@@ -13,7 +13,12 @@ import { useThree } from "@react-three/fiber";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HackToFuture = ({ onPositionReady, onViewportWidth }) => {
+type htfProps = {
+  onPositionReady?: (pos: THREE.Vector3) => void
+  onViewportWidth: number
+}
+
+const HackToFuture = ({ onPositionReady, onViewportWidth }: htfProps) => {
   const { scene } = useThree();
   const textGroupRef = useRef<THREE.Group | null>(null);
   const hasLoadedRef = useRef(false);
