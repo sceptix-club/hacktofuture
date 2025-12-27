@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+.hero-title {
+  font-family: "Dela Gothic One", sans-serif;
+}
+
+.comic-sans {
+  font-family : "Comic Relief", sans-serif;
+}
+
+.grid-bg{
+  background-image: url(https://www.svgrepo.com/show/348305/code-alt.svg);
+  background-size: 200px 200px;
+  animation: grid-scroll 4s linear infinite;
+  pointer-events: none;
+  opacity: 0.1;
+}
+
+@keyframes grid-scroll {
+  from {
+    background-position: 0 0;
+  } to {
+    background-position: 200px 200px;
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+.stroke-text {
+  -webkit-text-stroke: 1px white;
+  color: transparent;
+}
