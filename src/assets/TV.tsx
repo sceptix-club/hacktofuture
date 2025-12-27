@@ -4,7 +4,8 @@ import * as THREE from "three"
 import { useFrame } from "@react-three/fiber"
 
 type TVProps = {
-  position? : [number, number, number]
+  position?: [number, number, number]
+  size: number
 }
 
 function useGlitchMaterial(texture?: THREE.Texture) {
@@ -62,17 +63,16 @@ export function TV(props: TVProps) {
   const glitchMat = useGlitchMaterial(tvMaterial.map ?? undefined);
 
   useFrame((_, delta) => {
-    glitchMat.uniforms.iTime.value += 3* delta;
+    glitchMat.uniforms.iTime.value += 3 * delta;
   })
 
   return (
     <group {...props} dispose={null}>
-
       <mesh
+        position={props.position}
         geometry={tvMesh.geometry}
-        scale={3.05}
+        scale={(props.size < 6) ? 2.05 : 3.05}
         rotation={[-0.3, Math.PI * 0.75, -Math.PI / 2]}
-
       ><meshBasicMaterial color="white" side={THREE.BackSide} />
       </mesh>
 
@@ -80,12 +80,13 @@ export function TV(props: TVProps) {
       <mesh
         castShadow
         receiveShadow
+        position={props.position}
         geometry={tvMesh.geometry}
         material={glitchMat}
-        scale={3}
+        scale={(props.size < 6) ? 2.0 : 3.0}
         rotation={[-0.3, Math.PI * 0.75, -Math.PI / 2]}
       />
-    </group>
+    </group >
   );
 }
 
