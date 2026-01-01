@@ -79,7 +79,7 @@ const HackToFuture = ({ onPositionReady, onViewportWidth }: htfProps) => {
         });
       }
     };
-  }, [scene, onPositionReady]);
+  }, [scene, onPositionReady, onViewportWidth]);
 
   return null;
 }
@@ -88,11 +88,7 @@ const Scene = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera>(null);
   const tvRef = useRef<THREE.Group>(null);
   const controlsRef = useRef<any>(null);
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-  const longPressTimerRef = useRef<number | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
   const [oPos, setOPos] = useState<THREE.Vector3 | null>(null);
-  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
   const { viewport } = useThree();
   const viewportWidthRef = useRef<number | null>(null);
 
@@ -109,136 +105,56 @@ const Scene = () => {
       controlsRef.current.enabled = false;
     }
 
-    if (isMobile) {
-      // Mobile: Long press to trigger animation
-      const handleTouchStart = () => {
-        if (isAnimating) return;
+    ScrollTrigger.normalizeScroll(true);
 
-        longPressTimerRef.current = window.setTimeout(() => {
-          setIsAnimating(true);
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#scroll-spacer",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 2,
+        invalidateOnRefresh: true,
+      }
+    });
 
-          const tl = gsap.timeline({
-            onComplete: () => setIsAnimating(false)
-          });
+    tl.to(cameraRef.current.position, {
+      z: 2,
+      x: oPos.x,
+      y: oPos.y,
+      duration: 1,
+      ease: "power2.inOut"
+    }, 0);
 
-          tl.to(cameraRef.current!.position, {
-            z: 2,
-            x: oPos.x,
-            y: oPos.y,
-            duration: 3,
-            ease: "power2.inOut"
-          }, 0);
+    tl.to(cameraRef.current.rotation, {
+      z: Math.PI / 6,
+      duration: 1,
+      ease: "power2.inOut"
+    }, 0);
 
-          tl.to(cameraRef.current!.rotation, {
-            z: Math.PI / 6,
-            duration: 3,
-            ease: "power2.inOut"
-          }, 0);
+    tl.to(tvRef.current.rotation, {
+      y: Math.PI * 2,
+      duration: 1,
+      ease: "power2.inOut"
+    }, 0);
 
-          tl.to(tvRef.current!.rotation, {
-            y: Math.PI * 2,
-            duration: 3,
-            ease: "power2.inOut"
-          }, 0);
+    tl.to(tvRef.current.scale, {
+      x: 3,
+      y: 3,
+      z: 3,
+      duration: 1,
+      ease: "power2.inOut"
+    }, 0);
 
-          tl.to(tvRef.current!.scale, {
-            x: 3,
-            y: 3,
-            z: 3,
-            duration: 3,
-            ease: "power2.inOut"
-          }, 0);
+    tl.to(tvRef.current.position, {
+      z: 5,
+      duration: 0.5,
+      ease: "power2.in"
+    }, 0.8);
 
-          tl.to(tvRef.current!.position, {
-            z: 5,
-            duration: 1.5,
-            ease: "power2.in"
-          }, 1.5);
-        }, 500);
-      };
-
-      const handleTouchEnd = () => {
-        if (longPressTimerRef.current) {
-          clearTimeout(longPressTimerRef.current);
-          longPressTimerRef.current = null;
-        }
-      };
-
-      document.addEventListener('touchstart', handleTouchStart);
-      document.addEventListener('touchend', handleTouchEnd);
-      document.addEventListener('touchcancel', handleTouchEnd);
-
-      return () => {
-        document.removeEventListener('touchstart', handleTouchStart);
-        document.removeEventListener('touchend', handleTouchEnd);
-        document.removeEventListener('touchcancel', handleTouchEnd);
-        if (longPressTimerRef.current) {
-          clearTimeout(longPressTimerRef.current);
-        }
-      };
-    } else {
-      // Desktop: ScrollTrigger - wait for DOM to be ready
-      const initScrollTrigger = () => {
-        if (!document.body) {
-          requestAnimationFrame(initScrollTrigger);
-          return;
-        }
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: "body",
-            start: "top top",
-            end: "+=2000",
-            scrub: 1,
-            pin: true,
-            onRefresh: (self) => {
-              scrollTriggerRef.current = self;
-            }
-          }
-        });
-
-        tl.to(cameraRef.current!.position, {
-          z: 2,
-          x: oPos.x,
-          y: oPos.y,
-          duration: 1,
-          ease: "power2.inOut"
-        }, 0);
-
-        tl.to(cameraRef.current!.rotation, {
-          z: Math.PI / 6,
-          duration: 1,
-          ease: "power2.inOut"
-        }, 0);
-
-        tl.to(tvRef.current!.rotation, {
-          y: Math.PI * 2,
-          duration: 1,
-          ease: "power2.inOut"
-        }, 0);
-
-        tl.to(tvRef.current!.scale, {
-          x: 3,
-          y: 3,
-          z: 3,
-          duration: 1,
-          ease: "power2.inOut"
-        }, 0);
-
-        tl.to(tvRef.current!.position, {
-          z: 5,
-          duration: 0.5,
-          ease: "power2.in"
-        }, 0.8);
-      };
-
-      initScrollTrigger();
-
-      return () => {
-        ScrollTrigger.getAll().forEach(st => st.kill());
-      };
-    }
-  }, [isMobile, isAnimating, oPos, vw]);
+    return () => {
+      ScrollTrigger.getAll().forEach(st => st.kill());
+    };
+  }, [oPos, vw]);
 
   return (
     <>
