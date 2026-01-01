@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react"
 import * as THREE from "three";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { TV } from "../assets/TV";
+import { Wall } from "../assets/Wall";
 import { FontLoader } from "three/examples/jsm/Addons.js";
 import { useThree } from "@react-three/fiber";
 
@@ -87,7 +88,6 @@ const HackToFuture = ({ onPositionReady, onViewportWidth }: htfProps) => {
 const Scene = () => {
   const cameraRef = useRef<THREE.PerspectiveCamera>(null);
   const tvRef = useRef<THREE.Group>(null);
-  const controlsRef = useRef<any>(null);
   const [oPos, setOPos] = useState<THREE.Vector3 | null>(null);
   const { viewport } = useThree();
   const viewportWidthRef = useRef<number | null>(null);
@@ -101,9 +101,6 @@ const Scene = () => {
   useEffect(() => {
     if (!cameraRef.current || !tvRef.current || !oPos) return;
 
-    if (controlsRef.current) {
-      controlsRef.current.enabled = false;
-    }
 
     ScrollTrigger.normalizeScroll(true);
 
@@ -159,7 +156,6 @@ const Scene = () => {
   return (
     <>
       <OrbitControls
-        ref={controlsRef}
         enableZoom={false}
         enabled={false}
       />
@@ -170,7 +166,10 @@ const Scene = () => {
         far={50000}
         makeDefault
         position={[0, 0, 20]}
-      />
+      >
+        <Wall size={vw} />
+      </PerspectiveCamera>
+
       <Environment preset="city" />
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={vw} />
