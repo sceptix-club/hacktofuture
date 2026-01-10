@@ -16,10 +16,6 @@
   opacity: 0.1;
 }
 
-#scroll-spacer {
-  height: 200vh;
-}
-
 @keyframes grid-scroll {
   from {
     background-position: 0 0;
