@@ -1,12 +1,9 @@
 import { useEffect, useRef } from 'react'
 import React from 'react'
 import * as THREE from "three"
-import { useGLTF, useAnimations, useScroll } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
-
+import { useGLTF, useAnimations } from '@react-three/drei'
 
 function Comic(props: React.JSX.IntrinsicElements["group"]) {
-  const scroll = useScroll()
   const group = useRef<THREE.Group>(null)
   const { nodes, materials, animations } = useGLTF('/comic.glb')
   const { actions } = useAnimations(animations, group)
