@@ -4,5 +4,4 @@ bun.lockb
 /build
 .env
 .env.local
-public/*.glb
 
