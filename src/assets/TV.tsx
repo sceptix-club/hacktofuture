@@ -71,7 +71,7 @@ export function TV(props: TVProps) {
       <mesh
         position={props.position}
         geometry={tvMesh.geometry}
-        scale={(props.size < 6) ? 2.05 : 3.05}
+        scale={(props.size < 15) ? 2.05 : 3.05}
         rotation={[-0.3, Math.PI * 0.75, -Math.PI / 2]}
       ><meshBasicMaterial color="white" side={THREE.BackSide} />
       </mesh>
@@ -83,7 +83,7 @@ export function TV(props: TVProps) {
         position={props.position}
         geometry={tvMesh.geometry}
         material={glitchMat}
-        scale={(props.size < 6) ? 2.0 : 3.0}
+        scale={(props.size < 15) ? 2.0 : 3.0}
         rotation={[-0.3, Math.PI * 0.75, -Math.PI / 2]}
       />
     </group >

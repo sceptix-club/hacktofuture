@@ -1,13 +1,13 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
-import Experience from "./scenes/Experience";
+import Experience from "./Experience";
 import { ScrollControls, Stats } from "@react-three/drei";
 
 function App() {
   return (
     <>
       <div className="fixed inset-0 z-10 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }} >
+        <Canvas camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }} shadows >
           <Stats />
           <ScrollControls pages={3} damping={0.4} distance={1} >
             <Experience />
