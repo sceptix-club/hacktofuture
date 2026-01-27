@@ -1,19 +1,26 @@
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./Experience";
-import { ScrollControls, Stats } from "@react-three/drei";
+import { Stats } from "@react-three/drei";
 
 function App() {
   return (
     <>
+      <div id="smooth-wrapper">
+        <div id="smooth-content">
+          <div style={{ height: '100vh' }} /> {/* Scene 1 */}
+          <div style={{ height: '100vh' }} /> {/* Scene 2 */}
+          <div style={{ height: '100vh' }} /> {/* Scene 3 */}
+        </div>
+      </div>
+
       <div className="fixed inset-0 z-10 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }} shadows >
+        <Canvas camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }} shadows>
           <Stats />
-          <ScrollControls pages={3} damping={0.4} distance={1} >
-            <Experience />
-          </ScrollControls>
+          <Experience />
         </Canvas>
       </div>
+
       <div className="fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center pointer-events-none">
         <div className="max-w-[95vw] overflow-hidden">
           <h2
