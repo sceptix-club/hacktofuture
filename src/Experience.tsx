@@ -1,62 +1,28 @@
-import { useRef, useState, useEffect } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ScrollSmoother } from 'gsap/ScrollSmoother';
-import Wall from './assets/Wall';
-import { TV } from './assets/TV';
-import HackToFuture from './scenes/HackToFuture';
-import Rulebook from './scenes/Rulebook';
+import { useRef, useState } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
+import * as THREE from "three";
+import Wall from "./assets/Wall";
+import { TV } from "./assets/TV";
+import HackToFuture from "./scenes/HackToFuture";
+import Rulebook from "./scenes/Rulebook";
 
-gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+interface ExperienceProps {
+  scrollProgressRef: React.RefObject<number>;
+  scenes: number;
+}
 
-const Experience = () => {
+const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const { camera, viewport } = useThree();
-  const SCENES = 3;
   const [progress, setProgress] = useState(0);
-  const scrollProgressRef = useRef(0);
   const currentSceneRef = useRef(0);
   const tvRef = useRef<THREE.Group | null>(null);
   const cameraStart = useRef(new THREE.Vector3(0, 0, 20));
   const torusRef = useRef<THREE.Mesh | null>(null);
-  const smootherRef = useRef<ScrollSmoother | null>(null);
-
-  useEffect(() => {
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      smootherRef.current = ScrollSmoother.create({
-        wrapper: '#smooth-wrapper',
-        content: '#smooth-content',
-        smooth: 1.5,
-        effects: true,
-        smoothTouch: 0.1,
-      });
-
-      ScrollTrigger.create({
-        trigger: '#smooth-content',
-        start: 'top top',
-        end: 'bottom bottom',
-        scrub: true,
-        onUpdate: (self) => {
-          scrollProgressRef.current = self.progress;
-        },
-      });
-    }, 100);
-
-    return () => {
-      clearTimeout(timer);
-      if (smootherRef.current) {
-        smootherRef.current.kill();
-      }
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, []);
 
   useFrame((state) => {
-    const scrollProgress = scrollProgressRef.current;
-    const time = scrollProgress * SCENES;
-    const current = Math.min(Math.floor(time), SCENES - 1);
+    const scrollProgress = scrollProgressRef.current || 0;
+    const time = scrollProgress * scenes;
+    const current = Math.min(Math.floor(time), scenes - 1);
     const progress = time % 1;
 
     setProgress(progress);
