@@ -74,7 +74,7 @@ const TextContent = ({ currentScene }: TextContentProps) => {
               className="text-white whitespace-nowrap font-bold"
               style={{ fontSize: "clamp(1.0rem, 4vw, 2.0rem)" }}
             >
-              SCENE 1: HACK TO FUTURE
+              REGISTER NOW!!!
             </h2>
           </div>
         </div>

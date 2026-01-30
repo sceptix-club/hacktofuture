@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
-import Wall from "./assets/Wall";
+import MarqueeGrid from "./assets/Wall";
 import { TV } from "./assets/TV";
 import HackToFuture from "./scenes/HackToFuture";
 import Rulebook from "./scenes/Rulebook";
@@ -73,7 +73,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   return (
     <>
       {/* Scene 1 */}
-      <Wall size={viewport.width} />
+      <MarqueeGrid viewportWidth={viewport.width} />
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={viewport.width} />
       </group>
