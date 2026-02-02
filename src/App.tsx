@@ -55,10 +55,7 @@ function App() {
   return (
     <>
       <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <div style={{ height: "100vh" }} /> {/* Scene 1 */}
-          <div style={{ height: "100vh" }} /> {/* Scene 2 */}
-          <div style={{ height: "100vh" }} /> {/* Scene 3 */}
+        <div id="smooth-content" style={{ height: `${SCENES * 100}dvh` }}>
         </div>
       </div>
       <div className="fixed inset-0 z-10 pointer-events-none">
@@ -70,7 +67,7 @@ function App() {
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
         </Canvas>
       </div>
-      <TextContent currentScene={currentScene} />
+      <TextContent scenes={SCENES} currentScene={currentScene} />
     </>
   );
 }

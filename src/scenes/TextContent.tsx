@@ -3,47 +3,41 @@ import gsap from "gsap";
 
 type TextContentProps = {
   currentScene: number
+  scenes: number
 }
 
-const TextContent = ({ currentScene }: TextContentProps) => {
+const TextContent = ({ currentScene, scenes }: TextContentProps) => {
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
 
-    if (scene2TextRef.current) {
-      gsap.fromTo(
-        scene2TextRef.current,
-        {
-          y: "100vh",
-          opacity: 0,
-        },
-        {
-          y: "0vh",
-          opacity: 1,
-          scrollTrigger: {
-            trigger: "#smooth-content",
-            start: "20% top",
-            end: "40% top",
-            scrub: true,
-          },
-        }
-      );
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#smooth-content",
+        start: "top top",
+        end: `+=${scenes * 1000}`,
+        scrub: true,
+        pin: false
+      }
+    })
 
-      gsap.to(scene2TextRef.current, {
-        opacity: 0,
-        scrollTrigger: {
-          trigger: "#smooth-content",
-          start: "45% top",
-          end: "48% top",
-          scrub: true,
-        },
-      });
+    if (scene2TextRef.current) {
+      tl.fromTo(
+        scene2TextRef.current,
+        { y: "100vh", opacity: 0 },
+        { y: "0vh", opacity: 1, duration: 0.4 },
+        1.0
+      ).to(
+        scene2TextRef.current,
+        { opacity: 0, duration: 0.2 },
+        1.4
+      );
     }
 
     // Animate Scene 3 text: from bottom to middle, replacing scene 2 text
     if (scene3TextRef.current) {
-      gsap.fromTo(
+      tl.fromTo(
         scene3TextRef.current,
         {
           y: "100vh",
@@ -52,13 +46,13 @@ const TextContent = ({ currentScene }: TextContentProps) => {
         {
           y: "0vh",
           opacity: 1,
-          scrollTrigger: {
-            trigger: "#smooth-content",
-            start: "60% top",
-            end: "75% top",
-            scrub: true,
-          },
-        }
+          duration: 0.3
+        },
+        1.8
+      );
+      tl.to(scene3TextRef.current,
+        { opacity: 0 },
+        2.8
       );
     }
 
