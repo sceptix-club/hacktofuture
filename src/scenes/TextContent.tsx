@@ -2,25 +2,28 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
 type TextContentProps = {
-  currentScene: number
-  scenes: number
-}
+  currentScene: number;
+  scenes: number;
+};
 
 const TextContent = ({ currentScene, scenes }: TextContentProps) => {
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const width =
+      typeof window !== "undefined" ? window.innerWidth : (1024 as number);
+    const multiplier = width <= 640 ? 650 : 1000;
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#smooth-content",
         start: "top top",
-        end: `+=${scenes * 1000}`,
+        end: `+=${scenes * multiplier}`,
         scrub: true,
-        pin: false
-      }
-    })
+        pin: false,
+      },
+    });
 
     if (scene2TextRef.current) {
       tl.fromTo(
@@ -28,11 +31,7 @@ const TextContent = ({ currentScene, scenes }: TextContentProps) => {
         { y: "100vh", opacity: 0 },
         { y: "0vh", opacity: 1, duration: 0.4 },
         1.0
-      ).to(
-        scene2TextRef.current,
-        { opacity: 0, duration: 0.2 },
-        1.4
-      );
+      ).to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 1.4);
     }
 
     // Animate Scene 3 text: from bottom to middle, replacing scene 2 text
@@ -46,17 +45,13 @@ const TextContent = ({ currentScene, scenes }: TextContentProps) => {
         {
           y: "0vh",
           opacity: 1,
-          duration: 0.3
+          duration: 0.3,
         },
         1.8
       );
-      tl.to(scene3TextRef.current,
-        { opacity: 0 },
-        2.8
-      );
+      tl.to(scene3TextRef.current, { opacity: 0 }, 2.8);
     }
-
-  })
+  });
 
   return (
     <>
@@ -118,7 +113,7 @@ const TextContent = ({ currentScene, scenes }: TextContentProps) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default TextContent
+export default TextContent;

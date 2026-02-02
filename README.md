@@ -1,73 +1,113 @@
-# React + TypeScript + Vite
+# HackToFuture (React + TypeScript + Vite + three.js)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A scroll-driven multi-scene 3D experience built with React, Vite, TypeScript, @react-three/fiber and GSAP. Scroll maps to a normalized progress value which drives camera and object animations in the 3D scene (Experience.tsx). Overlay text and UI are animated with GSAP ScrollTrigger.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Key Files / Structure
 
-## React Compiler
+- src/main.tsx = app entry
+- src/App.tsx = app shell, GSAP ScrollSmoother/ScrollTrigger setup, defines SCENES and passes scrollProgressRef to Experience
+- src/Experience.tsx = 3D scene controller; reads scrollProgressRef each frame, decides active scene and progress, updates camera & objects; renders scene groups
+- src/scenes/* = scene-specific components (HackToFuture.tsx, Rulebook.tsx, etc.)
+- src/assets/* = meshes/shaders (TV, Wall)
+- src/scenes/TextContent.tsx = overlay copy and GSAP-driven animations
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## How scenes work (conceptually)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. App creates a normalized scroll progress value (0 → 1) and multiplies it by SCENES count.
+2. Experience useFrame computes:
+   - time = scrollProgress * scenes
+   - current = Math.floor(time)
+   - progress = time % 1 (fractional progress inside current scene)
+3. A switch on `current` drives the camera and objects using `progress`.
+4. Each scene is positioned vertically (e.g., y = -index * SCENE_GAP) and contains its own meshes & lights.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## How to add or change scenes — step-by-step
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Increase SCENES in App.tsx and pass it down:
+```tsx
+// filepath: src/App.tsx
+const SCENES = 4; // was 3
+<Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Make scene spacing explicit in Experience:
+- Add a SCENE_GAP constant (recommended) and position groups using it instead of hardcoded values.
+```tsx
+// filepath: src/Experience.tsx
+const SCENE_GAP = 30; // distance between scenes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+// In the returned JSX:
+<group position={[0, -SCENE_GAP * 0, 0]}>{/* scene 0 */}</group>
+<group position={[0, -SCENE_GAP * 1, 0]}>{/* scene 1 */}</group>
+<group position={[0, -SCENE_GAP * 2, 0]}>{/* scene 2 */}</group>
+<group position={[0, -SCENE_GAP * 3, 0]}>{/* new scene 3 */}</group>
 ```
+
+3. Add camera/object behavior for the new scene:
+- Add a new case in the existing useFrame switch that uses baseY = -SCENE_GAP * index and manipulates camera/object transforms using `progress`.
+```tsx
+// filepath: src/Experience.tsx
+case 3: {
+  const baseY = -SCENE_GAP * 3;
+  const target = new THREE.Vector3(0, baseY, 0);
+  // example: lerp camera toward target as progress goes 0→1
+  camera.position.lerpVectors(cameraStart.current, target, progress);
+  camera.lookAt(target);
+  // add object transforms here
+  break;
+}
+```
+
+4. Create the scene content component (optional, recommended):
+```tsx
+// filepath: src/scenes/NewScene.tsx
+const NewScene = ({ viewportWidth }: { viewportWidth: number }) => (
+  <group>
+    {/* meshes/lights here */}
+  </group>
+);
+export default NewScene;
+```
+- Import and place it in Experience inside the new group.
+
+5. Update overlay / TextContent:
+- Add UI panels for the new scene and update GSAP ScrollTrigger ranges or timeline lengths.
+- Ensure the useEffect that creates timelines includes the right dependency array (e.g., [scenes] or [] if only on mount).
+
+6. Ensure the scroll container size / smooth content matches SCENES:
+- Where App sets the smooth content height make it depend on SCENES so total scroll length scales:
+```tsx
+// pseudo
+smoothContent.style.height = `${SCENES * 100}vh`;
+```
+
+7. Test & iterate:
+- Run `npm run dev`.
+- Scroll through scenes, tweak SCENE_GAP, camera targets and timings until transitions feel smooth.
+
+---
+
+## Tips & recommended refactors
+
+- Centralize SCENES and SCENE_GAP in a constants file (src/constants.ts) and import where needed.
+- Extract camera transition helpers to keep useFrame switch clean.
+- Add prop types to scene components and keep each scene self-contained for easier testing.
+- Add tests for small utilities and for any stateful logic outside rendering.
+
+---
+
+## Quick checklist before commit
+- [ ] SCENES updated and passed to Experience
+- [ ] New scene group added with position=[0, -SCENE_GAP * n, 0]
+- [ ] Camera logic for the new case added and tested
+- [ ] Overlay panels and GSAP timeline updated
+- [ ] Smooth scroll height adjusted to SCENES
+- [ ] Build and manual test passed (`npm run dev`)
+
+---
