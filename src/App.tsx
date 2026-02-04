@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 
 function App() {
-  const SCENES = 3;
+  const SCENES = 4;
   const scrollProgressRef = useRef(0);
   const smootherRef = useRef<ScrollSmoother | null>(null);
   const [currentScene, setCurrentScene] = useState<number>(0);
@@ -67,7 +67,7 @@ function App() {
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
         </Canvas>
       </div>
-      <TextContent scenes={SCENES} currentScene={currentScene} />
+      <TextContent currentScene={currentScene} scenes={SCENES} />
     </>
   );
 }

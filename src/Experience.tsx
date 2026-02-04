@@ -5,6 +5,7 @@ import MarqueeGrid from "./assets/Wall";
 import { TV } from "./assets/TV";
 import HackToFuture from "./scenes/HackToFuture";
 import Rulebook from "./scenes/Rulebook";
+import Cards from "./scenes/Cards";
 
 interface ExperienceProps {
   scrollProgressRef: React.RefObject<number>;
@@ -55,16 +56,35 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         }
         break;
       case 2:
-        const radius = 5;
-        const angle = progress * Math.PI * 2;
-        camera.position.x = Math.sin(angle) * radius;
-        camera.position.y = -60 + Math.cos(angle * 0.5) * 2;
-        camera.position.z = Math.cos(angle) * radius;
-        camera.lookAt(0, -60, 0);
-        if (torusRef.current) {
-          const et = state.clock.elapsedTime;
-          const pulsate = 1 + Math.sin(et * 2) * 0.1;
-          torusRef.current.scale.setScalar(pulsate);
+        {
+          const radius = 5;
+          const angle = progress * Math.PI * 2;
+          camera.position.x = Math.sin(angle) * radius;
+          camera.position.y = -60 + Math.cos(angle * 0.5) * 2;
+          camera.position.z = Math.cos(angle) * radius;
+          camera.lookAt(0, -60, 0);
+          if (torusRef.current) {
+            const et = state.clock.elapsedTime;
+            const pulsate = 1 + Math.sin(et * 2) * 0.1;
+            torusRef.current.scale.setScalar(pulsate);
+          }
+        }
+        break;
+      case 3:
+        {
+          const pivot = new THREE.Vector3(0, -94, 0);
+          const radius = 10;
+          const angle = progress * Math.PI * 2;
+
+          camera.position.set(
+            pivot.x - Math.cos(angle) * radius,
+            pivot.y - Math.sin(angle) * radius,
+            pivot.z + 10
+          );
+
+          camera.rotation.x = 0
+          camera.rotation.y = 0
+          camera.rotation.z = angle + Math.PI / 2
         }
         break;
     }
@@ -108,6 +128,9 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           castShadow
         />
       </group>
+
+      {/* Scene 4: Cards */}
+      <Cards progress={scrollProgressRef} currentScene={currentSceneRef} />
     </>
   );
 };
