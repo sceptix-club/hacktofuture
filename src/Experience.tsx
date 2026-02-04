@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
+import gsap from "gsap";
 import MarqueeGrid from "./assets/Wall";
 import { TV } from "./assets/TV";
 import HackToFuture from "./scenes/HackToFuture";
@@ -17,8 +18,151 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const [progress, setProgress] = useState(0);
   const currentSceneRef = useRef(0);
   const tvRef = useRef<THREE.Group | null>(null);
-  const cameraStart = useRef(new THREE.Vector3(0, 0, 20));
   const torusRef = useRef<THREE.Mesh | null>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
+  useEffect(() => {
+    const tl = gsap.timeline({ paused: true });
+    tlRef.current = tl;
+
+    const base = viewport.width < 10 ? 0.6 : 1.0;
+
+    // Scene 1: TV zoom (0.0 - 1.0)
+    const scene1Camera = { posX: 0, posY: 0, posZ: 20, rotZ: 0 };
+    const scene1TV = { scale: 1, rotY: 0 };
+
+    tl.to(scene1Camera, {
+      posX: 0,
+      posY: 0,
+      posZ: 10,
+      rotZ: Math.PI / 6,
+      duration: 1,
+      onUpdate: () => {
+        camera.position.set(scene1Camera.posX, scene1Camera.posY, scene1Camera.posZ);
+        camera.lookAt(0, 0, 10);
+        camera.rotation.z = scene1Camera.rotZ;
+      },
+    }, 0);
+
+    tl.to(scene1TV, {
+      scale: 3 * base,
+      rotY: Math.PI * 2,
+      duration: 1,
+      onUpdate: () => {
+        if (tvRef.current) {
+          tvRef.current.scale.setScalar(scene1TV.scale);
+          tvRef.current.rotation.y = scene1TV.rotY;
+        }
+      },
+    }, 0);
+
+    // Scene 2: Circular camera around Rulebook (1.0 - 2.0)
+    const scene2State = { progress: 0 };
+    tl.to(scene2State, {
+      progress: 1,
+      duration: 1,
+      onUpdate: () => {
+        const p = scene2State.progress;
+        const angle = p * Math.PI * 2;
+        const radius = THREE.MathUtils.lerp(12, 3, p);
+        const height = THREE.MathUtils.lerp(15, 1.5, p);
+        const targetY = -30 + THREE.MathUtils.lerp(0, -0.3, p);
+
+        camera.position.set(
+          Math.sin(angle) * radius,
+          -30 + height,
+          Math.cos(angle) * radius
+        );
+        camera.lookAt(0, targetY, 0);
+      },
+    }, 1.0);
+
+    // Scene 3: Torus orbit (2.0 - 3.0)
+    const scene3State = { progress: 0 };
+    tl.to(scene3State, {
+      progress: 1,
+      duration: 1,
+      onUpdate: () => {
+        const p = scene3State.progress;
+        const radius = 5;
+        const angle = p * Math.PI * 2;
+        camera.position.set(
+          Math.sin(angle) * radius,
+          -60 + Math.cos(angle * 0.5) * 2,
+          Math.cos(angle) * radius
+        );
+        camera.lookAt(0, -60, 0);
+      },
+    }, 2.0);
+
+    // Scene 4: Cards with pauses (3.0 - 4.0)
+    const scene4State = { angle: 0 };
+    const pivot = { x: 0, y: -94, z: 0 };
+    const radius = 10;
+
+    const updateCardCamera = () => {
+      const a = scene4State.angle;
+      camera.position.set(
+        pivot.x - Math.cos(a) * radius,
+        pivot.y - Math.sin(a) * radius,
+        pivot.z + 10
+      );
+      camera.rotation.set(0, 0, a + Math.PI / 2);
+    };
+
+    // Card 1
+    tl.to(scene4State, {
+      angle: Math.PI * 0.5,
+      duration: 0.3,
+      onUpdate: updateCardCamera,
+    }, 3.0);
+
+    // Pause at Card 1
+    tl.to(scene4State, {
+      angle: Math.PI * 0.5,
+      duration: 0.2,
+      onUpdate: updateCardCamera,
+    });
+
+    // Card 2
+    tl.to(scene4State, {
+      angle: Math.PI,
+      duration: 0.3,
+      onUpdate: updateCardCamera,
+    });
+
+    // Pause at Card 2
+    tl.to(scene4State, {
+      angle: Math.PI,
+      duration: 0.2,
+      onUpdate: updateCardCamera,
+    });
+
+    // Card 3
+    tl.to(scene4State, {
+      angle: Math.PI * 1.5,
+      duration: 0.3,
+      onUpdate: updateCardCamera,
+    });
+
+    // Pause at Card 3
+    tl.to(scene4State, {
+      angle: Math.PI * 1.5,
+      duration: 0.2,
+      onUpdate: updateCardCamera,
+    });
+
+    // Card 4
+    tl.to(scene4State, {
+      angle: Math.PI * 2,
+      duration: 0.3,
+      onUpdate: updateCardCamera,
+    });
+
+    return () => {
+      tl.kill();
+    };
+  }, [scenes, viewport.width, camera]);
 
   useFrame((state) => {
     const scrollProgress = scrollProgressRef.current || 0;
@@ -29,64 +173,14 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     setProgress(progress);
     currentSceneRef.current = current;
 
-    switch (current) {
-      case 0:
-        if (tvRef.current) {
-          const target = new THREE.Vector3(0, 0, 10);
-          camera.position.lerpVectors(cameraStart.current, target, progress);
-          camera.lookAt(target);
-          camera.rotation.z = THREE.MathUtils.lerp(0, Math.PI / 6, progress);
-          const base = viewport.width < 10 ? 0.6 : 1.0;
-          const scale = THREE.MathUtils.lerp(1, 3 * base, progress);
-          tvRef.current.scale.setScalar(scale);
-          tvRef.current.rotation.y = progress * Math.PI * 2;
-        }
-        break;
-      case 1:
-        {
-          const target = new THREE.Vector3(0, -30, 0);
-          const angle = progress * Math.PI * 2;
-          const radius = THREE.MathUtils.lerp(12, 3, progress);
-          const height = THREE.MathUtils.lerp(15, 1.5, progress);
-          camera.position.x = Math.sin(angle) * radius;
-          camera.position.y = -30 + height;
-          camera.position.z = Math.cos(angle) * radius;
-          target.y += THREE.MathUtils.lerp(0, -0.3, progress);
-          camera.lookAt(target);
-        }
-        break;
-      case 2:
-        {
-          const radius = 5;
-          const angle = progress * Math.PI * 2;
-          camera.position.x = Math.sin(angle) * radius;
-          camera.position.y = -60 + Math.cos(angle * 0.5) * 2;
-          camera.position.z = Math.cos(angle) * radius;
-          camera.lookAt(0, -60, 0);
-          if (torusRef.current) {
-            const et = state.clock.elapsedTime;
-            const pulsate = 1 + Math.sin(et * 2) * 0.1;
-            torusRef.current.scale.setScalar(pulsate);
-          }
-        }
-        break;
-      case 3:
-        {
-          const pivot = new THREE.Vector3(0, -94, 0);
-          const radius = 10;
-          const angle = progress * Math.PI * 2;
+    if (tlRef.current) {
+      tlRef.current.progress(scrollProgress);
+    }
 
-          camera.position.set(
-            pivot.x - Math.cos(angle) * radius,
-            pivot.y - Math.sin(angle) * radius,
-            pivot.z + 10
-          );
-
-          camera.rotation.x = 0
-          camera.rotation.y = 0
-          camera.rotation.z = angle + Math.PI / 2
-        }
-        break;
+    if (torusRef.current && current === 2) {
+      const et = state.clock.elapsedTime;
+      const pulsate = 1 + Math.sin(et * 2) * 0.1;
+      torusRef.current.scale.setScalar(pulsate);
     }
   });
 
