@@ -15,6 +15,7 @@ function App() {
   const SCENES = 4;
   const scrollProgressRef = useRef(0);
   const smootherRef = useRef<ScrollSmoother | null>(null);
+  const textTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const [currentScene, setCurrentScene] = useState<number>(0);
 
 
@@ -39,6 +40,9 @@ function App() {
           const time = self.progress * SCENES;
           const current = Math.min(Math.floor(time), SCENES - 1);
           setCurrentScene(current);
+          if (textTimelineRef.current) {
+            textTimelineRef.current.progress(self.progress);
+          }
         },
       });
     }, 100);
@@ -67,7 +71,11 @@ function App() {
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
         </Canvas>
       </div>
-      <TextContent currentScene={currentScene} scenes={SCENES} />
+      <TextContent
+        getTimelineRef={(tl) => textTimelineRef.current = tl}
+        currentScene={currentScene}
+        scenes={SCENES}
+      />
     </>
   );
 }
