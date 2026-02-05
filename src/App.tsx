@@ -25,9 +25,9 @@ function App() {
       smootherRef.current = ScrollSmoother.create({
         wrapper: "#smooth-wrapper",
         content: "#smooth-content",
-        smooth: 1.5,
+        smooth: 1.0,
         effects: true,
-        smoothTouch: 0.1,
+        smoothTouch: 1.0
       });
 
       ScrollTrigger.create({
@@ -59,7 +59,7 @@ function App() {
   return (
     <>
       <div id="smooth-wrapper">
-        <div id="smooth-content" style={{ height: `${SCENES * 100}dvh` }}>
+        <div id="smooth-content" style={{ height: `${SCENES * 200}dvh` }}>
         </div>
       </div>
       <div className="fixed inset-0 z-10 pointer-events-none">
@@ -69,6 +69,7 @@ function App() {
         >
           <Stats />
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
+          <color attach="background" args={["#000000"]} />
         </Canvas>
       </div>
       <TextContent
