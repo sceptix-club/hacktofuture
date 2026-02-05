@@ -115,13 +115,13 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
       >
         <div className="max-w-[95vw] overflow-hidden text-center">
           <h2
-            className="text-white font-bold"
+            className="text-white font-bold hero-title"
             style={{ fontSize: "clamp(1.5rem, 6vw, 3.5rem)" }}
           >
             ABOUT HACKTOFUTURE
           </h2>
           <p
-            className="text-white/80 mt-4"
+            className="text-white/80 mt-4 comic-sans"
             style={{ fontSize: "clamp(0.8rem, 2vw, 1.2rem)" }}
           >
             Download the Rulebook here
@@ -137,13 +137,13 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
       >
         <div className="max-w-[95vw] overflow-hidden text-center">
           <h2
-            className="text-white font-bold"
+            className="text-white font-bold hero-title"
             style={{ fontSize: "clamp(2.0rem, 8vw, 4.5rem)" }}
           >
             COMING SOON!
           </h2>
           <p
-            className="text-white/80 mt-4"
+            className="text-white/80 mt-4 comic-sans"
             style={{ fontSize: "clamp(1.0rem, 3vw, 1.5rem)" }}
           >
             36 Hour Hackathon
