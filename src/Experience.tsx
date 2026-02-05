@@ -5,8 +5,9 @@ import gsap from "gsap";
 import MarqueeGrid from "./assets/Wall";
 import { TV } from "./assets/TV";
 import HackToFuture from "./scenes/HackToFuture";
-import Rulebook from "./scenes/Rulebook";
+import { Comic, ComicInstances } from "./scenes/Rulebook";
 import Cards from "./scenes/Cards";
+import { Cloud, Clouds } from "@react-three/drei";
 
 interface ExperienceProps {
   scrollProgressRef: React.RefObject<number>;
@@ -186,6 +187,21 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
   return (
     <>
+
+      <Clouds>
+        <Cloud
+          concentrate="outside"
+          seed={2}
+          bounds={15}
+          volume={4}
+          segments={5}
+          growth={20}
+          opacity={0.2}
+          position={[-10, -35, 0]}
+          speed={0.4}
+        />
+      </Clouds>
+
       {/* Scene 1 */}
       <MarqueeGrid viewportWidth={viewport.width} />
       <group ref={tvRef}>
@@ -195,9 +211,27 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 2 */}
       <group position={[0, -30, 0]}>
-        <ambientLight intensity={0.5} />
-        <pointLight castShadow position={[10, 10, 10]} intensity={1} />
-        <Rulebook />
+        <ambientLight intensity={0.85} />
+
+        <directionalLight
+          position={[8, 12, 6]}
+          intensity={1.6}
+          castShadow
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+        />
+
+        <Comic />
+        <ComicInstances
+          count={30}
+          speed={1}
+          bounds={{
+            x: [-20, 20],
+            y: [-10, 10],
+            z: [-20, 20],
+          }}
+          position={[0, -5, 0]}
+        />
       </group>
 
       {/* Scene 3 */}
@@ -211,16 +245,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
             envMapIntensity={1}
           />
         </mesh>
-        <ambientLight intensity={0.4} />
-        <pointLight position={[5, 5, 5]} intensity={1.2} color="#ffffff" />
-        <pointLight position={[-5, -5, 5]} intensity={0.8} color="#ffd700" />
-        <spotLight
-          position={[0, 10, 0]}
-          angle={0.3}
-          penumbra={1}
-          intensity={1}
-          castShadow
-        />
       </group>
 
       {/* Scene 4: Cards */}
