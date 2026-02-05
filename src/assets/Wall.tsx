@@ -73,7 +73,7 @@ const MarqueeGrid = ({
   });
 
   return (
-    <group ref={groupRef} position={position}>
+    <group ref={groupRef} position={position} >
       {imageColumns.map((images, colIndex) => (
         <group
           key={colIndex}
@@ -89,6 +89,8 @@ const MarqueeGrid = ({
               key={imgIndex}
               url={img.url}
               scale={imageScale}
+              transparent
+              opacity={0.5}
               position={[0, -imgIndex * imageSpacing, 0]}
             />
           ))}
@@ -97,6 +99,8 @@ const MarqueeGrid = ({
               key={`dup-${imgIndex}`}
               url={img.url}
               scale={imageScale}
+              transparent
+              opacity={0.5}
               position={[
                 0,
                 -imgIndex * imageSpacing + images.length * imageSpacing,
