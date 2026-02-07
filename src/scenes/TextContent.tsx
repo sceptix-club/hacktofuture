@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollIndicator from "../components/Scrollindicator";
+import Button from "../components/ui/Button";
 
 type TextContentProps = {
   currentScene: number;
@@ -98,7 +99,7 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
       {currentScene === 0 && (
         <div className="fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center pointer-events-none">
           <div className="max-w-[95vw] overflow-hidden">
-            <ScrollIndicator/>
+            <ScrollIndicator />
             <h2
               className="text-white whitespace-nowrap font-bold"
               style={{ fontSize: "clamp(0.5rem, 4vw, 1.0rem)" }}
@@ -122,15 +123,25 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
           >
             ABOUT HACKTOFUTURE
           </h2>
-            <p
+          <p
             className="text-white/80 mt-4 comic-sans"
             style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)" }}
-            >
-            “The clock starts ticking… 36 hours. Infinite chaos.”<br /><br />
+          >
+            “The clock starts ticking… 36 hours. Infinite chaos.”
+            <br />
+            <br />
             HackToFuture 4.0 is back this April (x–y), where ideas collide,
             caffeine fuels creativity, and legends are coded. Whether you’re a
             seasoned hacker or a first-time hero.
-            </p>
+          </p>
+
+          <div className="mt-6 flex justify-center pointer-events-auto">
+            <a href="/rulebook.pdf" download>
+              <Button className="bg-white text-black shadow-md hover:bg-white/90 hover:cursor-pointer">
+                Download Rulebook
+              </Button>
+            </a>
+          </div>
         </div>
       </div>
 
