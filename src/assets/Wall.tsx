@@ -1,7 +1,8 @@
-import { Image } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
-import { useMemo, useRef } from "react"
-import * as THREE from "three"
+import { Image } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useMemo, useRef } from "react";
+import * as THREE from "three";
+import halftoneUrl from "./halftone.png";
 
 interface MarqueeGridProps {
   viewportWidth: number;
@@ -24,24 +25,24 @@ const MarqueeGrid = ({
   imageScale,
   imageSpacing,
   columnSpacing,
-  marqueeSpeed
+  marqueeSpeed,
 }: MarqueeGridProps) => {
   if (viewportWidth < 15) {
-    columns = 4,
-      imagesPerColumn = 3,
-      position = [0, 0, -8],
-      imageScale = [3, 4],
-      imageSpacing = 5,
-      columnSpacing = 3.5,
-      marqueeSpeed = 2
+    (columns = 4),
+      (imagesPerColumn = 3),
+      (position = [0, 0, -8]),
+      (imageScale = [3, 4]),
+      (imageSpacing = 5),
+      (columnSpacing = 3.5),
+      (marqueeSpeed = 2);
   } else {
-    columns = 6,
-      imagesPerColumn = 3,
-      position = [0, 0, -10],
-      imageScale = [7, 9],
-      imageSpacing = 10,
-      columnSpacing = 8,
-      marqueeSpeed = 2
+    (columns = 6),
+      (imagesPerColumn = 3),
+      (position = [0, 0, -10]),
+      (imageScale = [7, 9]),
+      (imageSpacing = 10),
+      (columnSpacing = 8),
+      (marqueeSpeed = 2);
   }
 
   const groupRef = useRef<THREE.Group>(null);
@@ -54,10 +55,16 @@ const MarqueeGrid = ({
 
     return Array.from({ length: columns }, (_, colIndex) =>
       Array.from({ length: imagesPerColumn }, (_, imgIndex) => ({
-        url: `https://picsum.photos/seed/${colIndex * imagesPerColumn + imgIndex}/400/500`,
+        url: `https://picsum.photos/seed/${
+          colIndex * imagesPerColumn + imgIndex
+        }/400/500`,
       }))
     );
   }, [imageUrls, columns, imagesPerColumn]);
+
+  const wallWidth = (imageColumns.length - 1) * columnSpacing + imageScale[0];
+  const wallHeight = imagesPerColumn * imageSpacing + imageScale[1];
+  const wallCenterY = -((imagesPerColumn - 1) * imageSpacing) / 2;
 
   useFrame(() => {
     columnRefs.current.forEach((col, index) => {
@@ -67,13 +74,14 @@ const MarqueeGrid = ({
       const speed = (0.3 + index * 0.15) * marqueeSpeed;
 
       col.position.y -= speed * 0.005 * dir;
-      const columnHeight = imageColumns[index].length * imageSpacing / 3;
-      col.position.y = ((col.position.y % columnHeight) + columnHeight) % columnHeight;
+      const columnHeight = (imageColumns[index].length * imageSpacing) / 3;
+      col.position.y =
+        ((col.position.y % columnHeight) + columnHeight) % columnHeight;
     });
   });
 
   return (
-    <group ref={groupRef} position={position} >
+    <group ref={groupRef} position={position}>
       {imageColumns.map((images, colIndex) => (
         <group
           key={colIndex}
@@ -85,33 +93,52 @@ const MarqueeGrid = ({
           ]}
         >
           {images.map((img, imgIndex) => (
-            <Image
-              key={imgIndex}
-              url={img.url}
-              scale={imageScale}
-              transparent
-              opacity={0.5}
-              position={[0, -imgIndex * imageSpacing, 0]}
-            />
+            <group key={imgIndex} position={[0, -imgIndex * imageSpacing, 0]}>
+              <Image
+                url={img.url}
+                scale={imageScale}
+                transparent
+                opacity={0.5}
+              />
+              <Image
+                url={halftoneUrl}
+                scale={imageScale}
+                transparent
+                opacity={0.35}
+                position={[0, 0, 0.02]}
+                renderOrder={10}
+              />
+            </group>
           ))}
           {images.map((img, imgIndex) => (
-            <Image
+            <group
               key={`dup-${imgIndex}`}
-              url={img.url}
-              scale={imageScale}
-              transparent
-              opacity={0.5}
               position={[
                 0,
                 -imgIndex * imageSpacing + images.length * imageSpacing,
                 0,
               ]}
-            />
+            >
+              <Image
+                url={img.url}
+                scale={imageScale}
+                transparent
+                opacity={0.5}
+              />
+              <Image
+                url={halftoneUrl}
+                scale={imageScale}
+                transparent
+                opacity={0.35}
+                position={[0, 0, 0.02]}
+                renderOrder={10}
+              />
+            </group>
           ))}
         </group>
       ))}
     </group>
   );
-}
+};
 
 export default MarqueeGrid;
