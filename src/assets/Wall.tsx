@@ -62,10 +62,6 @@ const MarqueeGrid = ({
     );
   }, [imageUrls, columns, imagesPerColumn]);
 
-  const wallWidth = (imageColumns.length - 1) * columnSpacing + imageScale[0];
-  const wallHeight = imagesPerColumn * imageSpacing + imageScale[1];
-  const wallCenterY = -((imagesPerColumn - 1) * imageSpacing) / 2;
-
   useFrame(() => {
     columnRefs.current.forEach((col, index) => {
       if (!col) return;
