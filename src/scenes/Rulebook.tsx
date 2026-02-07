@@ -71,7 +71,7 @@ function ComicInstances({
 
   return (
     <group position={position}>
-      <Instances limit={count} range={count} castShadow receiveShadow geometry={(nodes as any).Object_5.geometry} material={materials.Paper}>
+      <Instances limit={count} range={count} castShadow receiveShadow geometry={(nodes as any).page.geometry} material={materials.Paper}>
         {Array.from({ length: count }, (_, i) => (
           <ComicInstance
             key={`paper-${i}`}
