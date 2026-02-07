@@ -124,9 +124,9 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
           </h2>
             <p
             className="text-white/80 mt-4 comic-sans"
-            style={{ fontSize: "clamp(0.8rem, 2vw, 1.2rem)" }}
+            style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)" }}
             >
-            “The clock starts ticking… 36 hours. Infinite chaos.”<br />
+            “The clock starts ticking… 36 hours. Infinite chaos.”<br /><br />
             HackToFuture 4.0 is back this April (x–y), where ideas collide,
             caffeine fuels creativity, and legends are coded. Whether you’re a
             seasoned hacker or a first-time hero.
