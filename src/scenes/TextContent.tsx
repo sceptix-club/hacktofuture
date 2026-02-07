@@ -99,9 +99,9 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
           <div className="max-w-[95vw] overflow-hidden">
             <h2
               className="text-white whitespace-nowrap font-bold"
-              style={{ fontSize: "clamp(1.0rem, 4vw, 2.0rem)" }}
+              style={{ fontSize: "clamp(0.5rem, 4vw, 1.0rem)" }}
             >
-              REGISTER NOW!!!
+              Scroll To Explore
             </h2>
           </div>
         </div>
