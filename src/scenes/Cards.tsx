@@ -21,7 +21,7 @@ export default function Cards({ progress, currentScene }: CardsProps) {
   const radius = 10;
 
   return (
-    <group position={[0, -94, 0]}>
+    <group position={[0, -124, 0]}>
 
       {/* Card 1 - Top (0 degrees) */}
       <mesh position={[0, radius, 0]}>
