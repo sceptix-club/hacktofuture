@@ -62,7 +62,7 @@ function App() {
         <div id="smooth-content" style={{ height: `${SCENES * 200}dvh` }}>
         </div>
       </div>
-      <div className="fixed inset-0 z-10 pointer-events-none">
+      <div className="fixed inset-0 z-10">
         <Canvas
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
           shadows

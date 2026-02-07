@@ -9,6 +9,7 @@ import { Comic, ComicInstances } from "./scenes/Rulebook";
 import Cards from "./scenes/Cards";
 import { Cloud, Clouds } from "@react-three/drei";
 
+
 interface ExperienceProps {
   scrollProgressRef: React.RefObject<number>;
   scenes: number;
@@ -19,6 +20,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const [progress, setProgress] = useState(0);
   const currentSceneRef = useRef(0);
   const tvRef = useRef<THREE.Group | null>(null);
+  const pointerRef = useRef<THREE.PointLight | null>(null);
   const torusRef = useRef<THREE.Mesh | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
@@ -183,6 +185,28 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       const pulsate = 1 + Math.sin(et * 2) * 0.1;
       torusRef.current.scale.setScalar(pulsate);
     }
+
+    // Pointer light
+    if (pointerRef.current) {
+      const p = state.pointer
+
+      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(state.camera)
+      const dir = worldPoint.sub(state.camera.position).normalize()
+
+      const ray = new THREE.Ray(state.camera.position, dir)
+
+      const cardsPlane = new THREE.Plane(
+        new THREE.Vector3(0, 0, 1),
+        0
+      )
+
+      const hit = new THREE.Vector3()
+      if (ray.intersectPlane(cardsPlane, hit)) {
+        pointerRef.current.position.copy(hit)
+        pointerRef.current.position.z += 2
+      }
+    }
+
   });
 
   return (
@@ -249,6 +273,14 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 4: Cards */}
       <Cards progress={scrollProgressRef} currentScene={currentSceneRef} />
+
+      <pointLight
+        ref={pointerRef}
+        intensity={10}
+        distance={10}
+        decay={2}
+        color="white"
+      />
     </>
   );
 };
