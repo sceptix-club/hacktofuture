@@ -113,19 +113,22 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
         style={{ opacity: 0 }}
       >
-        <div className="max-w-[95vw] overflow-hidden text-center">
+        <div className="max-w-[75vw] overflow-hidden text-center">
           <h2
             className="text-white font-bold hero-title"
             style={{ fontSize: "clamp(1.5rem, 6vw, 3.5rem)" }}
           >
             ABOUT HACKTOFUTURE
           </h2>
-          <p
+            <p
             className="text-white/80 mt-4 comic-sans"
             style={{ fontSize: "clamp(0.8rem, 2vw, 1.2rem)" }}
-          >
-            Download the Rulebook here
-          </p>
+            >
+            “The clock starts ticking… 36 hours. Infinite chaos.”<br />
+            HackToFuture 4.0 is back this April (x–y), where ideas collide,
+            caffeine fuels creativity, and legends are coded. Whether you’re a
+            seasoned hacker or a first-time hero.
+            </p>
         </div>
       </div>
 
