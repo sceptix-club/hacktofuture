@@ -43,30 +43,50 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
 
     // Scene 3 text (Sponsors)
     if (scene3TextRef.current) {
-      const panels = scene3TextRef.current.querySelectorAll('.sponsor-panel');
+      const panels = scene3TextRef.current.querySelectorAll(".sponsor-panel");
       gsap.set(panels, {
-        x: (index) => { const positions = [2000, -2000, 1500, 0, 2000]; return positions[index] || 0; },
-        y: (index) => { const positions = [-2000, -2000, 0, 1500, 2000]; return positions[index] || 0; },
-        opacity: 0
+        x: (index) => {
+          const positions = [2000, -2000, 1500, 0, 2000];
+          return positions[index] || 0;
+        },
+        y: (index) => {
+          const positions = [-2000, -2000, 0, 1500, 2000];
+          return positions[index] || 0;
+        },
+        opacity: 0,
       });
       // Animate them flying in
-      tl.to(panels, {
-        x: 0,
-        y: 0,
-        opacity: 1,
-        duration: 0.3,
-        stagger: 0.01,
-        ease: "back.out(0.8)",
-      }, 2.0);
+      tl.to(
+        panels,
+        {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 0.3,
+          stagger: 0.01,
+          ease: "back.out(0.8)",
+        },
+        2.0
+      );
 
-      tl.to(panels, {
-        x: (index) => { const positions = [0, -2000, 1500, 0, 0]; return positions[index] || 0; },
-        y: (index) => { const positions = [-1000, 2000, -1500, 1500, 2000]; return positions[index] || 0; },
-        opacity: 0,
-        duration: 0.4,
-        stagger: 0.08,
-        ease: "back.in(0.8)",
-      }, 2.8);
+      tl.to(
+        panels,
+        {
+          x: (index) => {
+            const positions = [0, -2000, 1500, 0, 0];
+            return positions[index] || 0;
+          },
+          y: (index) => {
+            const positions = [-1000, 2000, -1500, 1500, 2000];
+            return positions[index] || 0;
+          },
+          opacity: 0,
+          duration: 0.4,
+          stagger: 0.08,
+          ease: "back.in(0.8)",
+        },
+        2.8
+      );
     }
 
     if (scene4TextRef.current) {
@@ -80,7 +100,8 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
       tl.to(
         scene4TextRef.current,
         { opacity: 0, scale: 1.1, duration: 0.25 },
-        3.8);
+        3.8
+      );
     }
 
     // Card 1 text (4.0 - 4.5)
@@ -138,8 +159,11 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
   return (
     <>
       {/* Scene 1 text - static at bottom */}
-      {(
-        <div ref={scene1TextRef} className=" hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center">
+      {
+        <div
+          ref={scene1TextRef}
+          className=" hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
+        >
           <div className="max-w-[95vw] overflow-hidden">
             <ScrollIndicator />
             <h2
@@ -150,13 +174,16 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
             </h2>
           </div>
         </div>
-      )}
+      }
 
       {/* Scene 2 text */}
       <div
         ref={scene2TextRef}
-        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
+        className={`fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
+          currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+        }`}
         style={{ opacity: 0 }}
+        aria-hidden={currentScene !== 1}
       >
         <div className="max-w-[75vw] overflow-hidden text-center">
           <h2
@@ -176,18 +203,9 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
             caffeine fuels creativity, and legends are coded. Whether you’re a
             seasoned hacker or a first-time hero.
           </p>
-
-          <div className="mt-6 flex justify-center pointer-events-auto">
-            <a href="/rulebook.pdf" download>
-              <Button className="bg-white text-black shadow-md hover:bg-white/90 hover:cursor-pointer">
-                Download Rulebook
-              </Button>
-            </a>
-          </div>
+          <Button className="mt-6 bg-white text-black hover:cursor-pointer">Download Rulebook</Button>
         </div>
       </div>
-
-
 
       {/* Scene 3 text */}
       <div
@@ -198,7 +216,11 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
           title={{ name: "EGDK" }}
           platinum={[{ name: "Company A" }, { name: "Company B" }]}
           gold={[{ name: "Company C" }, { name: "Company D" }]}
-          silver={[{ name: "Company E" }, { name: "Company F" }, { name: "Company G" }]}
+          silver={[
+            { name: "Company E" },
+            { name: "Company F" },
+            { name: "Company G" },
+          ]}
         />
       </div>
 

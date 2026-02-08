@@ -9,7 +9,6 @@ import { Comic, ComicInstances } from "./scenes/Rulebook";
 import Cards from "./scenes/Cards";
 import { Cloud, Clouds } from "@react-three/drei";
 
-
 interface ExperienceProps {
   scrollProgressRef: React.RefObject<number>;
   scenes: number;
@@ -33,80 +32,104 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     const scene1Camera = { posX: 0, posY: 0, posZ: 20, rotZ: 0 };
     const scene1TV = { scale: 1, rotY: 0 };
 
-    tl.to(scene1Camera, {
-      posX: 0,
-      posY: 0,
-      posZ: 10,
-      rotZ: Math.PI / 6,
-      duration: 1,
-      onUpdate: () => {
-        camera.position.set(scene1Camera.posX, scene1Camera.posY, scene1Camera.posZ);
-        camera.lookAt(0, 0, 10);
-        camera.rotation.z = scene1Camera.rotZ;
+    tl.to(
+      scene1Camera,
+      {
+        posX: 0,
+        posY: 0,
+        posZ: 10,
+        rotZ: Math.PI / 6,
+        duration: 1,
+        onUpdate: () => {
+          camera.position.set(
+            scene1Camera.posX,
+            scene1Camera.posY,
+            scene1Camera.posZ
+          );
+          camera.lookAt(0, 0, 10);
+          camera.rotation.z = scene1Camera.rotZ;
+        },
       },
-    }, 0);
+      0
+    );
 
-    tl.to(scene1TV, {
-      scale: 3 * base,
-      rotY: Math.PI * 2,
-      duration: 1,
-      onUpdate: () => {
-        if (tvRef.current) {
-          tvRef.current.scale.setScalar(scene1TV.scale);
-          tvRef.current.rotation.y = scene1TV.rotY;
-        }
+    tl.to(
+      scene1TV,
+      {
+        scale: 3 * base,
+        rotY: Math.PI * 2,
+        duration: 1,
+        onUpdate: () => {
+          if (tvRef.current) {
+            tvRef.current.scale.setScalar(scene1TV.scale);
+            tvRef.current.rotation.y = scene1TV.rotY;
+          }
+        },
       },
-    }, 0);
+      0
+    );
 
     // Scene 2: Circular camera around Rulebook (1.0 - 2.0)
     const scene2State = { progress: 0 };
-    tl.to(scene2State, {
-      progress: 1,
-      duration: 1,
-      onUpdate: () => {
-        const p = scene2State.progress;
-        const angle = p * Math.PI * 2;
-        const radius = THREE.MathUtils.lerp(12, 3, p);
-        const height = THREE.MathUtils.lerp(15, 1.5, p);
-        const targetY = -30 + THREE.MathUtils.lerp(0, -0.3, p);
+    tl.to(
+      scene2State,
+      {
+        progress: 1,
+        duration: 1,
+        onUpdate: () => {
+          const p = scene2State.progress;
+          const angle = p * Math.PI * 2;
+          const radius = THREE.MathUtils.lerp(12, 3, p);
+          const height = THREE.MathUtils.lerp(15, 1.5, p);
+          const targetY = -30 + THREE.MathUtils.lerp(0, -0.3, p);
 
-        camera.position.set(
-          Math.sin(angle) * radius,
-          -30 + height,
-          Math.cos(angle) * radius
-        );
-        camera.lookAt(0, targetY, 0);
+          camera.position.set(
+            Math.sin(angle) * radius,
+            -30 + height,
+            Math.cos(angle) * radius
+          );
+          camera.lookAt(0, targetY, 0);
+        },
       },
-    }, 1.0);
+      1.0
+    );
 
     // Scene 3: Blank space for Sponsors (2.0 - 3.0)
     const scene3State = { progress: 0 };
-    tl.to(scene3State, {
-      progress: 1,
-      duration: 1,
-      onUpdate: () => {
-        camera.position.set(0, -60, 0)
-        camera.lookAt(0, -60, 0);
+    tl.to(
+      scene3State,
+      {
+        progress: 1,
+        duration: 1,
+        onUpdate: () => {
+          camera.position.set(0, -60, 0);
+          camera.lookAt(0, -60, 0);
+        },
       },
-    }, 2.0);
+      2.0
+    );
 
     // Scene 4: Still camera rotation (3.0 - 4.0)
     const scene4State = { progress: 0 };
-    tl.to(scene4State, {
-      progress: 1,
-      duration: 1,
-      onUpdate: () => {
-        const p = scene4State.progress;
-        const radius = 5;
-        const angle = p * Math.PI * 2;
-        camera.position.set(
-          Math.sin(angle) * radius,
-          -90 + Math.cos(angle * 0.5) * 2,
-          Math.cos(angle) * radius
-        );
-        camera.lookAt(0, -90, 0);
+    tl.to(
+      scene4State,
+      {
+        progress: 1,
+        duration: 1,
+        onUpdate: () => {
+          const p = scene4State.progress;
+          const radius = 5;
+          const angle = p * Math.PI * 2;
+          camera.position.set(
+            Math.sin(angle) * radius,
+            -90 + Math.cos(angle * 0.5) * 2,
+            Math.cos(angle) * radius
+          );
+          camera.lookAt(0, -90, 0);
+        },
       },
-    }, 3.0);
+      3.0
+    );
 
     // Scene 5: Cards with pauses (4.0 - 5.0)
     const scene5State = { angle: 0 };
@@ -124,11 +147,15 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     };
 
     // Card 1
-    tl.to(scene5State, {
-      angle: Math.PI * 0.5,
-      duration: 0.3,
-      onUpdate: updateCardCamera,
-    }, 4.0);
+    tl.to(
+      scene5State,
+      {
+        angle: Math.PI * 0.5,
+        duration: 0.3,
+        onUpdate: updateCardCamera,
+      },
+      4.0
+    );
 
     // Pause at Card 1
     tl.to(scene5State, {
@@ -192,30 +219,27 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
     // Pointer light
     if (pointerRef.current) {
-      const p = state.pointer
+      const p = state.pointer;
 
-      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(state.camera)
-      const dir = worldPoint.sub(state.camera.position).normalize()
+      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
+        state.camera
+      );
+      const dir = worldPoint.sub(state.camera.position).normalize();
 
-      const ray = new THREE.Ray(state.camera.position, dir)
+      const ray = new THREE.Ray(state.camera.position, dir);
 
-      const cardsPlane = new THREE.Plane(
-        new THREE.Vector3(0, 0, 1),
-        0
-      )
+      const cardsPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
-      const hit = new THREE.Vector3()
+      const hit = new THREE.Vector3();
       if (ray.intersectPlane(cardsPlane, hit)) {
-        pointerRef.current.position.copy(hit)
-        pointerRef.current.position.z += 2
+        pointerRef.current.position.copy(hit);
+        pointerRef.current.position.z += 2;
       }
     }
-
   });
 
   return (
     <>
-
       <Clouds>
         <Cloud
           concentrate="outside"
@@ -287,6 +311,16 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           />
         </mesh>
       </group>
+
+      <mesh>
+        <sphereGeometry args={[1.2, 128, 128]} />
+        <meshStandardMaterial
+          emissive="#00ff88"
+          emissiveIntensity={1.5}
+          metalness={0.1}
+          roughness={0.4}
+        />
+      </mesh>
 
       {/* Scene 5: Cards */}
       <Cards progress={scrollProgressRef} currentScene={currentSceneRef} />
