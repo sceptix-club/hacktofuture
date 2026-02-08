@@ -1,12 +1,7 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 
-type CardsProps = {
-  progress: React.RefObject<number>;
-  currentScene: React.RefObject<number>;
-};
-
-export default function Cards({ progress, currentScene }: CardsProps) {
+export default function Cards() {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);
 
   const maps = useMemo(() => {
@@ -22,7 +17,6 @@ export default function Cards({ progress, currentScene }: CardsProps) {
 
   return (
     <group position={[0, -124, 0]}>
-
       {/* Card 1 - Top (0 degrees) */}
       <mesh position={[0, radius, 0]}>
         <planeGeometry args={[3, 4, 64, 64]} />
