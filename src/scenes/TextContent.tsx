@@ -30,6 +30,7 @@ const TextContent = ({
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
 
+    // Scene 1: Hero section text: Ensure the Timeline is between 0 - 1.0
     if (scene1TextRef.current) {
       tl.fromTo(
         scene1TextRef.current,
@@ -39,6 +40,7 @@ const TextContent = ({
       );
     }
 
+    // Scene 2: About section text: Ensure the Timeline is between 1.0 - 2.0
     if (scene2TextRef.current) {
       tl.fromTo(
         scene2TextRef.current,
@@ -49,6 +51,7 @@ const TextContent = ({
       tl.to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
     }
 
+    // Scene 3: Sponsor content: Ensure the Timeline is between 2.0 - 3.0
     if (scene3TextRef.current) {
       const panels = scene3TextRef.current.querySelectorAll(".sponsor-panel");
       gsap.set(panels, {
@@ -95,6 +98,7 @@ const TextContent = ({
       );
     }
 
+    // Scene 4: Countdown section. Ensure the timeline is between 3.0 - 4.0
     if (scene4TextRef.current) {
       tl.fromTo(
         scene4TextRef.current,
@@ -109,14 +113,15 @@ const TextContent = ({
       );
     }
 
+    // Scene 5: Theme section. Ensure the timeline is between 4.0 - 6.0 (provide each card 0.5)
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        4.7
+        4.0
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 4.95);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 4.5);
     }
 
     if (card2TextRef.current) {
@@ -124,9 +129,9 @@ const TextContent = ({
         card2TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        5.2
+        4.8
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 5.25);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 5.0);
     }
 
     if (card3TextRef.current) {
@@ -134,9 +139,9 @@ const TextContent = ({
         card3TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        5.5
+        5.3
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 5.75);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 5.5);
     }
 
     if (card4TextRef.current) {
@@ -144,9 +149,9 @@ const TextContent = ({
         card4TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        6.0
+        5.8
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.25);
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.0);
     }
 
     if (ctaRef.current) {
@@ -160,12 +165,12 @@ const TextContent = ({
           duration: 0.5,
           ease: "power2.out",
         },
-        6.3
+        6.1
       );
       tl.to(
         ctaRef.current,
         { opacity: 0, visibility: "hidden", duration: 0.2 },
-        6.7
+        6.9
       );
     }
 
@@ -196,7 +201,7 @@ const TextContent = ({
       }
     }
 
-    tl.set({}, {}, 7.0);
+    tl.set({}, {}, 10.0);
 
     if (getTimelineRef) getTimelineRef(tl);
     return () => {

@@ -39,7 +39,9 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
           >
             {body}
           </p>
-          <Button className="mt-6 bg-white text-black">{buttonText}</Button>
+          <Button className="mt-6 bg-white text-black hover:cursor-pointer">
+            {buttonText}
+          </Button>
         </div>
       </div>
     );

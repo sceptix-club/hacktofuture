@@ -26,6 +26,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const currentSceneRef = useRef(0);
   const tvRef = useRef<THREE.Group | null>(null);
   const pointerRef = useRef<THREE.PointLight | null>(null);
+  const scene6Ref = useRef<THREE.Group | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
   const CardsWithProps = Cards as ComponentType<{
     progress: RefObject<number>;
@@ -157,14 +158,22 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     };
 
     // Snap camera to Card 1 at start of scene 5
-    tl.set(scene5State, { angle: Math.PI * 0.5, onUpdate: updateCardCamera }, 4.0);
+    tl.set(
+      scene5State,
+      { angle: Math.PI * 0.5, onUpdate: updateCardCamera },
+      4.0
+    );
 
     // Pause at Card 1
-    tl.to(scene5State, {
-      angle: Math.PI * 0.5,
-      duration: 0.4,
-      onUpdate: updateCardCamera,
-    }, 4.0);
+    tl.to(
+      scene5State,
+      {
+        angle: Math.PI * 0.5,
+        duration: 0.5,
+        onUpdate: updateCardCamera,
+      },
+      4.0
+    );
 
     // Card 2
     tl.to(scene5State, {
@@ -201,8 +210,30 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       onUpdate: updateCardCamera,
     });
 
-    // Pad timeline to 7.0 so it aligns with text timeline
-    tl.set({}, {}, 7.0);
+    // Pause at Card 4
+    tl.to(scene5State, {
+      angle: Math.PI * 2,
+      duration: 0.2,
+      onUpdate: updateCardCamera,
+    });
+
+    // Scene6: CTA section. Ensure timeline is between 6.0 to 7.0
+    const scene6State = { progress: 0 };
+    tl.to(
+      scene6State,
+      {
+        progress: 1,
+        duration: 1,
+        onUpdate: () => {
+          camera.position.set(0, -150, 0);
+          camera.lookAt(0, -150, 0);
+        },
+      },
+      6.0
+    );
+
+    // Pad timeline to 10.0 so it aligns with text timeline
+    tl.set({}, {}, 10.0);
 
     return () => {
       tl.kill();
@@ -332,6 +363,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress={scrollProgressRef}
         currentScene={currentSceneRef}
       />
+
+      <group ref={scene6Ref} position={[0, -150, 0]} />
 
       <pointLight
         ref={pointerRef}
