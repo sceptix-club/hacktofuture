@@ -6,7 +6,7 @@ type CardsProps = {
   currentScene: React.RefObject<number>;
 };
 
-export default function Cards({ progress, currentScene }: CardsProps) {
+export default function Cards({ progress: _progress, currentScene: _currentScene }: CardsProps) {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);
 
   const maps = useMemo(() => {

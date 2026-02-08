@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
+import Footer from "./Footer";
 
 type TextContentProps = {
   currentScene: number;
@@ -8,7 +9,7 @@ type TextContentProps = {
   getTimelineRef?: (tl: gsap.core.Timeline) => void;
 };
 
-const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
+const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextContentProps) => {
   const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
@@ -17,6 +18,7 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
   const card2TextRef = useRef<HTMLDivElement>(null);
   const card3TextRef = useRef<HTMLDivElement>(null);
   const card4TextRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
@@ -81,48 +83,79 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
         3.8);
     }
 
-    // Card 1 text (4.0 - 4.5)
+    // Card 1 text (visible immediately at scene 5 start: 4.0-4.38)
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.2 },
+        { opacity: 1, scale: 1, duration: 0.1 },
         4.0
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.15 }, 4.45);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 4.35);
     }
 
-    // Card 2 text (4.5 - 5.0)
+    // Card 2 text (visible during card 2 pause: 4.7-4.9)
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.2 },
+        { opacity: 1, scale: 1, duration: 0.15 },
         4.5
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.15 }, 4.95);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 4.88);
     }
 
-    // Card 3 text (5.0 - 5.5)
+    // Card 3 text (visible during card 3 pause: 5.2-5.4)
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.2 },
+        { opacity: 1, scale: 1, duration: 0.15 },
         5.0
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.15 }, 5.45);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 5.38);
     }
 
-    // Card 4 text (5.5 - 5.8)
+    // Card 4 text (stays visible, no fade out)
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.2 },
+        { opacity: 1, scale: 1, duration: 0.15 },
         5.5
       );
     }
+
+    // Footer slides up from bottom after 4th theme
+    if (footerRef.current) {
+      tl.fromTo(
+        footerRef.current,
+        { y: "100%" },
+        { y: "0%", duration: 0.5, ease: "power2.out", force3D: true },
+        6.0
+      );
+
+      // Animate HTF4.0 letters rising up inside the footer
+      const htfLetters = footerRef.current.querySelectorAll(".hero-title.inline-block");
+      if (htfLetters.length) {
+        tl.fromTo(
+          htfLetters,
+          { y: 200, opacity: 0, force3D: true },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.3,
+            stagger: 0.04,
+            ease: "back.out(1.4)",
+            force3D: true,
+          },
+          6.3
+        );
+      }
+    }
+
+    // Pad timeline to 7.0 so it aligns with Experience timeline
+    tl.set({}, {}, 7.0);
 
     if (getTimelineRef) {
       getTimelineRef(tl);
@@ -295,6 +328,9 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
           </p>
         </div>
       </div>
+
+      {/* Footer — slides up from bottom after 4th theme */}
+      <Footer ref={footerRef} />
     </>
   );
 };

@@ -109,7 +109,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     }, 3.0);
 
     // Scene 5: Cards with pauses (4.0 - 5.0)
-    const scene5State = { angle: 0 };
+    const scene5State = { angle: Math.PI * 0.5 };
     const pivot = { x: 0, y: -124, z: 0 };
     const radius = 10;
 
@@ -123,19 +123,15 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       camera.rotation.set(0, 0, a + Math.PI / 2);
     };
 
-    // Card 1
-    tl.to(scene5State, {
-      angle: Math.PI * 0.5,
-      duration: 0.3,
-      onUpdate: updateCardCamera,
-    }, 4.0);
+    // Snap camera to Card 1 at start of scene 5
+    tl.set(scene5State, { angle: Math.PI * 0.5, onUpdate: updateCardCamera }, 4.0);
 
     // Pause at Card 1
     tl.to(scene5State, {
       angle: Math.PI * 0.5,
-      duration: 0.2,
+      duration: 0.4,
       onUpdate: updateCardCamera,
-    });
+    }, 4.0);
 
     // Card 2
     tl.to(scene5State, {
@@ -171,6 +167,9 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
+
+    // Pad timeline to 7.0 so it aligns with text timeline
+    tl.set({}, {}, 7.0);
 
     return () => {
       tl.kill();
