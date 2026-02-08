@@ -9,6 +9,7 @@ import { Comic, ComicInstances } from "./scenes/Rulebook";
 import Cards from "./scenes/Cards";
 import { Cloud, Clouds } from "@react-three/drei";
 
+
 interface ExperienceProps {
   scrollProgressRef: React.RefObject<number>;
   scenes: number;
@@ -19,7 +20,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const [progress, setProgress] = useState(0);
   const currentSceneRef = useRef(0);
   const tvRef = useRef<THREE.Group | null>(null);
-  const torusRef = useRef<THREE.Mesh | null>(null);
+  const pointerRef = useRef<THREE.PointLight | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   useEffect(() => {
@@ -78,31 +79,42 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       },
     }, 1.0);
 
-    // Scene 3: Torus orbit (2.0 - 3.0)
+    // Scene 3: Blank space for Sponsors (2.0 - 3.0)
     const scene3State = { progress: 0 };
     tl.to(scene3State, {
       progress: 1,
       duration: 1,
       onUpdate: () => {
-        const p = scene3State.progress;
-        const radius = 5;
-        const angle = p * Math.PI * 2;
-        camera.position.set(
-          Math.sin(angle) * radius,
-          -60 + Math.cos(angle * 0.5) * 2,
-          Math.cos(angle) * radius
-        );
+        camera.position.set(0, -60, 0)
         camera.lookAt(0, -60, 0);
       },
     }, 2.0);
 
-    // Scene 4: Cards with pauses (3.0 - 4.0)
-    const scene4State = { angle: 0 };
-    const pivot = { x: 0, y: -94, z: 0 };
+    // Scene 4: Still camera rotation (3.0 - 4.0)
+    const scene4State = { progress: 0 };
+    tl.to(scene4State, {
+      progress: 1,
+      duration: 1,
+      onUpdate: () => {
+        const p = scene4State.progress;
+        const radius = 5;
+        const angle = p * Math.PI * 2;
+        camera.position.set(
+          Math.sin(angle) * radius,
+          -90 + Math.cos(angle * 0.5) * 2,
+          Math.cos(angle) * radius
+        );
+        camera.lookAt(0, -90, 0);
+      },
+    }, 3.0);
+
+    // Scene 5: Cards with pauses (4.0 - 5.0)
+    const scene5State = { angle: 0 };
+    const pivot = { x: 0, y: -124, z: 0 };
     const radius = 10;
 
     const updateCardCamera = () => {
-      const a = scene4State.angle;
+      const a = scene5State.angle;
       camera.position.set(
         pivot.x - Math.cos(a) * radius,
         pivot.y - Math.sin(a) * radius,
@@ -112,49 +124,49 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     };
 
     // Card 1
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI * 0.5,
       duration: 0.3,
       onUpdate: updateCardCamera,
-    }, 3.0);
+    }, 4.0);
 
     // Pause at Card 1
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI * 0.5,
       duration: 0.2,
       onUpdate: updateCardCamera,
     });
 
     // Card 2
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI,
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
     // Pause at Card 2
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI,
       duration: 0.2,
       onUpdate: updateCardCamera,
     });
 
     // Card 3
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI * 1.5,
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
     // Pause at Card 3
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI * 1.5,
       duration: 0.2,
       onUpdate: updateCardCamera,
     });
 
     // Card 4
-    tl.to(scene4State, {
+    tl.to(scene5State, {
       angle: Math.PI * 2,
       duration: 0.3,
       onUpdate: updateCardCamera,
@@ -178,11 +190,27 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       tlRef.current.progress(scrollProgress);
     }
 
-    if (torusRef.current && current === 2) {
-      const et = state.clock.elapsedTime;
-      const pulsate = 1 + Math.sin(et * 2) * 0.1;
-      torusRef.current.scale.setScalar(pulsate);
+    // Pointer light
+    if (pointerRef.current) {
+      const p = state.pointer
+
+      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(state.camera)
+      const dir = worldPoint.sub(state.camera.position).normalize()
+
+      const ray = new THREE.Ray(state.camera.position, dir)
+
+      const cardsPlane = new THREE.Plane(
+        new THREE.Vector3(0, 0, 1),
+        0
+      )
+
+      const hit = new THREE.Vector3()
+      if (ray.intersectPlane(cardsPlane, hit)) {
+        pointerRef.current.position.copy(hit)
+        pointerRef.current.position.z += 2
+      }
     }
+
   });
 
   return (
@@ -234,12 +262,12 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         />
       </group>
 
-      {/* Scene 3 */}
+      {/* Scene 3: Blank space for Sponsors */}
       <group position={[0, -60, 0]}>
-        <mesh ref={torusRef} position={[0, 0, 0]}>
-          <torusGeometry args={[2, 0.6, 32, 100]} />
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[2, 2, 2, 2]} />
           <meshStandardMaterial
-            color="#50c878"
+            color="red"
             metalness={0.8}
             roughness={0.3}
             envMapIntensity={1}
@@ -247,8 +275,29 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         </mesh>
       </group>
 
-      {/* Scene 4: Cards */}
+      {/* Scene 4 */}
+      <group position={[0, -90, 0]}>
+        <mesh position={[0, 0, 0]}>
+          <boxGeometry args={[2, 2, 2, 2]} />
+          <meshStandardMaterial
+            color="red"
+            metalness={0.8}
+            roughness={0.3}
+            envMapIntensity={1}
+          />
+        </mesh>
+      </group>
+
+      {/* Scene 5: Cards */}
       <Cards progress={scrollProgressRef} currentScene={currentSceneRef} />
+
+      <pointLight
+        ref={pointerRef}
+        intensity={10}
+        distance={10}
+        decay={2}
+        color="white"
+      />
     </>
   );
 };

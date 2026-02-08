@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import ScrollIndicator from "../components/Scrollindicator";
 import Button from "../components/ui/Button";
+import { SponsorsBento } from "../assets/Sponsor";
 
 type TextContentProps = {
   currentScene: number;
@@ -10,8 +11,10 @@ type TextContentProps = {
 };
 
 const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
+  const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
+  const scene4TextRef = useRef<HTMLDivElement>(null);
   const card1TextRef = useRef<HTMLDivElement>(null);
   const card2TextRef = useRef<HTMLDivElement>(null);
   const card3TextRef = useRef<HTMLDivElement>(null);
@@ -20,67 +23,106 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
 
-    // Scene 2 text
+    if (scene1TextRef.current) {
+      tl.fromTo(
+        scene1TextRef.current,
+        { opacity: 1 },
+        { opacity: 0, duration: 0.1 },
+        0.9
+      );
+    }
+
     if (scene2TextRef.current) {
       tl.fromTo(
         scene2TextRef.current,
         { y: "100vh", opacity: 0 },
-        { y: "0vh", opacity: 1, duration: 0.6 },
-        1.0
-      ).to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
-    }
-
-    // Scene 3 text
-    if (scene3TextRef.current) {
-      tl.fromTo(
-        scene3TextRef.current,
-        { y: "100vh", opacity: 0 },
         { y: "0vh", opacity: 1, duration: 0.5 },
-        2.1
-      );
-      tl.to(scene3TextRef.current, { opacity: 0, duration: 0.2 }, 2.6);
+        1.0
+      ).to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 1.8);
     }
 
-    // Card 1 text (3.0 - 3.5)
+    // Scene 3 text (Sponsors)
+    if (scene3TextRef.current) {
+      const panels = scene3TextRef.current.querySelectorAll('.sponsor-panel');
+      gsap.set(panels, {
+        x: (index) => { const positions = [2000, -2000, 1500, 0, 2000]; return positions[index] || 0; },
+        y: (index) => { const positions = [-2000, -2000, 0, 1500, 2000]; return positions[index] || 0; },
+        opacity: 0
+      });
+      // Animate them flying in
+      tl.to(panels, {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        duration: 0.3,
+        stagger: 0.01,
+        ease: "back.out(0.8)",
+      }, 2.0);
+
+      tl.to(panels, {
+        x: (index) => { const positions = [0, -2000, 1500, 0, 0]; return positions[index] || 0; },
+        y: (index) => { const positions = [-1000, 2000, -1500, 1500, 2000]; return positions[index] || 0; },
+        opacity: 0,
+        duration: 0.4,
+        stagger: 0.08,
+        ease: "back.in(0.8)",
+      }, 2.8);
+    }
+
+    if (scene4TextRef.current) {
+      tl.fromTo(
+        scene4TextRef.current,
+        { scale: 0.6, opacity: 0, y: 40 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+        3.0
+      );
+
+      tl.to(
+        scene4TextRef.current,
+        { opacity: 0, scale: 1.1, duration: 0.25 },
+        3.8);
+    }
+
+    // Card 1 text (4.0 - 4.5)
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.2 },
-        3.0
+        4.0
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.15 }, 3.35);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.15 }, 4.45);
     }
 
-    // Card 2 text (3.5 - 4.0)
+    // Card 2 text (4.5 - 5.0)
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.2 },
-        3.5
+        4.5
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.15 }, 3.85);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.15 }, 4.95);
     }
 
-    // Card 3 text (4.0 - 4.5) - Note: this extends beyond scene 3
+    // Card 3 text (5.0 - 5.5)
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.2 },
-        4.0
+        5.0
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.15 }, 4.35);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.15 }, 5.45);
     }
 
-    // Card 4 text (4.5 - 5.0)
+    // Card 4 text (5.5 - 5.8)
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.2 },
-        4.5
+        5.5
       );
     }
 
@@ -96,8 +138,8 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
   return (
     <>
       {/* Scene 1 text - static at bottom */}
-      {currentScene === 0 && (
-        <div className="fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center pointer-events-none">
+      {(
+        <div ref={scene1TextRef} className=" hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center">
           <div className="max-w-[95vw] overflow-hidden">
             <ScrollIndicator />
             <h2
@@ -113,7 +155,7 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
       {/* Scene 2 text */}
       <div
         ref={scene2TextRef}
-        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
+        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
         style={{ opacity: 0 }}
       >
         <div className="max-w-[75vw] overflow-hidden text-center">
@@ -145,9 +187,24 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
         </div>
       </div>
 
+
+
       {/* Scene 3 text */}
       <div
         ref={scene3TextRef}
+        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
+      >
+        <SponsorsBento
+          title={{ name: "EGDK" }}
+          platinum={[{ name: "Company A" }, { name: "Company B" }]}
+          gold={[{ name: "Company C" }, { name: "Company D" }]}
+          silver={[{ name: "Company E" }, { name: "Company F" }, { name: "Company G" }]}
+        />
+      </div>
+
+      {/* Scene 4 text */}
+      <div
+        ref={scene4TextRef}
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
         style={{ opacity: 0 }}
       >
@@ -156,13 +213,13 @@ const TextContent = ({ currentScene, getTimelineRef }: TextContentProps) => {
             className="text-white font-bold hero-title"
             style={{ fontSize: "clamp(2.0rem, 8vw, 4.5rem)" }}
           >
-            COMING SOON!
+            COUNTDOWN
           </h2>
           <p
             className="text-white/80 mt-4 comic-sans"
             style={{ fontSize: "clamp(1.0rem, 3vw, 1.5rem)" }}
           >
-            36 Hour Hackathon
+            + TIMELINE
           </p>
         </div>
       </div>
