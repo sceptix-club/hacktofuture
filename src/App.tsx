@@ -7,9 +7,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import TextContent from "./scenes/TextContent";
+import Navbar from "./components/ui/Navbar";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
-
 
 function App() {
   const SCENES = 4;
@@ -17,7 +17,6 @@ function App() {
   const smootherRef = useRef<ScrollSmoother | null>(null);
   const textTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const [currentScene, setCurrentScene] = useState<number>(0);
-
 
   useEffect(() => {
     // Small delay to ensure DOM is ready
@@ -27,7 +26,7 @@ function App() {
         content: "#smooth-content",
         smooth: 1.0,
         effects: true,
-        smoothTouch: 1.0
+        smoothTouch: 1.0,
       });
 
       ScrollTrigger.create({
@@ -58,22 +57,22 @@ function App() {
 
   return (
     <>
+      <Navbar />
       <div id="smooth-wrapper">
-        <div id="smooth-content" style={{ height: `${SCENES * 200}dvh` }}>
-        </div>
+        <div id="smooth-content" style={{ height: `${SCENES * 200}dvh` }}></div>
       </div>
       <div className="fixed inset-0 z-10">
         <Canvas
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
           shadows
         >
-          <Stats />
+          {/* <Stats /> */}
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
           <color attach="background" args={["#000000"]} />
         </Canvas>
       </div>
       <TextContent
-        getTimelineRef={(tl) => textTimelineRef.current = tl}
+        getTimelineRef={(tl) => (textTimelineRef.current = tl)}
         currentScene={currentScene}
         scenes={SCENES}
       />
