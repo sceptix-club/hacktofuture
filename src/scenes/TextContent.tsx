@@ -213,10 +213,10 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
       <div
         ref={scene2TextRef}
         className={`fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
-          currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
         }`}
         style={{ opacity: 0 }}
-        aria-hidden={currentScene !== 1}
+        aria-hidden={_currentScene !== 1}
       >
         <div className="max-w-[75vw] overflow-hidden text-center">
           <h2
