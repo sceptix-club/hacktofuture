@@ -4,6 +4,7 @@ import ScrollIndicator from "../components/Scrollindicator";
 import Button from "../components/ui/Button";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
+import CTA from "./CTA";
 
 type TextContentProps = {
   currentScene: number;
@@ -11,7 +12,10 @@ type TextContentProps = {
   getTimelineRef?: (tl: gsap.core.Timeline) => void;
 };
 
-const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextContentProps) => {
+const TextContent = ({
+  currentScene: _currentScene,
+  getTimelineRef,
+}: TextContentProps) => {
   const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
@@ -21,6 +25,7 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
   const card3TextRef = useRef<HTMLDivElement>(null);
   const card4TextRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
@@ -30,7 +35,7 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
         scene1TextRef.current,
         { opacity: 1 },
         { opacity: 0, duration: 0.1 },
-        0.9
+        0.05
       );
     }
 
@@ -38,12 +43,12 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
       tl.fromTo(
         scene2TextRef.current,
         { y: "100vh", opacity: 0 },
-        { y: "0vh", opacity: 1, duration: 0.5 },
+        { y: "0vh", opacity: 1, duration: 0.4 },
         1.0
-      ).to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 1.8);
+      );
+      tl.to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
     }
 
-    // Scene 3 text (Sponsors)
     if (scene3TextRef.current) {
       const panels = scene3TextRef.current.querySelectorAll(".sponsor-panel");
       gsap.set(panels, {
@@ -57,7 +62,7 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
         },
         opacity: 0,
       });
-      // Animate them flying in
+
       tl.to(
         panels,
         {
@@ -70,7 +75,6 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
         },
         2.0
       );
-
       tl.to(
         panels,
         {
@@ -87,7 +91,7 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
           stagger: 0.08,
           ease: "back.in(0.8)",
         },
-        2.8
+        2.6
       );
     }
 
@@ -96,9 +100,8 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
         scene4TextRef.current,
         { scale: 0.6, opacity: 0, y: 40 },
         { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
-        3.0
+        3.2
       );
-
       tl.to(
         scene4TextRef.current,
         { opacity: 0, scale: 1.1, duration: 0.25 },
@@ -106,84 +109,96 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
       );
     }
 
-    // Card 1 text (visible immediately at scene 5 start: 4.0-4.38)
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        4.0
+        4.7
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 4.35);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 4.95);
     }
 
-    // Card 2 text (visible during card 2 pause: 4.7-4.9)
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.15 },
-        4.5
+        { opacity: 1, scale: 1, duration: 0.1 },
+        5.2
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 4.88);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 5.25);
     }
 
-    // Card 3 text (visible during card 3 pause: 5.2-5.4)
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.15 },
-        5.0
+        { opacity: 1, scale: 1, duration: 0.1 },
+        5.5
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 5.38);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 5.75);
     }
 
-    // Card 4 text (stays visible, no fade out)
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.15 },
-        5.5
+        { opacity: 1, scale: 1, duration: 0.1 },
+        6.0
+      );
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.25);
+    }
+
+    if (ctaRef.current) {
+      tl.fromTo(
+        ctaRef.current,
+        { y: "100%", opacity: 0, visibility: "hidden" },
+        {
+          y: "0%",
+          opacity: 1,
+          visibility: "visible",
+          duration: 0.5,
+          ease: "power2.out",
+        },
+        6.3
+      );
+      tl.to(
+        ctaRef.current,
+        { opacity: 0, visibility: "hidden", duration: 0.2 },
+        6.7
       );
     }
 
-    // Footer slides up from bottom after 4th theme
     if (footerRef.current) {
       tl.fromTo(
         footerRef.current,
         { y: "100%" },
         { y: "0%", duration: 0.5, ease: "power2.out", force3D: true },
-        6.0
+        7.0
       );
 
-      // Animate HTF4.0 letters rising up inside the footer
-      const htfLetters = footerRef.current.querySelectorAll(".hero-title.inline-block");
+      const htfLetters = footerRef.current.querySelectorAll(
+        ".hero-title.inline-block"
+      );
       if (htfLetters.length) {
         tl.fromTo(
           htfLetters,
-          { y: 200, opacity: 0, force3D: true },
+          { y: 200, opacity: 0 },
           {
             y: 0,
             opacity: 1,
             duration: 0.3,
             stagger: 0.04,
             ease: "back.out(1.4)",
-            force3D: true,
           },
-          6.3
+          7.3
         );
       }
     }
 
-    // Pad timeline to 7.0 so it aligns with Experience timeline
     tl.set({}, {}, 7.0);
 
-    if (getTimelineRef) {
-      getTimelineRef(tl);
-    }
-
+    if (getTimelineRef) getTimelineRef(tl);
     return () => {
       tl.kill();
     };
@@ -236,7 +251,9 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
             caffeine fuels creativity, and legends are coded. Whether you’re a
             seasoned hacker or a first-time hero.
           </p>
-          <Button className="mt-6 bg-white text-black hover:cursor-pointer">Download Rulebook</Button>
+          <Button className="mt-6 bg-white text-black hover:cursor-pointer">
+            Download Rulebook
+          </Button>
         </div>
       </div>
 
@@ -367,7 +384,9 @@ const TextContent = ({ currentScene: _currentScene, getTimelineRef }: TextConten
         </div>
       </div>
 
-      {/* Footer — slides up from bottom after 4th theme */}
+      {/* CTA - slides up from bottom after 4th theme*/}
+      <CTA ref={ctaRef} />
+      {/* Footer — slides up from bottom after cta */}
       <Footer ref={footerRef} />
     </>
   );
