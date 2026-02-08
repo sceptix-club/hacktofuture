@@ -1,7 +1,12 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 
-export default function Cards() {
+type CardsProps = {
+  progress: React.RefObject<number>;
+  currentScene: React.RefObject<number>;
+};
+
+export default function Cards({ progress: _progress, currentScene: _currentScene }: CardsProps) {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);
 
   const maps = useMemo(() => {
