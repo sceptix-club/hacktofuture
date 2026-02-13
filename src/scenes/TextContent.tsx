@@ -167,11 +167,7 @@ const TextContent = ({
         },
         6.1
       );
-      tl.to(
-        ctaRef.current,
-        { opacity: 0, visibility: "hidden", duration: 0.2 },
-        6.9
-      );
+      // Keep CTA visible; footer will overlay it.
     }
 
     if (footerRef.current) {
