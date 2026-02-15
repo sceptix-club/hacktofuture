@@ -1,13 +1,17 @@
-import { useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 type CardsProps = {
   progress: React.RefObject<number>;
   currentScene: React.RefObject<number>;
+  pointerRef: React.RefObject<THREE.PointLight | null>
 };
 
-export default function Cards({ progress: _progress, currentScene: _currentScene }: CardsProps) {
+export default function Cards({ progress, currentScene, pointerRef }: CardsProps) {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);
+
+  const cardsRef = useRef<THREE.Mesh[]>([])
 
   const maps = useMemo(() => {
     const color = texLoader.load("/textures/broken_brick_wall_diff_1k.jpg");
@@ -18,12 +22,38 @@ export default function Cards({ progress: _progress, currentScene: _currentScene
     return { color, disp, normal, rough };
   }, [texLoader]);
 
+  useEffect(() => {
+    cardsRef.current = [];
+  }, []);
+
+  useFrame((_, dt) => {
+    if (!pointerRef.current || !cardsRef.current || cardsRef.current?.length === 0)
+      return
+
+    const pointerPos = pointerRef.current.position;
+
+    for (const card of cardsRef.current) {
+      const worldPos = new THREE.Vector3();
+      card.getWorldPosition(worldPos);
+
+      const dir = pointerPos.clone().sub(worldPos);
+
+      const targetRotX = -dir.y * 0.03;
+      const targetRotY = dir.x * 0.03;
+
+      card.rotation.x = THREE.MathUtils.lerp(card.rotation.x, targetRotX, 2 * dt);
+      card.rotation.y = THREE.MathUtils.lerp(card.rotation.y, targetRotY, 2 * dt);
+    }
+  });
+
   const radius = 10;
 
   return (
     <group position={[0, -124, 0]}>
       {/* Card 1 - Top (0 degrees) */}
-      <mesh position={[0, radius, 0]}>
+      <mesh
+        ref={(m) => { if (m) cardsRef.current[0] = m }}
+        position={[0, radius, 0]}>
         <planeGeometry args={[3, 4, 64, 64]} />
         <meshStandardMaterial
           map={maps.color}
@@ -36,7 +66,9 @@ export default function Cards({ progress: _progress, currentScene: _currentScene
       </mesh>
 
       {/* Card 2 - Right (90 degrees) */}
-      <mesh position={[radius, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
+      <mesh
+        ref={(m) => { if (m) cardsRef.current[1] = m }}
+        position={[radius, 0, 0]} rotation={[0, 0, -Math.PI / 2]}>
         <planeGeometry args={[3, 4, 64, 64]} />
         <meshStandardMaterial
           map={maps.color}
@@ -49,7 +81,9 @@ export default function Cards({ progress: _progress, currentScene: _currentScene
       </mesh>
 
       {/* Card 3 - Bottom (180 degrees) */}
-      <mesh position={[0, -radius, 0]} rotation={[0, 0, Math.PI]}>
+      <mesh
+        ref={(m) => { if (m) cardsRef.current[2] = m }}
+        position={[0, -radius, 0]} rotation={[0, 0, Math.PI]}>
         <planeGeometry args={[3, 4, 64, 64]} />
         <meshStandardMaterial
           map={maps.color}
@@ -62,7 +96,9 @@ export default function Cards({ progress: _progress, currentScene: _currentScene
       </mesh>
 
       {/* Card 4 - Left (270 degrees) */}
-      <mesh position={[-radius, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+      <mesh
+        ref={(m) => { if (m) cardsRef.current[3] = m }}
+        position={[-radius, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
         <planeGeometry args={[3, 4, 64, 64]} />
         <meshStandardMaterial
           map={maps.color}
