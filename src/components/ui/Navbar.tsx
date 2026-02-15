@@ -1,11 +1,16 @@
-import { Info, Users, Lightbulb, Heart } from "lucide-react";
+import { Info, Users, Lightbulb, Heart, ArrowLeft } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isTeamPage = location.pathname === "/team";
+
   const navItems = [
-    { icon: Info, href: "#about", label: "About" },
-    { icon: Users, href: "#team", label: "Team" },
-    { icon: Lightbulb, href: "#themes", label: "Themes" },
-    { icon: Heart, href: "#sponsors", label: "Sponsors" },
+    { icon: Info, href: "#about", label: "About", route: null },
+    { icon: Users, href: "#team", label: "Team", route: "/team" },
+    { icon: Lightbulb, href: "#themes", label: "Themes", route: null },
+    { icon: Heart, href: "#sponsors", label: "Sponsors", route: null },
   ];
 
   return (
@@ -36,8 +41,33 @@ const Navbar = () => {
           }}
         />
 
+        {/* Back button on team page */}
+        {isTeamPage && (
+          <>
+            <button
+              onClick={() => navigate("/")}
+              className="group relative flex items-center justify-center w-10 h-10 rounded-md bg-black text-[#FFF] hover:bg-[#DA100C] hover:text-white transition-all duration-200 cursor-pointer"
+              style={{
+                border: "2px solid #000",
+                boxShadow: "2px 2px 0px #000",
+              }}
+              title="Back"
+            >
+              <ArrowLeft size={20} strokeWidth={2.5} />
+            </button>
+            <div className="w-[3px] h-8 bg-black rounded-full" />
+          </>
+        )}
+
         {/* Logo */}
-        <a href="#" className="shrink-0">
+        <a
+          href="/"
+          className="shrink-0"
+          onClick={(e) => {
+            e.preventDefault();
+            navigate("/");
+          }}
+        >
           <div className="h-9 w-9 relative">
             <img
               src="/src/assets/logo_white.png"
@@ -53,10 +83,18 @@ const Navbar = () => {
 
         {/* Nav Icons */}
         {navItems.map((item) => (
-          <a
+          <button
             key={item.label}
-            href={item.href}
-            className="group relative flex items-center justify-center w-10 h-10 rounded-md bg-black text-[#FFF] hover:bg-[#DA100C] hover:text-white transition-all duration-200"
+            onClick={() => {
+              if (item.route) {
+                navigate(item.route);
+              } else if (item.href) {
+                if (isTeamPage) {
+                  navigate("/");
+                }
+              }
+            }}
+            className="group relative flex items-center justify-center w-10 h-10 rounded-md bg-black text-[#FFF] hover:bg-[#DA100C] hover:text-white transition-all duration-200 cursor-pointer"
             style={{
               border: "2px solid #000",
               boxShadow: "2px 2px 0px #000",
@@ -71,7 +109,7 @@ const Navbar = () => {
             >
               {item.label}
             </span>
-          </a>
+          </button>
         ))}
       </div>
     </nav>

@@ -7,10 +7,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import TextContent from "./scenes/TextContent";
 import Navbar from "./components/ui/Navbar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Team from "./pages/team";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-function App() {
+function HomePage() {
   const SCENES = 4;
   const scrollProgressRef = useRef(0);
   const smootherRef = useRef<ScrollSmoother | null>(null);
@@ -76,6 +78,17 @@ function App() {
         scenes={SCENES}
       />
     </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/team" element={<Team />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

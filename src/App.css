@@ -125,3 +125,8 @@ canvas {
   border-right: 4px solid transparent;
   border-top: 14px solid rgba(255, 255, 255, 0.1);
 }
+
+@keyframes scroll-dot-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
