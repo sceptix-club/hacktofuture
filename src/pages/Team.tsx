@@ -632,197 +632,198 @@ export default function Team() {
   }, [totalPages, currentPage, showFooter]);
 
   return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 overflow-hidden"
-      style={{ background: "#0a0a0a" }}
-    >
-      {/* Background: Comic halftone + 3D particles */}
-      <div className="absolute inset-0 z-0">
-        {/* Halftone dot background */}
-        <div className="comic-halftone absolute inset-0" />
+    <>
+      <div
+        ref={containerRef}
+        className="fixed inset-0 overflow-hidden"
+        style={{ background: "#0a0a0a" }}
+      >
+        {/* Background: Comic halftone + 3D particles */}
+        <div className="absolute inset-0 z-0">
+          {/* Halftone dot background */}
+          <div className="comic-halftone absolute inset-0" />
 
-        {/* Radial vignette */}
+          {/* Radial vignette */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%)",
+            }}
+          />
+
+          {/* Speed lines */}
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {Array.from({ length: 12 }, (_, i) => (
+              <div
+                key={i}
+                className="absolute pointer-events-none"
+                style={{
+                  top: `${8 + (i / 12) * 84}%`,
+                  left: `${Math.random() * 15}%`,
+                  width: `${35 + Math.random() * 45}%`,
+                  height: Math.random() > 0.5 ? 2 : 1,
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+                  animation: `speed-lines-pulse ${
+                    2.5 + Math.random() * 2
+                  }s ease-in-out ${Math.random() * 3}s infinite`,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* 3D Particles */}
+          <Canvas
+            camera={{ position: [0, 0, 6], fov: 45 }}
+            style={{ pointerEvents: "none" }}
+          >
+            <Suspense fallback={null}>
+              <ComicParticles />
+            </Suspense>
+            <color attach="background" args={["rgba(0,0,0,0)"]} />
+          </Canvas>
+        </div>
+
+        {/* Secondary halftone overlay for depth */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none z-[1]"
           style={{
-            background:
-              "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%)",
+            backgroundImage:
+              "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
+            backgroundSize: "12px 12px",
           }}
         />
 
-        {/* Speed lines */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {Array.from({ length: 12 }, (_, i) => (
-            <div
-              key={i}
-              className="absolute pointer-events-none"
+        {/* Header */}
+        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-4 sm:pt-6">
+          <div
+            className="px-4 sm:px-6 py-1.5 sm:py-2 relative"
+            style={{
+              background: "#DA100C",
+              border: "3px solid #000",
+              boxShadow: "4px 4px 0px #000",
+              transform: "skewX(-3deg)",
+            }}
+          >
+            <h1
+              className="hero-title text-white"
               style={{
-                top: `${8 + (i / 12) * 84}%`,
-                left: `${Math.random() * 15}%`,
-                width: `${35 + Math.random() * 45}%`,
-                height: Math.random() > 0.5 ? 2 : 1,
-                background:
-                  "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
-                animation: `speed-lines-pulse ${
-                  2.5 + Math.random() * 2
-                }s ease-in-out ${Math.random() * 3}s infinite`,
+                fontSize: "clamp(0.9rem, 3vw, 2rem)",
+                transform: "skewX(3deg)",
               }}
+            >
+              ★ OUR TEAM ★
+            </h1>
+          </div>
+        </div>
+
+        {/* Page cards overlay */}
+        <div className="absolute inset-0 z-20">
+          {TEAM_MEMBERS.map((member, index) => (
+            <PageCard
+              key={member.name}
+              member={member}
+              index={index}
+              isActive={index === currentPage}
+              direction={index === currentPage ? direction : "exit"}
             />
           ))}
         </div>
 
-        {/* 3D Particles */}
-        <Canvas
-          camera={{ position: [0, 0, 6], fov: 45 }}
-          style={{ pointerEvents: "none" }}
-        >
-          <Suspense fallback={null}>
-            <ComicParticles />
-          </Suspense>
-          <color attach="background" args={["rgba(0,0,0,0)"]} />
-        </Canvas>
-      </div>
-
-      {/* Secondary halftone overlay for depth */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[1]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "12px 12px",
-        }}
-      />
-
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-4 sm:pt-6">
-        <div
-          className="px-4 sm:px-6 py-1.5 sm:py-2 relative"
-          style={{
-            background: "#DA100C",
-            border: "3px solid #000",
-            boxShadow: "4px 4px 0px #000",
-            transform: "skewX(-3deg)",
-          }}
-        >
-          <h1
-            className="hero-title text-white"
-            style={{
-              fontSize: "clamp(0.9rem, 3vw, 2rem)",
-              transform: "skewX(3deg)",
-            }}
-          >
-            ★ OUR TEAM ★
-          </h1>
-        </div>
-      </div>
-
-      {/* Page cards overlay */}
-      <div className="absolute inset-0 z-20">
-        {TEAM_MEMBERS.map((member, index) => (
-          <PageCard
-            key={member.name}
-            member={member}
-            index={index}
-            isActive={index === currentPage}
-            direction={index === currentPage ? direction : "exit"}
-          />
-        ))}
-      </div>
-
-      {/* Page indicator */}
-      <div className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-1.5 sm:gap-2">
-        {TEAM_MEMBERS.map((_, i) => (
+        {/* Page indicator */}
+        <div className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-1.5 sm:gap-2">
+          {TEAM_MEMBERS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (isScrolling.current) return;
+                if (showFooter) setShowFooter(false);
+                setDirection("exit");
+                setTimeout(() => {
+                  setCurrentPage(i);
+                  setDirection("enter");
+                }, 300);
+              }}
+              className="transition-all duration-300 cursor-pointer"
+              style={{
+                width: currentPage === i ? 12 : 8,
+                height: currentPage === i ? 12 : 8,
+                borderRadius: "2px",
+                background:
+                  currentPage === i ? "#DA100C" : "rgba(255,255,255,0.3)",
+                border: `2px solid ${
+                  currentPage === i ? "#000" : "rgba(255,255,255,0.2)"
+                }`,
+                boxShadow: currentPage === i ? "2px 2px 0px #000" : "none",
+                transform: `rotate(${currentPage === i ? 45 : 0}deg)`,
+              }}
+              title={`Page ${i + 1}`}
+            />
+          ))}
+          {/* Footer indicator dot */}
+          <div className="w-px h-2 bg-white/20 mx-auto" />
           <button
-            key={i}
             onClick={() => {
               if (isScrolling.current) return;
-              if (showFooter) setShowFooter(false);
-              setDirection("exit");
-              setTimeout(() => {
-                setCurrentPage(i);
-                setDirection("enter");
-              }, 300);
+              setShowFooter(true);
             }}
             className="transition-all duration-300 cursor-pointer"
             style={{
-              width: currentPage === i ? 12 : 8,
-              height: currentPage === i ? 12 : 8,
-              borderRadius: "2px",
-              background:
-                currentPage === i ? "#DA100C" : "rgba(255,255,255,0.3)",
+              width: showFooter ? 12 : 8,
+              height: showFooter ? 12 : 8,
+              borderRadius: "50%",
+              background: showFooter ? "#fff" : "rgba(255,255,255,0.2)",
               border: `2px solid ${
-                currentPage === i ? "#000" : "rgba(255,255,255,0.2)"
+                showFooter ? "#000" : "rgba(255,255,255,0.15)"
               }`,
-              boxShadow: currentPage === i ? "2px 2px 0px #000" : "none",
-              transform: `rotate(${currentPage === i ? 45 : 0}deg)`,
+              boxShadow: showFooter ? "2px 2px 0px #000" : "none",
             }}
-            title={`Page ${i + 1}`}
+            title="Footer"
           />
-        ))}
-        {/* Footer indicator dot */}
-        <div className="w-px h-2 bg-white/20 mx-auto" />
-        <button
-          onClick={() => {
-            if (isScrolling.current) return;
-            setShowFooter(true);
-          }}
-          className="transition-all duration-300 cursor-pointer"
-          style={{
-            width: showFooter ? 12 : 8,
-            height: showFooter ? 12 : 8,
-            borderRadius: "50%",
-            background: showFooter ? "#fff" : "rgba(255,255,255,0.2)",
-            border: `2px solid ${
-              showFooter ? "#000" : "rgba(255,255,255,0.15)"
-            }`,
-            boxShadow: showFooter ? "2px 2px 0px #000" : "none",
-          }}
-          title="Footer"
-        />
-      </div>
+        </div>
 
-      {/* Scroll hint — hide when footer is showing */}
-      {!showFooter && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1">
-          <div
-            className="w-5 h-8 sm:w-6 sm:h-10 rounded-full flex items-start justify-center pt-1.5 sm:pt-2"
-            style={{ border: "2px solid rgba(255,255,255,0.3)" }}
-          >
+        {/* Scroll hint — hide when footer is showing */}
+        {!showFooter && (
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1">
             <div
-              className="w-1 h-2.5 sm:w-1.5 sm:h-3 rounded-full bg-white/60"
-              style={{
-                animation: "scroll-dot-bounce 1.5s ease-in-out infinite",
-              }}
-            />
+              className="w-5 h-8 sm:w-6 sm:h-10 rounded-full flex items-start justify-center pt-1.5 sm:pt-2"
+              style={{ border: "2px solid rgba(255,255,255,0.3)" }}
+            >
+              <div
+                className="w-1 h-2.5 sm:w-1.5 sm:h-3 rounded-full bg-white/60"
+                style={{
+                  animation: "scroll-dot-bounce 1.5s ease-in-out infinite",
+                }}
+              />
+            </div>
+            <span
+              className="comic-sans text-white/40"
+              style={{ fontSize: "0.6rem" }}
+            >
+              SCROLL TO TURN
+            </span>
           </div>
+        )}
+
+        {/* Page counter */}
+        <div className="absolute bottom-20 right-3 sm:right-6 z-30">
           <span
-            className="comic-sans text-white/40"
-            style={{ fontSize: "0.6rem" }}
+            className="hero-title text-white/60"
+            style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.9rem)" }}
           >
-            SCROLL TO TURN
+            {String(currentPage + 1).padStart(2, "0")}{" "}
+            <span className="text-white/30">/</span>{" "}
+            <span className="text-white/30">
+              {String(totalPages).padStart(2, "0")}
+            </span>
           </span>
         </div>
-      )}
 
-      {/* Page counter */}
-      <div className="absolute bottom-20 right-3 sm:right-6 z-30">
-        <span
-          className="hero-title text-white/60"
-          style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.9rem)" }}
-        >
-          {String(currentPage + 1).padStart(2, "0")}{" "}
-          <span className="text-white/30">/</span>{" "}
-          <span className="text-white/30">
-            {String(totalPages).padStart(2, "0")}
-          </span>
-        </span>
+        {/* Footer — slides up after last card */}
+        <Footer ref={footerRef} />
       </div>
-
-      {/* Footer — slides up after last card */}
-      <Footer ref={footerRef} />
-
       <Navbar />
-    </div>
+    </>
   );
 }
