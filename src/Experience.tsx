@@ -337,7 +337,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 4 */}
       <group position={[0, -90, 0]}>
-        {/* <mesh position={[0, 0, 0]}>
+        {/* <mesh position={[0, 0, 0]}>*/}
+        <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2, 2, 2, 2]} />
           <meshStandardMaterial
             color="red"
@@ -345,21 +346,11 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
             roughness={0.3}
             envMapIntensity={1}
           />
-        </mesh> */}
-      </group>
-
-      <mesh>
-        <sphereGeometry args={[1.2, 128, 128]} />
-        <meshStandardMaterial
-          emissive="#00ff88"
-          emissiveIntensity={1.5}
-          metalness={0.1}
-          roughness={0.4}
-        />
-      </mesh>
+        </mesh>
+      </group >
 
       {/* Scene 5: Cards */}
-      <CardsWithProps
+      < CardsWithProps
         progress={scrollProgressRef}
         currentScene={currentSceneRef}
       />
