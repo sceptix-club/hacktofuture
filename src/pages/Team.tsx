@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useMemo, Suspense } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import Navbar from "../components/ui/Navbar";
@@ -86,12 +86,12 @@ interface ComicBookProps {
 }
 
 function ComicBook({ currentPage, totalPages }: ComicBookProps) {
-  const gltf = useLoader(GLTFLoader, "/models/comic.glb");
+  const { scene } = useGLTF("/comic.glb");
   const modelRef = useRef<THREE.Group>(null);
   const targetRotation = useRef({ x: 0, y: 0 });
 
   const model = useMemo(() => {
-    const clone = gltf.scene.clone(true);
+    const clone = scene.clone(true);
     clone.traverse((child) => {
       if ((child as THREE.Mesh).isMesh) {
         const mesh = child as THREE.Mesh;
@@ -100,9 +100,8 @@ function ComicBook({ currentPage, totalPages }: ComicBookProps) {
       }
     });
     return clone;
-  }, [gltf]);
+  }, [scene]);
 
-  // Animate page turn rotation
   useEffect(() => {
     const pageProgress = currentPage / Math.max(totalPages - 1, 1);
     targetRotation.current.y = -pageProgress * Math.PI * 0.15;
@@ -110,12 +109,8 @@ function ComicBook({ currentPage, totalPages }: ComicBookProps) {
 
   useFrame((state) => {
     if (!modelRef.current) return;
-
-    // Subtle idle float
     const t = state.clock.elapsedTime;
     modelRef.current.position.y = Math.sin(t * 0.8) * 0.08;
-
-    // Smooth rotation lerp
     modelRef.current.rotation.y = THREE.MathUtils.lerp(
       modelRef.current.rotation.y,
       targetRotation.current.y + Math.sin(t * 0.3) * 0.03,
@@ -139,17 +134,15 @@ function ComicBook({ currentPage, totalPages }: ComicBookProps) {
 function ComicParticles() {
   const particlesRef = useRef<THREE.Points>(null);
 
-  const { positions, sizes } = useMemo(() => {
+  const positions = useMemo(() => {
     const count = 200;
-    const positions = new Float32Array(count * 3);
-    const sizes = new Float32Array(count);
+    const arr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 30;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
-      sizes[i] = Math.random() * 3 + 0.5;
+      arr[i * 3] = (Math.random() - 0.5) * 30;
+      arr[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      arr[i * 3 + 2] = (Math.random() - 0.5) * 15;
     }
-    return { positions, sizes };
+    return arr;
   }, []);
 
   useFrame((state) => {
@@ -165,16 +158,6 @@ function ComicParticles() {
         <bufferAttribute
           attach="attributes-position"
           args={[positions, 3]}
-          count={positions.length / 3}
-          array={positions}
-          itemSize={3}
-        />
-        <bufferAttribute
-          attach="attributes-size"
-          args={[sizes, 1]}
-          count={sizes.length}
-          array={sizes}
-          itemSize={1}
         />
       </bufferGeometry>
       <pointsMaterial
@@ -186,6 +169,57 @@ function ComicParticles() {
       />
     </points>
   );
+}
+
+/* ─── Fallback Comic Particles (when GLB is missing) ─── */
+function FallbackScene() {
+  return (
+    <>
+      <ComicParticles />
+      {/* Placeholder rotating box styled like a comic book */}
+      <mesh rotation={[0.3, 0, 0]}>
+        <boxGeometry args={[2.4, 3.2, 0.15]} />
+        <meshStandardMaterial color="#DA100C" />
+      </mesh>
+    </>
+  );
+}
+
+/* ─── Error Boundary for 3D ─── */
+import { Component, type ReactNode, type ErrorInfo } from "react";
+
+interface ErrorBoundaryProps {
+  fallback: ReactNode;
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class CanvasErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.warn("3D scene error:", error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
 /* ─── Page Turn Card ─── */
@@ -565,7 +599,7 @@ export default function Team() {
       className="fixed inset-0 overflow-hidden"
       style={{ background: "#0a0a0a" }}
     >
-      {/* 3D Canvas Background — Comic book in front */}
+      {/* 3D Canvas Background */}
       <div className="absolute inset-0 z-0">
         <Canvas
           camera={{ position: [0, 0, 6], fov: 45 }}
@@ -573,19 +607,15 @@ export default function Team() {
           style={{ pointerEvents: "none" }}
         >
           <ambientLight intensity={0.4} />
-          <directionalLight
-            position={[5, 8, 5]}
-            intensity={1.2}
-            castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-          />
+          <directionalLight position={[5, 8, 5]} intensity={1.2} castShadow />
           <pointLight position={[-3, 2, 4]} intensity={0.6} color="#DA100C" />
           <pointLight position={[3, -2, 3]} intensity={0.4} color="#4488ff" />
 
-          <Suspense fallback={null}>
-            <ComicBook currentPage={currentPage} totalPages={totalPages} />
-          </Suspense>
+          <CanvasErrorBoundary fallback={<FallbackScene />}>
+            <Suspense fallback={<FallbackScene />}>
+              <ComicBook currentPage={currentPage} totalPages={totalPages} />
+            </Suspense>
+          </CanvasErrorBoundary>
 
           <ComicParticles />
           <color attach="background" args={["#0a0a0a"]} />
@@ -667,27 +697,6 @@ export default function Team() {
             title={`Page ${i + 1}`}
           />
         ))}
-      </div>
-
-      {/* Scroll hint */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1">
-        <div
-          className="w-6 h-10 rounded-full flex items-start justify-center pt-2"
-          style={{ border: "2px solid rgba(255,255,255,0.3)" }}
-        >
-          <div
-            className="w-1.5 h-3 rounded-full bg-white/60"
-            style={{
-              animation: "scroll-dot-bounce 1.5s ease-in-out infinite",
-            }}
-          />
-        </div>
-        <span
-          className="comic-sans text-white/40"
-          style={{ fontSize: "0.65rem" }}
-        >
-          SCROLL TO TURN
-        </span>
       </div>
 
       {/* Page counter */}

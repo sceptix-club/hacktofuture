@@ -8,7 +8,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import TextContent from "./scenes/TextContent";
 import Navbar from "./components/ui/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Team from "./pages/team";
+import Team from "./pages/Team";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
