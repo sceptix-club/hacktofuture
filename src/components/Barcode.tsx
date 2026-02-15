@@ -4,7 +4,7 @@ type BarcodeProps = {
 };
 
 export default function Barcode({ width = 240, height = 80 }: BarcodeProps) {
-  const bars = Array.from({ length: 48 }, (_, i) => ({
+  const bars = Array.from({ length: 48 }, (_,) => ({
     width: Math.random() > 0.7 ? 4 : 2,
     height: height,
     marginRight: Math.random() > 0.8 ? 2 : 1,
