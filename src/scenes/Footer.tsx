@@ -36,7 +36,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4263.66930063788!2d74.89606981102712!3d12.91077313734648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba359dfac132663%3A0xa7bf228838232d32!2sSt%20Joseph%20Engineering%20College!5e1!3m2!1sen!2sin!4v1770539822992!5m2!1sen!2sin"
               width="100%"
-              height="200"
+              height="400"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
@@ -181,7 +181,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                 href="#"
                 className="text-white/60 hover:text-white transition-colors underline underline-offset-2"
               >
-                Sceptix
+                The Sceptix Club
               </a>
             </span>
           </div>
