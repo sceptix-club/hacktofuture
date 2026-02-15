@@ -2,8 +2,6 @@ import {
   useRef,
   useState,
   useEffect,
-  type ComponentType,
-  type RefObject,
 } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
@@ -28,10 +26,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const pointerRef = useRef<THREE.PointLight | null>(null);
   const scene6Ref = useRef<THREE.Group | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const CardsWithProps = Cards as ComponentType<{
-    progress: RefObject<number>;
-    currentScene: RefObject<number>;
-  }>;
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });

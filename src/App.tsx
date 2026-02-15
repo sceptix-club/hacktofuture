@@ -24,19 +24,23 @@ function HomePage() {
   useEffect(() => {
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
+
+      ScrollTrigger.config({ ignoreMobileResize: true })
+      // this fixes the address bar hiding on scroll on mobile devices
+      ScrollTrigger.normalizeScroll(true);
+
       smootherRef.current = ScrollSmoother.create({
         wrapper: "#smooth-wrapper",
         content: "#smooth-content",
         smooth: 1.0,
         effects: true,
-        smoothTouch: 1.0,
+        smoothTouch: 0.3,
       });
 
       ScrollTrigger.create({
         trigger: "#smooth-content",
         start: "top top",
         end: "bottom bottom",
-        scrub: true,
         onUpdate: (self) => {
           scrollProgressRef.current = self.progress;
           const time = self.progress * SCENES;
@@ -62,7 +66,7 @@ function HomePage() {
     <>
       <Navbar />
       <div id="smooth-wrapper">
-        <div id="smooth-content" style={{ height: `${SCENES * 200}dvh` }}></div>
+        <div id="smooth-content" style={{ height: `${SCENES * 400}dvh` }}></div>
       </div>
       <div className="fixed inset-0 z-10">
         <Canvas
