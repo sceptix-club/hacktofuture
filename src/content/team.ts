@@ -1,7 +1,7 @@
 export interface TeamMember {
   name: string;
   role: string;
-  photo: string;
+  photo: string | null;
   bio: string;
   links: { label: string; url: string }[];
 }
@@ -10,7 +10,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Ms Diana Monteiro",
     role: "Faculty Convenor",
-    photo: "",
+    photo: null,
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -20,7 +20,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Dr Shrisha H.S",
     role: "Faculty Convenor",
-    photo: "https://gdgsjec.in/images/output/Ashley.webp",
+    photo: null,
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -44,7 +44,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     name: "Shovin Jeson Dsouza",
 >>>>>>> 94ac575 (fix: remove unneccesary items in the page to improve performance. wip: change team information in team.ts)
     role: "Lead Organizer",
-    photo: "",
+    photo: null,
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -80,7 +80,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Priyal Saldanha",
     role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
+    photo: null,
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },

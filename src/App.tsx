@@ -10,6 +10,7 @@ import Navbar from "./components/ui/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Team from "./pages/Team";
 import { Stats } from "@react-three/drei";
+import Themes from "./pages/Themes";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -88,6 +89,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/team" element={<Team />} />
+        <Route path="/themes" element={<Themes />} />
       </Routes>
     </BrowserRouter>
   );

@@ -924,7 +924,6 @@ export default function Team() {
           </div>
         </div>
 
-<<<<<<< HEAD
         {/* Page dots */}
         <div
           className="absolute z-30 flex gap-1.5 sm:gap-2"
@@ -1031,8 +1030,6 @@ export default function Team() {
           </div>
         )}
 
-=======
->>>>>>> 94ac575 (fix: remove unneccesary items in the page to improve performance. wip: change team information in team.ts)
         {/* Page counter */}
         <div
           className="absolute z-30"
