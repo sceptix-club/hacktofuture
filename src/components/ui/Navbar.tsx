@@ -1,7 +1,11 @@
 import { Info, Users, Lightbulb, Heart, ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+interface NavbarProps {
+  className?: string;
+}
+
+const Navbar = ({ className }: NavbarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const isTeamPage = location.pathname === "/team";
@@ -14,9 +18,13 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
+    <nav
+      className={`fixed bottom-4 left-1/2 -translate-x-1/2 z-50 ${
+        className ?? ""
+      }`}
+    >
       <div
-        className="relative bg-white px-6 py-3 flex items-center gap-6"
+        className="relative bg-white px-6 py-3 flex items-center gap-6 h-full w-full"
         style={{
           border: "3px solid #000",
           borderRadius: "8px",
@@ -25,7 +33,7 @@ const Navbar = () => {
       >
         {/* Comic tail */}
         <div
-          className="absolute -bottom-[14px] left-8 w-0 h-0"
+          className="absolute -bottom-3.5 left-8 w-0 h-0"
           style={{
             borderLeft: "12px solid transparent",
             borderRight: "12px solid transparent",
@@ -33,7 +41,7 @@ const Navbar = () => {
           }}
         />
         <div
-          className="absolute -bottom-[10px] left-[34px] w-0 h-0"
+          className="absolute -bottom-2.5 left-[34px] w-0 h-0"
           style={{
             borderLeft: "10px solid transparent",
             borderRight: "10px solid transparent",
