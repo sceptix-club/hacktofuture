@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState, Suspense, forwardRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
+import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import gsap from "gsap";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../scenes/Footer";
@@ -9,50 +7,33 @@ import type { TeamMember } from "../content/team";
 import "../App.css";
 import { Stats } from "@react-three/drei";
 
-/* ─── Team Data ─── */
+/* ─── Precomputed speed lines (avoid Math.random in render) ─── */
+const SPEED_LINES = Array.from({ length: 8 }, (_, i) => ({
+  top: `${8 + (i / 8) * 84}%`,
+  left: `${(i * 13) % 15}%`,
+  width: `${35 + ((i * 7) % 45)}%`,
+  height: i % 2 === 0 ? 2 : 1,
+  animDuration: `${2.5 + (i % 3)}s`,
+  animDelay: `${(i * 0.7) % 3}s`,
+}));
 
-/* ─── Floating Comic Particles (3D background) ─── */
-function ComicParticles() {
-  const particlesRef = useRef<THREE.Points>(null);
-  const geo = useRef<THREE.BufferGeometry>(null);
-
-  useEffect(() => {
-    if (!geo.current) return;
-    const count = 150;
-    const positions = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 30;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
-    }
-    geo.current.setAttribute(
-      "position",
-      new THREE.BufferAttribute(positions, 3)
-    );
-  }, []);
-
-  useFrame((state) => {
-    if (!particlesRef.current) return;
-    particlesRef.current.rotation.y = state.clock.elapsedTime * 0.015;
-    particlesRef.current.rotation.x =
-      Math.sin(state.clock.elapsedTime * 0.01) * 0.08;
-  });
-
+/* ─── Simple CSS-based floating dots (replaces Three.js Canvas entirely) ─── */
+function FloatingDots() {
   return (
-    <points ref={particlesRef}>
-      <bufferGeometry ref={geo} />
-      <pointsMaterial
-        size={0.04}
-        color="#ffffff"
-        transparent
-        opacity={0.3}
-        sizeAttenuation
-      />
-    </points>
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle, rgba(255,255,255,0.15) 2px, transparent 1px)",
+        backgroundSize: "20px 20px",
+        animation: "float-dots 60s linear infinite",
+        willChange: "transform",
+      }}
+    />
   );
 }
 
-/* ─── Page Turn Card ─── */
+/* ─── Page Turn Card (only renders active + adjacent cards) ─── */
 interface PageCardProps {
   member: TeamMember;
   index: number;
@@ -62,47 +43,65 @@ interface PageCardProps {
 
 function PageCard({ member, index, isActive, direction }: PageCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const tweenRef = useRef<gsap.core.Tween | null>(null);
 
   useEffect(() => {
     if (!cardRef.current) return;
 
+    // Kill any running tween before starting a new one
+    if (tweenRef.current) {
+      tweenRef.current.kill();
+      tweenRef.current = null;
+    }
+
     if (isActive && direction === "enter") {
-      gsap.fromTo(
+      tweenRef.current = gsap.fromTo(
         cardRef.current,
         {
-          rotationY: 90,
+          x: 80,
           opacity: 0,
-          scale: 0.8,
-          transformOrigin: "left center",
+          scale: 0.95,
         },
         {
-          rotationY: 0,
+          x: 0,
           opacity: 1,
           scale: 1,
-          duration: 0.8,
-          ease: "back.out(1.4)",
+          duration: 0.5,
+          ease: "power2.out",
+          force3D: true,
         }
       );
     } else if (!isActive && direction === "exit") {
-      gsap.to(cardRef.current, {
-        rotationY: -90,
+      tweenRef.current = gsap.to(cardRef.current, {
+        x: -80,
         opacity: 0,
-        scale: 0.8,
-        duration: 0.6,
+        scale: 0.95,
+        duration: 0.35,
         ease: "power2.in",
-        transformOrigin: "right center",
+        force3D: true,
       });
     }
+
+    return () => {
+      if (tweenRef.current) {
+        tweenRef.current.kill();
+        tweenRef.current = null;
+      }
+    };
   }, [isActive, direction]);
+
+  // Don't render DOM at all if not active and idle
+  if (!isActive && direction === "idle") return null;
 
   return (
     <div
       ref={cardRef}
       className="absolute inset-0 flex items-center justify-center"
       style={{
-        perspective: "1200px",
         opacity: isActive ? 1 : 0,
         pointerEvents: isActive ? "auto" : "none",
+        willChange: "transform, opacity",
+        contain: "layout style paint",
       }}
     >
       {/* Card — responsive sizing */}
@@ -113,30 +112,15 @@ function PageCard({ member, index, isActive, direction }: PageCardProps) {
           borderRadius: "8px",
           boxShadow: "8px 8px 0px #000",
           background: "#FFFEF2",
+          contain: "content",
         }}
       >
-        {/* Comic panel divider — vertical on sm+, horizontal on mobile */}
+        {/* Comic panel divider */}
         <div className="hidden sm:block absolute top-0 bottom-0 left-1/2 w-[4px] bg-black z-10" />
         <div className="block sm:hidden absolute left-0 right-0 top-[40%] h-[4px] bg-black z-10" />
 
         {/* Left Page — Photo */}
-        <div
-          className="w-full sm:w-1/2 h-[40%] sm:h-full flex flex-col items-center justify-center p-3 sm:p-6 relative"
-          style={{
-            background:
-              "repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0,0,0,0.03) 24px, rgba(0,0,0,0.03) 25px)",
-          }}
-        >
-          {/* Halftone dots overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px)",
-              backgroundSize: "6px 6px",
-            }}
-          />
-
+        <div className="w-full sm:w-1/2 h-[40%] sm:h-full flex flex-col items-center justify-center p-3 sm:p-6 relative">
           {/* Page number */}
           <div
             className="absolute top-2 left-3 sm:top-3 sm:left-4 hero-title text-black/30"
@@ -160,11 +144,14 @@ function PageCard({ member, index, isActive, direction }: PageCardProps) {
             <img
               src={member.photo}
               alt={member.name}
+              loading="lazy"
+              decoding="async"
               className="w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-52 lg:h-52 object-cover"
               style={{
                 border: "2px solid #000",
                 borderRadius: "2px",
                 filter: "contrast(1.1) saturate(1.2)",
+                contentVisibility: "auto",
               }}
             />
             <div
@@ -174,31 +161,10 @@ function PageCard({ member, index, isActive, direction }: PageCardProps) {
               ★ MEMBER #{index + 1} ★
             </div>
           </div>
-
-          {/* Speech bubble — hidden on very small screens
-          <div
-            className="hidden sm:block absolute bottom-6 right-6 bg-white px-2 py-1 sm:px-3 sm:py-2"
-            style={{
-              border: "2px solid #000",
-              borderRadius: "12px 12px 12px 2px",
-              boxShadow: "2px 2px 0px #000",
-              fontSize: "clamp(0.5rem, 1vw, 0.75rem)",
-              fontFamily: "'Comic Relief', sans-serif",
-              maxWidth: "100px",
-            }}
-          >
-            That's me!
-          </div> */}
         </div>
 
         {/* Right Page — Info */}
-        <div
-          className="w-full sm:w-1/2 h-[60%] sm:h-full flex flex-col justify-center p-4 sm:p-6 md:p-8 relative"
-          style={{
-            background:
-              "repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(0,0,0,0.03) 24px, rgba(0,0,0,0.03) 25px)",
-          }}
-        >
+        <div className="w-full sm:w-1/2 h-[60%] sm:h-full flex flex-col justify-center p-4 sm:p-6 md:p-8 relative">
           {/* Page number */}
           <div
             className="absolute top-2 right-3 sm:top-3 sm:right-4 hero-title text-black/30"
@@ -308,10 +274,50 @@ export default function Team() {
     "enter"
   );
   const [showFooter, setShowFooter] = useState(false);
+  // Track which cards should be rendered (active + previous for exit animation)
+  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set([0]));
   const isScrolling = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const totalPages = TEAM_MEMBERS.length;
+
+  // Memoize speed lines JSX
+  const speedLinesJSX = useMemo(
+    () =>
+      SPEED_LINES.map((line, i) => (
+        <div
+          key={i}
+          className="absolute pointer-events-none"
+          style={{
+            top: line.top,
+            left: line.left,
+            width: line.width,
+            height: line.height,
+            background:
+              "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
+            animation: `speed-lines-pulse ${line.animDuration} ease-in-out ${line.animDelay} infinite`,
+            willChange: "opacity",
+          }}
+        />
+      )),
+    []
+  );
+
+  // Update visible cards when currentPage changes
+  useEffect(() => {
+    setVisibleCards((prev) => {
+      const next = new Set(prev);
+      next.add(currentPage);
+      return next;
+    });
+
+    // Clean up old cards after exit animation completes
+    const timer = setTimeout(() => {
+      setVisibleCards(new Set([currentPage]));
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [currentPage]);
 
   // Animate footer in/out
   useEffect(() => {
@@ -319,80 +325,85 @@ export default function Team() {
     if (showFooter) {
       gsap.to(footerRef.current, {
         y: "0%",
-        duration: 0.6,
+        duration: 0.4,
         ease: "power2.out",
+        force3D: true,
       });
     } else {
       gsap.to(footerRef.current, {
         y: "100%",
-        duration: 0.5,
+        duration: 0.35,
         ease: "power2.in",
+        force3D: true,
       });
     }
   }, [showFooter]);
 
-  // Scroll / wheel based page turn
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
+  // Unified navigation handler
+  const navigate = useCallback(
+    (deltaDirection: 1 | -1) => {
       if (isScrolling.current) return;
 
-      const delta = e.deltaY;
-      if (Math.abs(delta) < 30) return;
+      const isDown = deltaDirection > 0;
+      const isUp = deltaDirection < 0;
 
-      // If footer is showing and scrolling up, hide footer
-      if (showFooter && delta < 0) {
+      // Footer logic
+      if (showFooter && isUp) {
         isScrolling.current = true;
         setShowFooter(false);
         setTimeout(() => {
           isScrolling.current = false;
-        }, 700);
+        }, 500);
         return;
       }
-
-      // If footer is showing and scrolling down, do nothing
-      if (showFooter && delta > 0) return;
-
-      // At first page scrolling up — do nothing (stop)
-      if (currentPage === 0 && delta < 0) return;
-
-      // At last page scrolling down — show footer
-      if (currentPage === totalPages - 1 && delta > 0) {
+      if (showFooter && isDown) return;
+      if (currentPage === 0 && isUp) return;
+      if (currentPage === totalPages - 1 && isDown) {
         isScrolling.current = true;
         setShowFooter(true);
         setTimeout(() => {
           isScrolling.current = false;
-        }, 700);
+        }, 500);
         return;
       }
 
       isScrolling.current = true;
       setDirection("exit");
 
-      setTimeout(() => {
-        setCurrentPage((prev) => {
-          if (delta > 0) return Math.min(prev + 1, totalPages - 1);
-          return Math.max(prev - 1, 0);
-        });
-        setDirection("enter");
-
+      // Use requestAnimationFrame for smoother transition timing
+      requestAnimationFrame(() => {
         setTimeout(() => {
-          isScrolling.current = false;
-        }, 600);
-      }, 400);
+          setCurrentPage((prev) => {
+            if (isDown) return Math.min(prev + 1, totalPages - 1);
+            return Math.max(prev - 1, 0);
+          });
+          setDirection("enter");
+
+          setTimeout(() => {
+            isScrolling.current = false;
+          }, 400);
+        }, 250);
+      });
+    },
+    [totalPages, currentPage, showFooter]
+  );
+
+  // Scroll / wheel based page turn
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (Math.abs(e.deltaY) < 30) return;
+      navigate(e.deltaY > 0 ? 1 : -1);
     };
 
     const el = containerRef.current;
     if (el) {
       el.addEventListener("wheel", handleWheel, { passive: false });
     }
-
     return () => {
-      if (el) {
-        el.removeEventListener("wheel", handleWheel);
-      }
+      if (el) el.removeEventListener("wheel", handleWheel);
     };
-  }, [totalPages, currentPage, showFooter]);
+  }, [navigate]);
 
   // Touch support
   useEffect(() => {
@@ -407,44 +418,9 @@ export default function Team() {
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (isScrolling.current) return;
       const deltaY = touchStartY - e.changedTouches[0].clientY;
       if (Math.abs(deltaY) < 50) return;
-
-      // Footer logic
-      if (showFooter && deltaY < 0) {
-        isScrolling.current = true;
-        setShowFooter(false);
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 700);
-        return;
-      }
-      if (showFooter && deltaY > 0) return;
-      if (currentPage === 0 && deltaY < 0) return;
-      if (currentPage === totalPages - 1 && deltaY > 0) {
-        isScrolling.current = true;
-        setShowFooter(true);
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 700);
-        return;
-      }
-
-      isScrolling.current = true;
-      setDirection("exit");
-
-      setTimeout(() => {
-        setCurrentPage((prev) => {
-          if (deltaY > 0) return Math.min(prev + 1, totalPages - 1);
-          return Math.max(prev - 1, 0);
-        });
-        setDirection("enter");
-
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 600);
-      }, 400);
+      navigate(deltaY > 0 ? 1 : -1);
     };
 
     const el = containerRef.current;
@@ -453,7 +429,6 @@ export default function Team() {
       el.addEventListener("touchmove", handleTouchMove, { passive: false });
       el.addEventListener("touchend", handleTouchEnd, { passive: true });
     }
-
     return () => {
       if (el) {
         el.removeEventListener("touchstart", handleTouchStart);
@@ -461,58 +436,24 @@ export default function Team() {
         el.removeEventListener("touchend", handleTouchEnd);
       }
     };
-  }, [totalPages, currentPage, showFooter]);
+  }, [navigate]);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (isScrolling.current) return;
       const isDown = e.key === "ArrowDown" || e.key === "ArrowRight";
       const isUp = e.key === "ArrowUp" || e.key === "ArrowLeft";
       if (!isDown && !isUp) return;
-
-      // Footer logic
-      if (showFooter && isUp) {
-        isScrolling.current = true;
-        setShowFooter(false);
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 700);
-        return;
-      }
-      if (showFooter && isDown) return;
-      if (currentPage === 0 && isUp) return;
-      if (currentPage === totalPages - 1 && isDown) {
-        isScrolling.current = true;
-        setShowFooter(true);
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 700);
-        return;
-      }
-
-      isScrolling.current = true;
-      setDirection("exit");
-
-      setTimeout(() => {
-        setCurrentPage((prev) => {
-          if (isDown) return Math.min(prev + 1, totalPages - 1);
-          return Math.max(prev - 1, 0);
-        });
-        setDirection("enter");
-
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 600);
-      }, 400);
+      navigate(isDown ? 1 : -1);
     };
 
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [totalPages, currentPage, showFooter]);
+  }, [navigate]);
 
   return (
     <>
+      <Stats />
       <div
         ref={containerRef}
         className="fixed inset-0 overflow-hidden"
@@ -522,9 +463,8 @@ export default function Team() {
           touchAction: "none",
         }}
       >
-        <Stats />
-        {/* Background: Comic halftone + 3D particles */}
-        <div className="absolute inset-0 z-0">
+        {/* Background layers */}
+        <div className="absolute inset-0 z-0" style={{ contain: "strict" }}>
           {/* Halftone dot background */}
           <div className="comic-halftone absolute inset-0" />
 
@@ -537,48 +477,14 @@ export default function Team() {
             }}
           />
 
-          {/* Speed lines */}
+          {/* Speed lines - memoized */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {Array.from({ length: 12 }, (_, i) => (
-              <div
-                key={i}
-                className="absolute pointer-events-none"
-                style={{
-                  top: `${8 + (i / 12) * 84}%`,
-                  left: `${Math.random() * 15}%`,
-                  width: `${35 + Math.random() * 45}%`,
-                  height: Math.random() > 0.5 ? 2 : 1,
-                  background:
-                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
-                  animation: `speed-lines-pulse ${
-                    2.5 + Math.random() * 2
-                  }s ease-in-out ${Math.random() * 3}s infinite`,
-                }}
-              />
-            ))}
+            {speedLinesJSX}
           </div>
 
-          {/* 3D Particles */}
-          <Canvas
-            camera={{ position: [0, 0, 6], fov: 45 }}
-            style={{ pointerEvents: "none" }}
-          >
-            <Suspense fallback={null}>
-              <ComicParticles />
-            </Suspense>
-            <color attach="background" args={["rgba(0,0,0,0)"]} />
-          </Canvas>
+          {/* CSS floating dots (replaces Three.js Canvas) */}
+          <FloatingDots />
         </div>
-
-        {/* Secondary halftone overlay for depth */}
-        <div
-          className="absolute inset-0 pointer-events-none z-[1]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
-            backgroundSize: "12px 12px",
-          }}
-        />
 
         {/* Header */}
         <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-4 sm:pt-6">
@@ -603,17 +509,20 @@ export default function Team() {
           </div>
         </div>
 
-        {/* Page cards overlay */}
+        {/* Page cards — only render visible cards */}
         <div className="absolute inset-0 z-20">
-          {TEAM_MEMBERS.map((member, index) => (
-            <PageCard
-              key={member.name}
-              member={member}
-              index={index}
-              isActive={index === currentPage}
-              direction={index === currentPage ? direction : "exit"}
-            />
-          ))}
+          {TEAM_MEMBERS.map(
+            (member, index) =>
+              visibleCards.has(index) && (
+                <PageCard
+                  key={member.name}
+                  member={member}
+                  index={index}
+                  isActive={index === currentPage}
+                  direction={index === currentPage ? direction : "exit"}
+                />
+              )
+          )}
         </div>
 
         {/* Page counter */}
@@ -630,7 +539,7 @@ export default function Team() {
           </span>
         </div>
 
-        {/* Footer — slides up after last card */}
+        {/* Footer */}
         <Footer ref={footerRef} />
       </div>
       <Navbar />
