@@ -181,7 +181,7 @@ export default function Themes() {
     animate();
 
     // ─── Scroll-driven navigation ───
-    const SCROLL_SENSITIVITY = 2.5;
+    const SCROLL_SENSITIVITY = 1.0;
     let scrollCooldown = false;
 
     const handleWheel = (e: WheelEvent) => {
