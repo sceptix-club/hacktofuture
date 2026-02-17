@@ -431,8 +431,8 @@ export default function Team() {
     }
   }, [showFooter]);
 
-  const flipForwardRef = useRef(() => {});
-  const flipBackwardRef = useRef(() => {});
+  const flipForwardRef = useRef(() => { });
+  const flipBackwardRef = useRef(() => { });
 
   flipForwardRef.current = () => {
     if (isAnimating.current) return;
@@ -794,24 +794,24 @@ export default function Team() {
             style={
               isMobile
                 ? {
-                    width: "85vh",
-                    height: "88vw",
-                    maxWidth: "600px",
-                    maxHeight: "380px",
-                    transform: "rotate(90deg)",
-                    perspective: "2500px",
-                    perspectiveOrigin: "50% 50%",
-                    position: "relative",
-                  }
+                  width: "85vh",
+                  height: "88vw",
+                  maxWidth: "600px",
+                  maxHeight: "380px",
+                  transform: "rotate(90deg)",
+                  perspective: "2500px",
+                  perspectiveOrigin: "50% 50%",
+                  position: "relative",
+                }
                 : {
-                    width: "92vw",
-                    maxWidth: "1000px",
-                    height: "70vh",
-                    maxHeight: "580px",
-                    perspective: "2500px",
-                    perspectiveOrigin: "50% 50%",
-                    position: "relative",
-                  }
+                  width: "92vw",
+                  maxWidth: "1000px",
+                  height: "70vh",
+                  maxHeight: "580px",
+                  perspective: "2500px",
+                  perspectiveOrigin: "50% 50%",
+                  position: "relative",
+                }
             }
           >
             <div
@@ -930,19 +930,19 @@ export default function Team() {
           style={
             isMobile
               ? {
-                  bottom: 16,
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  flexDirection: "row",
-                  alignItems: "center",
-                }
+                bottom: 16,
+                left: "50%",
+                transform: "translateX(-50%)",
+                flexDirection: "row",
+                alignItems: "center",
+              }
               : {
-                  right: 24,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }
+                right: 24,
+                top: "50%",
+                transform: "translateY(-50%)",
+                flexDirection: "column",
+                alignItems: "center",
+              }
           }
         >
           {TEAM_MEMBERS.map((_, i) => (
