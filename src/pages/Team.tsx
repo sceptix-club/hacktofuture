@@ -4,81 +4,12 @@ import * as THREE from "three";
 import gsap from "gsap";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../scenes/Footer";
-import Barcode from "../components/Barcode";
+import { TEAM_MEMBERS } from "../content/team";
+import type { TeamMember } from "../content/team";
 import "../App.css";
+import { Stats } from "@react-three/drei";
 
 /* ─── Team Data ─── */
-interface TeamMember {
-  name: string;
-  role: string;
-  photo: string;
-  bio: string;
-  links: { label: string; url: string }[];
-}
-
-const TEAM_MEMBERS: TeamMember[] = [
-  {
-    name: "Roche Jeethan",
-    role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
-    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-  {
-    name: "Alice Wonder",
-    role: "Tech Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
-    bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-    ],
-  },
-  {
-    name: "Bob Builder",
-    role: "Design Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Bob",
-    bio: "Pixel perfectionist. If it's not aligned, it's not shipping.",
-    links: [
-      { label: "Dribbble", url: "#" },
-      { label: "LinkedIn", url: "#" },
-    ],
-  },
-  {
-    name: "Carol Danvers",
-    role: "Marketing Head",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Carol",
-    bio: "Spreads the word faster than light. Social media sorcerer.",
-    links: [
-      { label: "Instagram", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-  {
-    name: "Dave Singh",
-    role: "Sponsorship Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Dave",
-    bio: "Can convince anyone to sponsor anything. Charming negotiator.",
-    links: [
-      { label: "LinkedIn", url: "#" },
-      { label: "Email", url: "#" },
-    ],
-  },
-  {
-    name: "Eve Torres",
-    role: "Logistics Coordinator",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Eve",
-    bio: "Nothing escapes her spreadsheets. The backbone of operations.",
-    links: [
-      { label: "LinkedIn", url: "#" },
-      { label: "GitHub", url: "#" },
-    ],
-  },
-];
 
 /* ─── Floating Comic Particles (3D background) ─── */
 function ComicParticles() {
@@ -120,63 +51,6 @@ function ComicParticles() {
     </points>
   );
 }
-
-/* ─── Team Footer (reuses Footer styling but adapted) ─── */
-const TeamFooter = forwardRef<HTMLDivElement>((_, ref) => {
-  return (
-    <div
-      ref={ref}
-      className="fixed inset-0 z-50 flex flex-col bg-black w-full h-screen overflow-hidden"
-      style={{ transform: "translateY(100%)", willChange: "transform" }}
-    >
-      <div className="absolute inset-0 grid-bg" />
-
-      <div className="relative z-10 flex flex-col flex-1 justify-center">
-        <div className="px-4 md:px-12 lg:px-20 pt-6">
-          <div className="w-full rounded-xl overflow-hidden border border-white/10">
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4263.66930063788!2d74.89606981102712!3d12.91077313734648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba359dfac132663%3A0xa7bf228838232d32!2sSt%20Joseph%20Engineering%20College!5e1!3m2!1sen!2sin!4v1770539822992!5m2!1sen!2sin"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title="St Joseph Engineering College Map"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-12 lg:px-20 pb-6 mt-6">
-          <div
-            className="rounded-xl overflow-hidden border border-white/10 flex items-center justify-center"
-            style={{ minHeight: 200 }}
-          >
-            <Barcode height={40} />
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h3 className="hero-title text-white font-bold text-lg">
-              QUERIES & CONTACT
-            </h3>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h3 className="hero-title text-white font-bold text-lg">
-              FOLLOW US
-            </h3>
-          </div>
-        </div>
-
-        <div className="w-full flex-1 overflow-hidden border-t border-white/10 flex flex-col justify-end">
-          <div className="flex justify-between items-center px-4 md:px-12 lg:px-20 py-2" />
-        </div>
-      </div>
-    </div>
-  );
-});
-
-TeamFooter.displayName = "TeamFooter";
 
 /* ─── Page Turn Card ─── */
 interface PageCardProps {
@@ -301,7 +175,7 @@ function PageCard({ member, index, isActive, direction }: PageCardProps) {
             </div>
           </div>
 
-          {/* Speech bubble — hidden on very small screens */}
+          {/* Speech bubble — hidden on very small screens
           <div
             className="hidden sm:block absolute bottom-6 right-6 bg-white px-2 py-1 sm:px-3 sm:py-2"
             style={{
@@ -313,8 +187,8 @@ function PageCard({ member, index, isActive, direction }: PageCardProps) {
               maxWidth: "100px",
             }}
           >
-            That's me! 👆
-          </div>
+            That's me!
+          </div> */}
         </div>
 
         {/* Right Page — Info */}
@@ -528,6 +402,10 @@ export default function Team() {
       touchStartY = e.touches[0].clientY;
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
     const handleTouchEnd = (e: TouchEvent) => {
       if (isScrolling.current) return;
       const deltaY = touchStartY - e.changedTouches[0].clientY;
@@ -572,12 +450,14 @@ export default function Team() {
     const el = containerRef.current;
     if (el) {
       el.addEventListener("touchstart", handleTouchStart, { passive: true });
+      el.addEventListener("touchmove", handleTouchMove, { passive: false });
       el.addEventListener("touchend", handleTouchEnd, { passive: true });
     }
 
     return () => {
       if (el) {
         el.removeEventListener("touchstart", handleTouchStart);
+        el.removeEventListener("touchmove", handleTouchMove);
         el.removeEventListener("touchend", handleTouchEnd);
       }
     };
@@ -636,8 +516,13 @@ export default function Team() {
       <div
         ref={containerRef}
         className="fixed inset-0 overflow-hidden"
-        style={{ background: "#0a0a0a" }}
+        style={{
+          background: "#0a0a0a",
+          overscrollBehavior: "none",
+          touchAction: "none",
+        }}
       >
+        <Stats />
         {/* Background: Comic halftone + 3D particles */}
         <div className="absolute inset-0 z-0">
           {/* Halftone dot background */}
@@ -783,7 +668,7 @@ export default function Team() {
           />
         </div>
 
-        {/* Scroll hint — hide when footer is showing */}
+        {/* Scroll hint — hide when footer is showing
         {!showFooter && (
           <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1">
             <div
@@ -804,7 +689,7 @@ export default function Team() {
               SCROLL TO TURN
             </span>
           </div>
-        )}
+        )} */}
 
         {/* Page counter */}
         <div className="absolute bottom-20 right-3 sm:right-6 z-30">

@@ -9,6 +9,7 @@ import TextContent from "./scenes/TextContent";
 import Navbar from "./components/ui/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Team from "./pages/Team";
+import { Stats } from "@react-three/drei";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -67,7 +68,7 @@ function HomePage() {
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
           shadows
         >
-          {/* <Stats /> */}
+          <Stats />
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
           <color attach="background" args={["#000000"]} />
         </Canvas>
