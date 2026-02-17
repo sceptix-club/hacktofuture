@@ -38,43 +38,13 @@ export const TEAM_MEMBERS: TeamMember[] = [
     ],
   },
   {
-<<<<<<< HEAD
-    name: "Shovin Dsouza",
-=======
     name: "Shovin Jeson Dsouza",
->>>>>>> 94ac575 (fix: remove unneccesary items in the page to improve performance. wip: change team information in team.ts)
     role: "Lead Organizer",
     photo: null,
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
       { label: "LinkedIn", url: "#" },
-<<<<<<< HEAD
-      { label: "Twitter", url: "#" },
-    ],
-  },
-  {
-    name: "Ashley Cleon Pinto",
-    role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
-    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-  {
-    name: "Ashley Cleon Pinto",
-    role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
-    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
-=======
->>>>>>> 94ac575 (fix: remove unneccesary items in the page to improve performance. wip: change team information in team.ts)
     ],
   },
   {

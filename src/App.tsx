@@ -9,7 +9,7 @@ import TextContent from "./scenes/TextContent";
 import Navbar from "./components/ui/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Team from "./pages/Team";
-import { Stats } from "@react-three/drei";
+import { Environment, Stats } from "@react-three/drei";
 import Themes from "./pages/Themes";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
@@ -75,7 +75,7 @@ function HomePage() {
         >
           <Stats />
           <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
-          <color attach="background" args={["#000000"]} />
+          <Environment files="/textures/background.jpg" background blur={0.5} />
         </Canvas>
       </div>
       <TextContent

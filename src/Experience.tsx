@@ -304,16 +304,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         />
 
         <Comic />
-        <ComicInstances
-          count={30}
-          speed={1}
-          bounds={{
-            x: [-20, 20],
-            y: [-10, 10],
-            z: [-20, 20],
-          }}
-          position={[0, -5, 0]}
-        />
       </group>
 
       {/* Scene 3: Blank space for Sponsors */}
