@@ -350,12 +350,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       </group >
 
       {/* Scene 5: Cards */}
-      < CardsWithProps
-        progress={scrollProgressRef}
-        currentScene={currentSceneRef}
-      />
-
       <group ref={scene6Ref} position={[0, -150, 0]} />
+      <Cards pointerRef={pointerRef} progress={scrollProgressRef} currentScene={currentSceneRef} />
 
       <pointLight
         ref={pointerRef}
