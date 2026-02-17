@@ -36,7 +36,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4263.66930063788!2d74.89606981102712!3d12.91077313734648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba359dfac132663%3A0xa7bf228838232d32!2sSt%20Joseph%20Engineering%20College!5e1!3m2!1sen!2sin!4v1770539822992!5m2!1sen!2sin"
               width="100%"
-              height="400"
+              height="300"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
@@ -51,7 +51,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
             className="rounded-xl overflow-hidden border border-white/10 flex items-center justify-center"
             style={{ minHeight: 200 }}
           >
-            <Barcode height={40}/>
+            <Barcode height={40} />
           </div>
 
           <div className="flex flex-col gap-4">
