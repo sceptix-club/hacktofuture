@@ -8,6 +8,26 @@ export interface TeamMember {
 
 export const TEAM_MEMBERS: TeamMember[] = [
   {
+    name: "Ms Diana Monteiro",
+    role: "Faculty Convenor",
+    photo: "",
+    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
+    name: "Dr Shrisha H.S",
+    role: "Faculty Convenor",
+    photo: "https://gdgsjec.in/images/output/Ashley.webp",
+    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
     name: "Ashley Cleon Pinto",
     role: "Lead Organizer",
     photo: "https://gdgsjec.in/images/output/Ashley.webp",
@@ -15,45 +35,51 @@ export const TEAM_MEMBERS: TeamMember[] = [
     links: [
       { label: "GitHub", url: "#" },
       { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
     ],
   },
-    {
-    name: "Shovin Dsouza",
+  {
+    name: "Shovin Jeson Dsouza",
     role: "Lead Organizer",
     photo: "",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
       { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-    {
-    name: "Ashley Cleon Pinto",
-    role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
-    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-    {
-    name: "Ashley Cleon Pinto",
-    role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
-    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
     ],
   },
   {
-    name: "Alice Wonder",
-    role: "Tech Lead",
+    name: "Priyal Saldanha",
+    role: "Lead Organizer",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
+    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
+    name: "Ankit Shah",
+    role: "Lead Organizer",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
+    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
+    name: "Viona Noronha",
+    role: "Logistics & Accomodation Lead",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
+    bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
+    name: "Melroy Almeida",
+    role: "Logistics & Accomodation Lead",
     photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
     bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
     links: [
