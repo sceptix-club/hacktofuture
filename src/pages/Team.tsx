@@ -2,79 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Navbar from "../components/ui/Navbar";
 import "../App.css";
-
-/* ─── Team Data ─── */
-interface TeamMember {
-  name: string;
-  role: string;
-  photo: string;
-  bio: string;
-  links: { label: string; url: string }[];
-}
-
-const TEAM_MEMBERS: TeamMember[] = [
-  {
-    name: "Roche Jeethan",
-    role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
-    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-  {
-    name: "Alice Wonder",
-    role: "Tech Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
-    bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
-    links: [
-      { label: "GitHub", url: "#" },
-      { label: "LinkedIn", url: "#" },
-    ],
-  },
-  {
-    name: "Bob Builder",
-    role: "Design Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Bob",
-    bio: "Pixel perfectionist. If it's not aligned, it's not shipping.",
-    links: [
-      { label: "Dribbble", url: "#" },
-      { label: "LinkedIn", url: "#" },
-    ],
-  },
-  {
-    name: "Carol Danvers",
-    role: "Marketing Head",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Carol",
-    bio: "Spreads the word faster than light. Social media sorcerer.",
-    links: [
-      { label: "Instagram", url: "#" },
-      { label: "Twitter", url: "#" },
-    ],
-  },
-  {
-    name: "Dave Singh",
-    role: "Sponsorship Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Dave",
-    bio: "Can convince anyone to sponsor anything. Charming negotiator.",
-    links: [
-      { label: "LinkedIn", url: "#" },
-      { label: "Email", url: "#" },
-    ],
-  },
-  {
-    name: "Eve Torres",
-    role: "Logistics Coordinator",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Eve",
-    bio: "Nothing escapes her spreadsheets. The backbone of operations.",
-    links: [
-      { label: "LinkedIn", url: "#" },
-      { label: "GitHub", url: "#" },
-    ],
-  },
-];
+import { TEAM_MEMBERS } from "../content/team";
+import type { TeamMember } from "../content/team";
 
 const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
@@ -92,7 +21,7 @@ function PhotoContent({
   return (
     <div
       className="w-full h-full flex flex-col items-center justify-center relative"
-      style={{ padding: isMobile ? "10px 16px" : "16px 24px" }}
+      style={{ padding: isMobile ? "10px 16px" : "16px 24px 16px 40px" }}
     >
       <div
         className="absolute inset-0 pointer-events-none"
@@ -142,29 +71,12 @@ function PhotoContent({
           <div
             className="text-center mt-1 hero-title text-black"
             style={{
-              fontSize: isMobile
-                ? "0.45rem"
-                : "clamp(0.5rem, 1.2vw, 0.8rem)",
+              fontSize: isMobile ? "0.45rem" : "clamp(0.5rem, 1.2vw, 0.8rem)",
             }}
           >
             ★ MEMBER #{index + 1} ★
           </div>
         </div>
-        {!isMobile && (
-          <div
-            className="hidden sm:block absolute -bottom-10 -right-6 bg-white px-3 py-2"
-            style={{
-              border: "2px solid #000",
-              borderRadius: "12px 12px 12px 2px",
-              boxShadow: "2px 2px 0px #000",
-              fontSize: "clamp(0.5rem, 1vw, 0.75rem)",
-              fontFamily: "'Comic Relief', sans-serif",
-              maxWidth: "110px",
-            }}
-          >
-            That's me! 👆
-          </div>
-        )}
       </div>
     </div>
   );
@@ -207,8 +119,7 @@ function DetailsContent({
         <div
           className="absolute top-0 left-0 bottom-0 w-8 pointer-events-none"
           style={{
-            background:
-              "linear-gradient(90deg, rgba(0,0,0,0.06), transparent)",
+            background: "linear-gradient(90deg, rgba(0,0,0,0.06), transparent)",
           }}
         />
       )}
@@ -222,6 +133,7 @@ function DetailsContent({
         />
       )}
       <div className="relative z-10">
+        {/* Name - full width banner */}
         <div
           className="mb-1 inline-block self-start"
           style={{
@@ -235,42 +147,82 @@ function DetailsContent({
           <h2
             className="hero-title"
             style={{
-              fontSize: isMobile
-                ? "0.95rem"
-                : "clamp(1rem, 3.5vw, 2.2rem)",
+              fontSize: isMobile ? "0.95rem" : "clamp(1rem, 3.5vw, 2.2rem)",
               transform: "skewX(3deg)",
             }}
           >
             {member.name}
           </h2>
         </div>
-        <div
-          className="mb-2 inline-block px-2 py-0.5"
-          style={{
-            border: "2px solid #DA100C",
-            borderRadius: "4px",
-            color: "#DA100C",
-            fontFamily: "'Dela Gothic One', sans-serif",
-            fontSize: isMobile
-              ? "0.6rem"
-              : "clamp(0.65rem, 1.4vw, 1rem)",
-            boxShadow: "2px 2px 0px rgba(0,0,0,0.2)",
-          }}
-        >
-          {member.role}
-        </div>
-        <p
-          className="comic-sans text-black/80 leading-relaxed"
-          style={{
-            fontSize: isMobile
-              ? "0.7rem"
-              : "clamp(0.75rem, 1.6vw, 1.05rem)",
-            marginBottom: isMobile ? "8px" : "20px",
-            maxWidth: "400px",
-          }}
-        >
-          "{member.bio}"
-        </p>
+
+        {/* Role & Links - side by side on mobile */}
+        {isMobile ? (
+          <div className="flex items-center gap-2 mb-2 flex-wrap">
+            <div
+              className="inline-block px-2 py-0.5"
+              style={{
+                border: "2px solid #DA100C",
+                borderRadius: "4px",
+                color: "#DA100C",
+                fontFamily: "'Dela Gothic One', sans-serif",
+                fontSize: "0.6rem",
+                boxShadow: "2px 2px 0px rgba(0,0,0,0.2)",
+              }}
+            >
+              {member.role}
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {member.links.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="comic-sans text-white hover:scale-105 transition-transform"
+                  style={{
+                    background: "#000",
+                    border: "2px solid #000",
+                    borderRadius: "4px",
+                    padding: "2px 8px",
+                    fontSize: "0.55rem",
+                    boxShadow: "2px 2px 0px rgba(218,16,12,0.6)",
+                    textDecoration: "none",
+                  }}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div
+            className="mb-2 inline-block px-2 py-0.5"
+            style={{
+              border: "2px solid #DA100C",
+              borderRadius: "4px",
+              color: "#DA100C",
+              fontFamily: "'Dela Gothic One', sans-serif",
+              fontSize: "clamp(0.65rem, 1.4vw, 1rem)",
+              boxShadow: "2px 2px 0px rgba(0,0,0,0.2)",
+            }}
+          >
+            {member.role}
+          </div>
+        )}
+
+        {/* Quote */}
+        {!isMobile && (
+          <p
+            className="comic-sans text-black/80 leading-relaxed"
+            style={{
+              fontSize: isMobile ? "0.7rem" : "clamp(0.75rem, 1.6vw, 1.05rem)",
+              marginBottom: isMobile ? "8px" : "20px",
+              maxWidth: "400px",
+            }}
+          >
+            "{member.bio}"
+          </p>
+        )}
         <div
           style={{
             height: 3,
@@ -279,30 +231,32 @@ function DetailsContent({
             marginBottom: isMobile ? 8 : 16,
           }}
         />
-        <div className="flex flex-wrap gap-1.5">
-          {member.links.map((link) => (
-            <a
-              key={link.label}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="comic-sans text-white hover:scale-105 transition-transform"
-              style={{
-                background: "#000",
-                border: "2px solid #000",
-                borderRadius: "4px",
-                padding: isMobile ? "2px 8px" : "4px 10px",
-                fontSize: isMobile
-                  ? "0.55rem"
-                  : "clamp(0.6rem, 1.2vw, 0.85rem)",
-                boxShadow: "2px 2px 0px rgba(218,16,12,0.6)",
-                textDecoration: "none",
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
+
+        {/* Links - only on desktop (already rendered above for mobile) */}
+        {!isMobile && (
+          <div className="flex flex-wrap gap-1.5">
+            {member.links.map((link) => (
+              <a
+                key={link.label}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="comic-sans text-white hover:scale-105 transition-transform"
+                style={{
+                  background: "#000",
+                  border: "2px solid #000",
+                  borderRadius: "4px",
+                  padding: "4px 10px",
+                  fontSize: "clamp(0.6rem, 1.2vw, 0.85rem)",
+                  boxShadow: "2px 2px 0px rgba(218,16,12,0.6)",
+                  textDecoration: "none",
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )}
       </div>
       {!isMobile && (
         <svg
@@ -361,9 +315,7 @@ export default function Team() {
   const footerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
   const sheetRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const flippedState = useRef<boolean[]>(
-    new Array(TOTAL_SHEETS).fill(false)
-  );
+  const flippedState = useRef<boolean[]>(new Array(TOTAL_SHEETS).fill(false));
 
   useEffect(() => {
     isMobileRef.current = isMobile;
@@ -431,8 +383,8 @@ export default function Team() {
     }
   }, [showFooter]);
 
-  const flipForwardRef = useRef(() => { });
-  const flipBackwardRef = useRef(() => { });
+  const flipForwardRef = useRef(() => {});
+  const flipBackwardRef = useRef(() => {});
 
   flipForwardRef.current = () => {
     if (isAnimating.current) return;
@@ -652,11 +604,7 @@ export default function Team() {
                   transformOrigin: "center center",
                 }}
               >
-                <DetailsContent
-                  member={TEAM_MEMBERS[i]}
-                  index={i}
-                  isMobile
-                />
+                <DetailsContent member={TEAM_MEMBERS[i]} index={i} isMobile />
               </div>
             ) : (
               <DetailsContent
@@ -755,7 +703,9 @@ export default function Team() {
                   height: i % 2 === 0 ? 2 : 1,
                   background:
                     "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
-                  animation: `speed-lines-pulse ${2.5 + (i % 3)}s ease-in-out ${(i * 0.4) % 3}s infinite`,
+                  animation: `speed-lines-pulse ${2.5 + (i % 3)}s ease-in-out ${
+                    (i * 0.4) % 3
+                  }s infinite`,
                 }}
               />
             ))}
@@ -776,9 +726,7 @@ export default function Team() {
             <h1
               className="hero-title text-white"
               style={{
-                fontSize: isMobile
-                  ? "0.85rem"
-                  : "clamp(0.9rem, 3vw, 2rem)",
+                fontSize: isMobile ? "0.85rem" : "clamp(0.9rem, 3vw, 2rem)",
                 transform: "skewX(3deg)",
               }}
             >
@@ -794,24 +742,24 @@ export default function Team() {
             style={
               isMobile
                 ? {
-                  width: "85vh",
-                  height: "88vw",
-                  maxWidth: "600px",
-                  maxHeight: "380px",
-                  transform: "rotate(90deg)",
-                  perspective: "2500px",
-                  perspectiveOrigin: "50% 50%",
-                  position: "relative",
-                }
+                    width: "85vh",
+                    height: "88vw",
+                    maxWidth: "600px",
+                    maxHeight: "380px",
+                    transform: "rotate(90deg)",
+                    perspective: "2500px",
+                    perspectiveOrigin: "50% 50%",
+                    position: "relative",
+                  }
                 : {
-                  width: "92vw",
-                  maxWidth: "1000px",
-                  height: "70vh",
-                  maxHeight: "580px",
-                  perspective: "2500px",
-                  perspectiveOrigin: "50% 50%",
-                  position: "relative",
-                }
+                    width: "92vw",
+                    maxWidth: "1000px",
+                    height: "70vh",
+                    maxHeight: "580px",
+                    perspective: "2500px",
+                    perspectiveOrigin: "50% 50%",
+                    position: "relative",
+                  }
             }
           >
             <div
@@ -824,12 +772,8 @@ export default function Team() {
                 style={{
                   ...pageBase,
                   border: isMobile ? "3px solid #000" : "4px solid #000",
-                  borderRight: isMobile
-                    ? "1.5px solid #000"
-                    : "2px solid #000",
-                  borderRadius: isMobile
-                    ? "6px 0 0 6px"
-                    : "8px 0 0 8px",
+                  borderRight: isMobile ? "1.5px solid #000" : "2px solid #000",
+                  borderRadius: isMobile ? "6px 0 0 6px" : "8px 0 0 8px",
                   boxShadow: isMobile
                     ? "-4px 4px 0px rgba(0,0,0,0.4)"
                     : "-6px 6px 0px rgba(0,0,0,0.4)",
@@ -868,12 +812,8 @@ export default function Team() {
                 style={{
                   ...pageBase,
                   border: isMobile ? "3px solid #000" : "4px solid #000",
-                  borderLeft: isMobile
-                    ? "1.5px solid #000"
-                    : "2px solid #000",
-                  borderRadius: isMobile
-                    ? "0 6px 6px 0"
-                    : "0 8px 8px 0",
+                  borderLeft: isMobile ? "1.5px solid #000" : "2px solid #000",
+                  borderRadius: isMobile ? "0 6px 6px 0" : "0 8px 8px 0",
                   boxShadow: isMobile
                     ? "4px 4px 0px rgba(0,0,0,0.4)"
                     : "6px 6px 0px rgba(0,0,0,0.4)",
@@ -930,19 +870,19 @@ export default function Team() {
           style={
             isMobile
               ? {
-                bottom: 16,
-                left: "50%",
-                transform: "translateX(-50%)",
-                flexDirection: "row",
-                alignItems: "center",
-              }
+                  bottom: 72,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }
               : {
-                right: 24,
-                top: "50%",
-                transform: "translateY(-50%)",
-                flexDirection: "column",
-                alignItems: "center",
-              }
+                  right: 24,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }
           }
         >
           {TEAM_MEMBERS.map((_, i) => (
@@ -955,12 +895,11 @@ export default function Team() {
                 height: displayPage === i ? 14 : 8,
                 borderRadius: "2px",
                 background:
-                  displayPage === i
-                    ? "#DA100C"
-                    : "rgba(255,255,255,0.3)",
-                border: `2px solid ${displayPage === i ? "#000" : "rgba(255,255,255,0.2)"}`,
-                boxShadow:
-                  displayPage === i ? "2px 2px 0px #000" : "none",
+                  displayPage === i ? "#DA100C" : "rgba(255,255,255,0.3)",
+                border: `2px solid ${
+                  displayPage === i ? "#000" : "rgba(255,255,255,0.2)"
+                }`,
+                boxShadow: displayPage === i ? "2px 2px 0px #000" : "none",
                 transform: `rotate(${displayPage === i ? 45 : 0}deg)`,
               }}
               title={`Member ${i + 1}`}
@@ -984,39 +923,15 @@ export default function Team() {
               width: showFooter ? 14 : 8,
               height: showFooter ? 14 : 8,
               borderRadius: "50%",
-              background: showFooter
-                ? "#fff"
-                : "rgba(255,255,255,0.2)",
-              border: `2px solid ${showFooter ? "#000" : "rgba(255,255,255,0.15)"}`,
+              background: showFooter ? "#fff" : "rgba(255,255,255,0.2)",
+              border: `2px solid ${
+                showFooter ? "#000" : "rgba(255,255,255,0.15)"
+              }`,
               boxShadow: showFooter ? "2px 2px 0px #000" : "none",
             }}
             title="Footer"
           />
         </div>
-
-        {/* Scroll hint desktop */}
-        {!showFooter && !isMobile && (
-          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1">
-            <div
-              className="w-6 h-10 rounded-full flex items-start justify-center pt-2"
-              style={{ border: "2px solid rgba(255,255,255,0.3)" }}
-            >
-              <div
-                className="w-1.5 h-3 rounded-full bg-white/60"
-                style={{
-                  animation:
-                    "scroll-dot-bounce 1.5s ease-in-out infinite",
-                }}
-              />
-            </div>
-            <span
-              className="comic-sans text-white/40"
-              style={{ fontSize: "0.6rem" }}
-            >
-              SCROLL TO TURN PAGE
-            </span>
-          </div>
-        )}
 
         {/* Scroll hint mobile */}
         {!showFooter && isMobile && (
@@ -1035,16 +950,14 @@ export default function Team() {
           className="absolute z-30"
           style={
             isMobile
-              ? { bottom: 40, right: 16 }
+              ? { bottom: 100, left: "50%", transform: "translateX(-50%)" }
               : { bottom: 80, right: 24 }
           }
         >
           <span
             className="hero-title text-white/60"
             style={{
-              fontSize: isMobile
-                ? "0.65rem"
-                : "clamp(0.6rem, 1.3vw, 0.9rem)",
+              fontSize: isMobile ? "0.65rem" : "clamp(0.6rem, 1.3vw, 0.9rem)",
             }}
           >
             {String(displayPage + 1).padStart(2, "0")}{" "}
