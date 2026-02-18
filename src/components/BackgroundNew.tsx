@@ -10,6 +10,7 @@ import {
   MeshWobbleMaterial,
   Float,
   Environment,
+  Stats,
 } from "@react-three/drei";
 import {
   EffectComposer,
@@ -223,6 +224,7 @@ function Scene({
 
   return (
     <>
+      <Stats />
       <ambientLight intensity={0.8} />
       <pointLight position={[10, 10, 10]} intensity={1} />
 
@@ -236,7 +238,7 @@ function Scene({
       </Float>
 
       <Environment preset="city" background blur={0.5} />
-
+      {/* 
       <Clouds>
         <Cloud
           concentrate="outside"
@@ -249,7 +251,7 @@ function Scene({
           position={[0, 0, -10]}
           speed={1}
         />
-      </Clouds>
+      </Clouds> */}
 
       <EffectComposer enableNormalPass multisampling={4}>
         <HueSaturation saturation={-1} />
