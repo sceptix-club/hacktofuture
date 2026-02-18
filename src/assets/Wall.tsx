@@ -55,9 +55,8 @@ const MarqueeGrid = ({
 
     return Array.from({ length: columns }, (_, colIndex) =>
       Array.from({ length: imagesPerColumn }, (_, imgIndex) => ({
-        url: `https://picsum.photos/seed/${
-          colIndex * imagesPerColumn + imgIndex
-        }/400/500`,
+        url: `https://picsum.photos/seed/${colIndex * imagesPerColumn + imgIndex
+          }/400/500`,
       }))
     );
   }, [imageUrls, columns, imagesPerColumn]);
@@ -96,14 +95,6 @@ const MarqueeGrid = ({
                 transparent
                 opacity={0.5}
               />
-              <Image
-                url={halftoneUrl}
-                scale={imageScale}
-                transparent
-                opacity={0.35}
-                position={[0, 0, 0.02]}
-                renderOrder={10}
-              />
             </group>
           ))}
           {images.map((img, imgIndex) => (
@@ -120,14 +111,6 @@ const MarqueeGrid = ({
                 scale={imageScale}
                 transparent
                 opacity={0.5}
-              />
-              <Image
-                url={halftoneUrl}
-                scale={imageScale}
-                transparent
-                opacity={0.35}
-                position={[0, 0, 0.02]}
-                renderOrder={10}
               />
             </group>
           ))}

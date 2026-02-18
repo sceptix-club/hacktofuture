@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Navbar from "../components/ui/Navbar";
-import Footer from "../scenes/Footer";
-import { TEAM_MEMBERS } from "../content/team";
-import type { TeamMember } from "../content/team";
 import "../App.css";
 import { Stats } from "@react-three/drei";
 
@@ -17,309 +14,408 @@ const SPEED_LINES = Array.from({ length: 8 }, (_, i) => ({
   animDelay: `${(i * 0.7) % 3}s`,
 }));
 
-/* ─── Simple CSS-based floating dots (replaces Three.js Canvas entirely) ─── */
-function FloatingDots() {
-  return (
-    <div
-      className="absolute inset-0 pointer-events-none"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, rgba(255,255,255,0.15) 2px, transparent 1px)",
-        backgroundSize: "20px 20px",
-        animation: "float-dots 60s linear infinite",
-        willChange: "transform",
-      }}
-    />
-  );
-}
+const TEAM_MEMBERS: TeamMember[] = [
+  {
+    name: "Roche Jeethan",
+    role: "Lead Organizer",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
+    bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+      { label: "Twitter", url: "#" },
+    ],
+  },
+  {
+    name: "Alice Wonder",
+    role: "Tech Lead",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
+    bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
+    links: [
+      { label: "GitHub", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
+    name: "Bob Builder",
+    role: "Design Lead",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Bob",
+    bio: "Pixel perfectionist. If it's not aligned, it's not shipping.",
+    links: [
+      { label: "Dribbble", url: "#" },
+      { label: "LinkedIn", url: "#" },
+    ],
+  },
+  {
+    name: "Carol Danvers",
+    role: "Marketing Head",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Carol",
+    bio: "Spreads the word faster than light. Social media sorcerer.",
+    links: [
+      { label: "Instagram", url: "#" },
+      { label: "Twitter", url: "#" },
+    ],
+  },
+  {
+    name: "Dave Singh",
+    role: "Sponsorship Lead",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Dave",
+    bio: "Can convince anyone to sponsor anything. Charming negotiator.",
+    links: [
+      { label: "LinkedIn", url: "#" },
+      { label: "Email", url: "#" },
+    ],
+  },
+  {
+    name: "Eve Torres",
+    role: "Logistics Coordinator",
+    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Eve",
+    bio: "Nothing escapes her spreadsheets. The backbone of operations.",
+    links: [
+      { label: "LinkedIn", url: "#" },
+      { label: "GitHub", url: "#" },
+    ],
+  },
+];
 
-/* ─── Page Turn Card (only renders active + adjacent cards) ─── */
-interface PageCardProps {
+const TOTAL_MEMBERS = TEAM_MEMBERS.length;
+const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
+
+/* ─── Photo Page Content ─── */
+function PhotoContent({
+  member,
+  index,
+  isMobile,
+}: {
   member: TeamMember;
   index: number;
-  isActive: boolean;
-  direction: "enter" | "exit" | "idle";
-}
-
-function PageCard({ member, index, isActive, direction }: PageCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const tweenRef = useRef<gsap.core.Tween | null>(null);
-
-  useEffect(() => {
-    if (!cardRef.current) return;
-
-    // Kill any running tween before starting a new one
-    if (tweenRef.current) {
-      tweenRef.current.kill();
-      tweenRef.current = null;
-    }
-
-    if (isActive && direction === "enter") {
-      tweenRef.current = gsap.fromTo(
-        cardRef.current,
-        {
-          x: 80,
-          opacity: 0,
-          scale: 0.95,
-        },
-        {
-          x: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.5,
-          ease: "power2.out",
-          force3D: true,
-        }
-      );
-    } else if (!isActive && direction === "exit") {
-      tweenRef.current = gsap.to(cardRef.current, {
-        x: -80,
-        opacity: 0,
-        scale: 0.95,
-        duration: 0.35,
-        ease: "power2.in",
-        force3D: true,
-      });
-    }
-
-    return () => {
-      if (tweenRef.current) {
-        tweenRef.current.kill();
-        tweenRef.current = null;
-      }
-    };
-  }, [isActive, direction]);
-
-  // Don't render DOM at all if not active and idle
-  if (!isActive && direction === "idle") return null;
-
+  isMobile: boolean;
+}) {
   return (
     <div
-      ref={cardRef}
-      className="absolute inset-0 flex items-center justify-center"
-      style={{
-        opacity: isActive ? 1 : 0,
-        pointerEvents: isActive ? "auto" : "none",
-        willChange: "transform, opacity",
-        contain: "layout style paint",
-      }}
+      className="w-full h-full flex flex-col items-center justify-center relative"
+      style={{ padding: isMobile ? "10px 16px" : "16px 24px" }}
     >
-      {/* Card — responsive sizing */}
       <div
-        className="relative w-[95vw] max-w-[900px] h-[55vh] sm:h-[60vh] md:h-[70vh] max-h-[550px] flex flex-col sm:flex-row overflow-hidden"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          border: "4px solid #000",
-          borderRadius: "8px",
-          boxShadow: "8px 8px 0px #000",
-          background: "#FFFEF2",
-          contain: "content",
+          backgroundImage:
+            "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)",
+          backgroundSize: "8px 8px",
+        }}
+      />
+      <div
+        className="absolute hero-title text-black/25"
+        style={{
+          fontSize: "0.55rem",
+          top: isMobile ? 8 : 12,
+          left: isMobile ? 12 : 16,
         }}
       >
-        {/* Comic panel divider */}
-        <div className="hidden sm:block absolute top-0 bottom-0 left-1/2 w-[4px] bg-black z-10" />
-        <div className="block sm:hidden absolute left-0 right-0 top-[40%] h-[4px] bg-black z-10" />
-
-        {/* Left Page — Photo */}
-        <div className="w-full sm:w-1/2 h-[40%] sm:h-full flex flex-col items-center justify-center p-3 sm:p-6 relative">
-          {/* Page number */}
-          <div
-            className="absolute top-2 left-3 sm:top-3 sm:left-4 hero-title text-black/30"
-            style={{ fontSize: "0.6rem" }}
-          >
-            PAGE {index * 2 + 1}
-          </div>
-
-          {/* Photo frame */}
-          <div
-            className="relative"
+        PAGE {index * 2 + 1}
+      </div>
+      <div className="relative z-10">
+        <div
+          style={{
+            border: "3px solid #000",
+            borderRadius: "4px",
+            boxShadow: "4px 4px 0px rgba(0,0,0,0.3)",
+            padding: isMobile ? "5px" : "8px",
+            background: "#fff",
+            transform: `rotate(${index % 2 === 0 ? -2 : 2}deg)`,
+          }}
+        >
+          <img
+            src={member.photo}
+            alt={member.name}
             style={{
-              border: "3px solid #000",
-              borderRadius: "4px",
-              boxShadow: "4px 4px 0px rgba(0,0,0,0.3)",
-              padding: "6px",
-              background: "#fff",
-              transform: `rotate(${index % 2 === 0 ? -2 : 2}deg)`,
+              width: isMobile ? "80px" : undefined,
+              height: isMobile ? "80px" : undefined,
+              border: "2px solid #000",
+              borderRadius: "2px",
+              filter: "contrast(1.1) saturate(1.2)",
             }}
-          >
-            <img
-              src={member.photo}
-              alt={member.name}
-              loading="lazy"
-              decoding="async"
-              className="w-20 h-20 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-52 lg:h-52 object-cover"
-              style={{
-                border: "2px solid #000",
-                borderRadius: "2px",
-                filter: "contrast(1.1) saturate(1.2)",
-                contentVisibility: "auto",
-              }}
-            />
-            <div
-              className="text-center mt-1 sm:mt-2 hero-title text-black"
-              style={{ fontSize: "clamp(0.5rem, 1.2vw, 0.8rem)" }}
-            >
-              ★ MEMBER #{index + 1} ★
-            </div>
-          </div>
-        </div>
-
-        {/* Right Page — Info */}
-        <div className="w-full sm:w-1/2 h-[60%] sm:h-full flex flex-col justify-center p-4 sm:p-6 md:p-8 relative">
-          {/* Page number */}
-          <div
-            className="absolute top-2 right-3 sm:top-3 sm:right-4 hero-title text-black/30"
-            style={{ fontSize: "0.6rem" }}
-          >
-            PAGE {index * 2 + 2}
-          </div>
-
-          {/* Name banner */}
-          <div
-            className="mb-1 sm:mb-2 inline-block px-2 sm:px-3 py-1 self-start"
-            style={{
-              background: "#000",
-              color: "#fff",
-              transform: "skewX(-3deg)",
-              boxShadow: "3px 3px 0px rgba(218,16,12,0.8)",
-            }}
-          >
-            <h2
-              className="hero-title"
-              style={{
-                fontSize: "clamp(0.9rem, 3vw, 2rem)",
-                transform: "skewX(3deg)",
-              }}
-            >
-              {member.name}
-            </h2>
-          </div>
-
-          {/* Role badge */}
-          <div
-            className="mb-2 sm:mb-4 inline-block self-start px-2 sm:px-3 py-1"
-            style={{
-              border: "2px solid #DA100C",
-              borderRadius: "4px",
-              color: "#DA100C",
-              fontFamily: "'Dela Gothic One', sans-serif",
-              fontSize: "clamp(0.6rem, 1.3vw, 0.9rem)",
-              boxShadow: "2px 2px 0px rgba(0,0,0,0.2)",
-            }}
-          >
-            {member.role}
-          </div>
-
-          {/* Bio */}
-          <p
-            className="comic-sans text-black/80 mb-3 sm:mb-6 leading-relaxed"
-            style={{ fontSize: "clamp(0.7rem, 1.5vw, 1rem)" }}
-          >
-            "{member.bio}"
-          </p>
-
-          {/* Action line */}
-          <div
-            className="h-[3px] w-12 sm:w-16 mb-3 sm:mb-4"
-            style={{
-              background: "linear-gradient(90deg, #DA100C, #000)",
-            }}
+            className={
+              isMobile
+                ? ""
+                : "w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 lg:w-52 lg:h-52 object-cover"
+            }
           />
-
-          {/* Links */}
-          <div className="flex flex-wrap gap-1.5 sm:gap-2">
-            {member.links.map((link) => (
-              <a
-                key={link.label}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="comic-sans text-white hover:scale-105 transition-transform"
-                style={{
-                  background: "#000",
-                  border: "2px solid #000",
-                  borderRadius: "4px",
-                  padding: "3px 8px",
-                  fontSize: "clamp(0.55rem, 1.1vw, 0.8rem)",
-                  boxShadow: "2px 2px 0px rgba(218,16,12,0.6)",
-                  textDecoration: "none",
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-
-          {/* Corner starburst */}
-          <svg
-            className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 opacity-10"
-            width="40"
-            height="40"
-            viewBox="0 0 100 100"
+          <div
+            className="text-center mt-1 hero-title text-black"
+            style={{
+              fontSize: isMobile
+                ? "0.45rem"
+                : "clamp(0.5rem, 1.2vw, 0.8rem)",
+            }}
           >
-            <polygon
-              points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
-              fill="#DA100C"
-            />
-          </svg>
+            ★ MEMBER #{index + 1} ★
+          </div>
         </div>
+        {!isMobile && (
+          <div
+            className="hidden sm:block absolute -bottom-10 -right-6 bg-white px-3 py-2"
+            style={{
+              border: "2px solid #000",
+              borderRadius: "12px 12px 12px 2px",
+              boxShadow: "2px 2px 0px #000",
+              fontSize: "clamp(0.5rem, 1vw, 0.75rem)",
+              fontFamily: "'Comic Relief', sans-serif",
+              maxWidth: "110px",
+            }}
+          >
+            That's me! 👆
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-/* ─── Main Team Page ─── */
-export default function Team() {
-  const [currentPage, setCurrentPage] = useState(0);
-  const [direction, setDirection] = useState<"enter" | "exit" | "idle">(
-    "enter"
-  );
-  const [showFooter, setShowFooter] = useState(false);
-  // Track which cards should be rendered (active + previous for exit animation)
-  const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set([0]));
-  const isScrolling = useRef(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
-  const totalPages = TEAM_MEMBERS.length;
-
-  // Memoize speed lines JSX
-  const speedLinesJSX = useMemo(
-    () =>
-      SPEED_LINES.map((line, i) => (
+/* ─── Details Page Content ─── */
+function DetailsContent({
+  member,
+  index,
+  isMobile,
+}: {
+  member: TeamMember;
+  index: number;
+  isMobile: boolean;
+}) {
+  return (
+    <div
+      className="w-full h-full flex flex-col justify-center relative"
+      style={{ padding: isMobile ? "10px 16px" : "16px 24px 16px 40px" }}
+    >
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)",
+          backgroundSize: "8px 8px",
+        }}
+      />
+      <div
+        className="absolute hero-title text-black/25"
+        style={{
+          fontSize: "0.55rem",
+          top: isMobile ? 8 : 12,
+          right: isMobile ? 12 : 16,
+        }}
+      >
+        PAGE {index * 2 + 2}
+      </div>
+      {!isMobile && (
         <div
-          key={i}
-          className="absolute pointer-events-none"
+          className="absolute top-0 left-0 bottom-0 w-8 pointer-events-none"
           style={{
-            top: line.top,
-            left: line.left,
-            width: line.width,
-            height: line.height,
             background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent)",
-            animation: `speed-lines-pulse ${line.animDuration} ease-in-out ${line.animDelay} infinite`,
-            willChange: "opacity",
+              "linear-gradient(90deg, rgba(0,0,0,0.06), transparent)",
           }}
         />
-      )),
-    []
+      )}
+      {isMobile && (
+        <div
+          className="absolute top-0 left-0 right-0 h-4 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(0,0,0,0.06), transparent)",
+          }}
+        />
+      )}
+      <div className="relative z-10">
+        <div
+          className="mb-1 inline-block self-start"
+          style={{
+            background: "#000",
+            color: "#fff",
+            transform: "skewX(-3deg)",
+            boxShadow: "3px 3px 0px rgba(218,16,12,0.8)",
+            padding: isMobile ? "3px 10px" : "6px 16px",
+          }}
+        >
+          <h2
+            className="hero-title"
+            style={{
+              fontSize: isMobile
+                ? "0.95rem"
+                : "clamp(1rem, 3.5vw, 2.2rem)",
+              transform: "skewX(3deg)",
+            }}
+          >
+            {member.name}
+          </h2>
+        </div>
+        <div
+          className="mb-2 inline-block px-2 py-0.5"
+          style={{
+            border: "2px solid #DA100C",
+            borderRadius: "4px",
+            color: "#DA100C",
+            fontFamily: "'Dela Gothic One', sans-serif",
+            fontSize: isMobile
+              ? "0.6rem"
+              : "clamp(0.65rem, 1.4vw, 1rem)",
+            boxShadow: "2px 2px 0px rgba(0,0,0,0.2)",
+          }}
+        >
+          {member.role}
+        </div>
+        <p
+          className="comic-sans text-black/80 leading-relaxed"
+          style={{
+            fontSize: isMobile
+              ? "0.7rem"
+              : "clamp(0.75rem, 1.6vw, 1.05rem)",
+            marginBottom: isMobile ? "8px" : "20px",
+            maxWidth: "400px",
+          }}
+        >
+          "{member.bio}"
+        </p>
+        <div
+          style={{
+            height: 3,
+            width: isMobile ? 40 : 60,
+            background: "linear-gradient(90deg, #DA100C, #000)",
+            marginBottom: isMobile ? 8 : 16,
+          }}
+        />
+        <div className="flex flex-wrap gap-1.5">
+          {member.links.map((link) => (
+            <a
+              key={link.label}
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="comic-sans text-white hover:scale-105 transition-transform"
+              style={{
+                background: "#000",
+                border: "2px solid #000",
+                borderRadius: "4px",
+                padding: isMobile ? "2px 8px" : "4px 10px",
+                fontSize: isMobile
+                  ? "0.55rem"
+                  : "clamp(0.6rem, 1.2vw, 0.85rem)",
+                boxShadow: "2px 2px 0px rgba(218,16,12,0.6)",
+                textDecoration: "none",
+              }}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
+      {!isMobile && (
+        <svg
+          className="absolute bottom-4 right-4 opacity-10"
+          width="50"
+          height="50"
+          viewBox="0 0 100 100"
+        >
+          <polygon
+            points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
+            fill="#DA100C"
+          />
+        </svg>
+      )}
+    </div>
+  );
+}
+
+const pageBase: React.CSSProperties = {
+  background: "#FFFEF2",
+  backgroundImage:
+    "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px)",
+};
+
+/* ─── Opaque blocker that sits behind content on each face ─── */
+const pageBlockerStyle: React.CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  background: "#FFFEF2",
+  zIndex: 0,
+};
+
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth < breakpoint : false
+  );
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+/* ─── Main ─── */
+export default function Team() {
+  const [displayPage, setDisplayPage] = useState(0);
+  const [showFooter, setShowFooter] = useState(false);
+  const isMobile = useIsMobile();
+
+  const currentMemberRef = useRef(0);
+  const isAnimating = useRef(false);
+  const showFooterRef = useRef(false);
+  const isMobileRef = useRef(isMobile);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const bookRef = useRef<HTMLDivElement>(null);
+  const sheetRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const flippedState = useRef<boolean[]>(
+    new Array(TOTAL_SHEETS).fill(false)
   );
 
-  // Update visible cards when currentPage changes
   useEffect(() => {
-    setVisibleCards((prev) => {
-      const next = new Set(prev);
-      next.add(currentPage);
-      return next;
+    isMobileRef.current = isMobile;
+  }, [isMobile]);
+
+  const setSheetRef = (index: number) => (el: HTMLDivElement | null) => {
+    sheetRefs.current[index] = el;
+  };
+
+  const rebuildZIndices = () => {
+    sheetRefs.current.forEach((el, i) => {
+      if (!el) return;
+      if (flippedState.current[i]) {
+        gsap.set(el, { zIndex: i + 1 });
+      } else {
+        gsap.set(el, { zIndex: TOTAL_SHEETS - i });
+      }
     });
+  };
 
-    // Clean up old cards after exit animation completes
+  useEffect(() => {
     const timer = setTimeout(() => {
-      setVisibleCards(new Set([currentPage]));
-    }, 500);
-
+      rebuildZIndices();
+      sheetRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, {
+          rotateY: flippedState.current[i] ? -180 : 0,
+        });
+      });
+    }, 50);
     return () => clearTimeout(timer);
-  }, [currentPage]);
+  }, [isMobile]);
 
-  // Animate footer in/out
+  useEffect(() => {
+    if (bookRef.current) {
+      gsap.fromTo(
+        bookRef.current,
+        { scale: 0.85, opacity: 0 },
+        {
+          scale: 1,
+          opacity: 1,
+          duration: 1,
+          ease: "power2.out",
+          delay: 0.3,
+        }
+      );
+    }
+    rebuildZIndices();
+  }, []);
+
   useEffect(() => {
     if (!footerRef.current) return;
     if (showFooter) {
@@ -339,88 +435,155 @@ export default function Team() {
     }
   }, [showFooter]);
 
-  // Unified navigation handler
-  const navigate = useCallback(
-    (deltaDirection: 1 | -1) => {
-      if (isScrolling.current) return;
+  const flipForwardRef = useRef(() => { });
+  const flipBackwardRef = useRef(() => { });
 
-      const isDown = deltaDirection > 0;
-      const isUp = deltaDirection < 0;
+  flipForwardRef.current = () => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    if (cur >= TOTAL_MEMBERS - 1) {
+      if (showFooterRef.current) return;
+      isAnimating.current = true;
+      showFooterRef.current = true;
+      setShowFooter(true);
+      setTimeout(() => {
+        isAnimating.current = false;
+      }, 700);
+      return;
+    }
+    const sheetEl = sheetRefs.current[cur];
+    if (!sheetEl) return;
+    isAnimating.current = true;
+    flippedState.current[cur] = true;
+    gsap.set(sheetEl, { zIndex: TOTAL_SHEETS + 10 });
+    gsap.to(sheetEl, {
+      rotateY: -180,
+      duration: 0.8,
+      ease: "power2.inOut",
+      onComplete: () => {
+        currentMemberRef.current = cur + 1;
+        rebuildZIndices();
+        setDisplayPage(cur + 1);
+        isAnimating.current = false;
+      },
+    });
+  };
 
-      // Footer logic
-      if (showFooter && isUp) {
-        isScrolling.current = true;
-        setShowFooter(false);
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 500);
-        return;
+  flipBackwardRef.current = () => {
+    if (isAnimating.current) return;
+    if (showFooterRef.current) {
+      isAnimating.current = true;
+      showFooterRef.current = false;
+      setShowFooter(false);
+      setTimeout(() => {
+        isAnimating.current = false;
+      }, 700);
+      return;
+    }
+    const cur = currentMemberRef.current;
+    if (cur <= 0) return;
+    const sheetIndex = cur - 1;
+    const sheetEl = sheetRefs.current[sheetIndex];
+    if (!sheetEl) return;
+    isAnimating.current = true;
+    flippedState.current[sheetIndex] = false;
+    gsap.set(sheetEl, { zIndex: TOTAL_SHEETS + 10 });
+    gsap.to(sheetEl, {
+      rotateY: 0,
+      duration: 0.8,
+      ease: "power2.inOut",
+      onComplete: () => {
+        currentMemberRef.current = cur - 1;
+        rebuildZIndices();
+        setDisplayPage(cur - 1);
+        isAnimating.current = false;
+      },
+    });
+  };
+
+  const jumpToPage = (target: number) => {
+    if (isAnimating.current) return;
+    if (target === currentMemberRef.current) return;
+    isAnimating.current = true;
+    if (showFooterRef.current) {
+      showFooterRef.current = false;
+      setShowFooter(false);
+    }
+    sheetRefs.current.forEach((el, i) => {
+      if (!el) return;
+      if (i < target) {
+        gsap.set(el, { rotateY: -180 });
+        flippedState.current[i] = true;
+      } else {
+        gsap.set(el, { rotateY: 0 });
+        flippedState.current[i] = false;
       }
-      if (showFooter && isDown) return;
-      if (currentPage === 0 && isUp) return;
-      if (currentPage === totalPages - 1 && isDown) {
-        isScrolling.current = true;
-        setShowFooter(true);
-        setTimeout(() => {
-          isScrolling.current = false;
-        }, 500);
-        return;
-      }
+    });
+    rebuildZIndices();
+    currentMemberRef.current = target;
+    setDisplayPage(target);
+    setTimeout(() => {
+      isAnimating.current = false;
+    }, 100);
+  };
 
-      isScrolling.current = true;
-      setDirection("exit");
-
-      // Use requestAnimationFrame for smoother transition timing
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          setCurrentPage((prev) => {
-            if (isDown) return Math.min(prev + 1, totalPages - 1);
-            return Math.max(prev - 1, 0);
-          });
-          setDirection("enter");
-
-          setTimeout(() => {
-            isScrolling.current = false;
-          }, 400);
-        }, 250);
-      });
-    },
-    [totalPages, currentPage, showFooter]
-  );
-
-  // Scroll / wheel based page turn
+  // Wheel
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
+      if (isAnimating.current) return;
       if (Math.abs(e.deltaY) < 30) return;
-      navigate(e.deltaY > 0 ? 1 : -1);
+      if (e.deltaY > 0) flipForwardRef.current();
+      else flipBackwardRef.current();
     };
-
     const el = containerRef.current;
-    if (el) {
-      el.addEventListener("wheel", handleWheel, { passive: false });
-    }
+    if (el) el.addEventListener("wheel", handleWheel, { passive: false });
     return () => {
       if (el) el.removeEventListener("wheel", handleWheel);
     };
-  }, [navigate]);
+  }, []);
 
-  // Touch support
+  // Touch
   useEffect(() => {
-    let touchStartY = 0;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
 
     const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      tracking = true;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
+      if (tracking) {
+        e.preventDefault();
+      }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      const deltaY = touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(deltaY) < 50) return;
-      navigate(deltaY > 0 ? 1 : -1);
+      if (!tracking) return;
+      tracking = false;
+      if (isAnimating.current) return;
+
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      const deltaX = startX - endX;
+      const deltaY = startY - endY;
+      const absDX = Math.abs(deltaX);
+      const absDY = Math.abs(deltaY);
+
+      if (absDX < 30 && absDY < 30) return;
+
+      let goForward: boolean;
+      if (absDY >= absDX) {
+        goForward = deltaY > 0;
+      } else {
+        goForward = deltaX > 0;
+      }
+
+      if (goForward) flipForwardRef.current();
+      else flipBackwardRef.current();
     };
 
     const el = containerRef.current;
@@ -436,20 +599,125 @@ export default function Team() {
         el.removeEventListener("touchend", handleTouchEnd);
       }
     };
-  }, [navigate]);
+  }, []);
 
-  // Keyboard navigation
+  // Keyboard
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      const isDown = e.key === "ArrowDown" || e.key === "ArrowRight";
-      const isUp = e.key === "ArrowUp" || e.key === "ArrowLeft";
-      if (!isDown && !isUp) return;
-      navigate(isDown ? 1 : -1);
+      if (isAnimating.current) return;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight")
+        flipForwardRef.current();
+      else if (e.key === "ArrowUp" || e.key === "ArrowLeft")
+        flipBackwardRef.current();
     };
-
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [navigate]);
+  }, []);
+
+  /* ─── Sheet renderer — each face is a self-contained opaque layer ─── */
+  const renderSheets = () =>
+    Array.from({ length: TOTAL_SHEETS }, (_, i) => (
+      <div
+        key={`sheet-${i}`}
+        ref={setSheetRef(i)}
+        className="absolute right-0 top-0 w-1/2 h-full"
+        style={{
+          transformOrigin: "left center",
+          transformStyle: "preserve-3d",
+          willChange: "transform",
+        }}
+      >
+        {/* ── FRONT FACE: Details[i] ── */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            MozBackfaceVisibility: "hidden" as any,
+            transform: "rotateY(0deg) translateZ(1px)",
+            overflow: "hidden",
+            ...pageBase,
+            border: isMobile ? "3px solid #000" : "4px solid #000",
+            borderLeft: isMobile ? "1.5px solid #000" : "2px solid #000",
+            borderRadius: isMobile ? "0 6px 6px 0" : "0 8px 8px 0",
+            boxShadow: isMobile
+              ? "4px 4px 0px rgba(0,0,0,0.4)"
+              : "6px 6px 0px rgba(0,0,0,0.4)",
+          }}
+        >
+          {/* Solid opaque blocker behind content */}
+          <div style={pageBlockerStyle} />
+          <div className="relative z-10 w-full h-full">
+            {isMobile ? (
+              <div
+                className="w-full h-full"
+                style={{
+                  transform: "rotate(-90deg)",
+                  transformOrigin: "center center",
+                }}
+              >
+                <DetailsContent
+                  member={TEAM_MEMBERS[i]}
+                  index={i}
+                  isMobile
+                />
+              </div>
+            ) : (
+              <DetailsContent
+                member={TEAM_MEMBERS[i]}
+                index={i}
+                isMobile={false}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* ── BACK FACE: Photo[i+1] ── */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
+            MozBackfaceVisibility: "hidden" as any,
+            transform: "rotateY(180deg) translateZ(1px)",
+            overflow: "hidden",
+            ...pageBase,
+            border: isMobile ? "3px solid #000" : "4px solid #000",
+            borderRight: isMobile ? "1.5px solid #000" : "2px solid #000",
+            borderRadius: isMobile ? "6px 0 0 6px" : "8px 0 0 8px",
+            boxShadow: isMobile
+              ? "-4px 4px 0px rgba(0,0,0,0.4)"
+              : "-6px 6px 0px rgba(0,0,0,0.4)",
+          }}
+        >
+          {/* Solid opaque blocker behind content */}
+          <div style={pageBlockerStyle} />
+          <div className="relative z-10 w-full h-full">
+            {isMobile ? (
+              <div
+                className="w-full h-full"
+                style={{
+                  transform: "rotate(-90deg)",
+                  transformOrigin: "center center",
+                }}
+              >
+                <PhotoContent
+                  member={TEAM_MEMBERS[i + 1]}
+                  index={i + 1}
+                  isMobile
+                />
+              </div>
+            ) : (
+              <PhotoContent
+                member={TEAM_MEMBERS[i + 1]}
+                index={i + 1}
+                isMobile={false}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    ));
 
   return (
     <>
@@ -459,16 +727,20 @@ export default function Team() {
         className="fixed inset-0 overflow-hidden"
         style={{
           background: "#0a0a0a",
-          overscrollBehavior: "none",
           touchAction: "none",
+          overscrollBehavior: "none",
         }}
       >
-        {/* Background layers */}
-        <div className="absolute inset-0 z-0" style={{ contain: "strict" }}>
-          {/* Halftone dot background */}
-          <div className="comic-halftone absolute inset-0" />
-
-          {/* Radial vignette */}
+        {/* Background */}
+        <div className="absolute inset-0 z-0">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px)",
+              backgroundSize: "20px 20px",
+            }}
+          />
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -476,20 +748,29 @@ export default function Team() {
                 "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%)",
             }}
           />
-
-          {/* Speed lines - memoized */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {speedLinesJSX}
+            {Array.from({ length: 12 }, (_, i) => (
+              <div
+                key={i}
+                className="absolute pointer-events-none"
+                style={{
+                  top: `${8 + (i / 12) * 84}%`,
+                  left: `${5 + ((i * 3) % 15)}%`,
+                  width: `${35 + ((i * 7) % 45)}%`,
+                  height: i % 2 === 0 ? 2 : 1,
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)",
+                  animation: `speed-lines-pulse ${2.5 + (i % 3)}s ease-in-out ${(i * 0.4) % 3}s infinite`,
+                }}
+              />
+            ))}
           </div>
-
-          {/* CSS floating dots (replaces Three.js Canvas) */}
-          <FloatingDots />
         </div>
 
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-4 sm:pt-6">
+        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-3 sm:pt-6">
           <div
-            className="px-4 sm:px-6 py-1.5 sm:py-2 relative"
+            className="px-3 sm:px-6 py-1 sm:py-2 relative"
             style={{
               background: "#DA100C",
               border: "3px solid #000",
@@ -500,7 +781,9 @@ export default function Team() {
             <h1
               className="hero-title text-white"
               style={{
-                fontSize: "clamp(0.9rem, 3vw, 2rem)",
+                fontSize: isMobile
+                  ? "0.85rem"
+                  : "clamp(0.9rem, 3vw, 2rem)",
                 transform: "skewX(3deg)",
               }}
             >
@@ -509,38 +792,273 @@ export default function Team() {
           </div>
         </div>
 
-        {/* Page cards — only render visible cards */}
-        <div className="absolute inset-0 z-20">
-          {TEAM_MEMBERS.map(
-            (member, index) =>
-              visibleCards.has(index) && (
-                <PageCard
-                  key={member.name}
-                  member={member}
-                  index={index}
-                  isActive={index === currentPage}
-                  direction={index === currentPage ? direction : "exit"}
-                />
-              )
-          )}
+        {/* ─── BOOK ─── */}
+        <div className="absolute inset-0 z-20 flex items-center justify-center">
+          <div
+            ref={bookRef}
+            style={
+              isMobile
+                ? {
+                  width: "85vh",
+                  height: "88vw",
+                  maxWidth: "600px",
+                  maxHeight: "380px",
+                  transform: "rotate(90deg)",
+                  perspective: "2500px",
+                  perspectiveOrigin: "50% 50%",
+                  position: "relative",
+                }
+                : {
+                  width: "92vw",
+                  maxWidth: "1000px",
+                  height: "70vh",
+                  maxHeight: "580px",
+                  perspective: "2500px",
+                  perspectiveOrigin: "50% 50%",
+                  position: "relative",
+                }
+            }
+          >
+            <div
+              className="relative w-full h-full"
+              style={{ transformStyle: "preserve-3d" }}
+            >
+              {/* Static left base: Photo[0] */}
+              <div
+                className="absolute left-0 top-0 w-1/2 h-full overflow-hidden"
+                style={{
+                  ...pageBase,
+                  border: isMobile ? "3px solid #000" : "4px solid #000",
+                  borderRight: isMobile
+                    ? "1.5px solid #000"
+                    : "2px solid #000",
+                  borderRadius: isMobile
+                    ? "6px 0 0 6px"
+                    : "8px 0 0 8px",
+                  boxShadow: isMobile
+                    ? "-4px 4px 0px rgba(0,0,0,0.4)"
+                    : "-6px 6px 0px rgba(0,0,0,0.4)",
+                  zIndex: 0,
+                }}
+              >
+                <div style={pageBlockerStyle} />
+                <div className="relative z-10 w-full h-full">
+                  {isMobile ? (
+                    <div
+                      className="w-full h-full"
+                      style={{
+                        transform: "rotate(-90deg)",
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      <PhotoContent
+                        member={TEAM_MEMBERS[0]}
+                        index={0}
+                        isMobile
+                      />
+                    </div>
+                  ) : (
+                    <PhotoContent
+                      member={TEAM_MEMBERS[0]}
+                      index={0}
+                      isMobile={false}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Static right base: Details[last] */}
+              <div
+                className="absolute right-0 top-0 w-1/2 h-full overflow-hidden"
+                style={{
+                  ...pageBase,
+                  border: isMobile ? "3px solid #000" : "4px solid #000",
+                  borderLeft: isMobile
+                    ? "1.5px solid #000"
+                    : "2px solid #000",
+                  borderRadius: isMobile
+                    ? "0 6px 6px 0"
+                    : "0 8px 8px 0",
+                  boxShadow: isMobile
+                    ? "4px 4px 0px rgba(0,0,0,0.4)"
+                    : "6px 6px 0px rgba(0,0,0,0.4)",
+                  zIndex: 0,
+                }}
+              >
+                <div style={pageBlockerStyle} />
+                <div className="relative z-10 w-full h-full">
+                  {isMobile ? (
+                    <div
+                      className="w-full h-full"
+                      style={{
+                        transform: "rotate(-90deg)",
+                        transformOrigin: "center center",
+                      }}
+                    >
+                      <DetailsContent
+                        member={TEAM_MEMBERS[TOTAL_MEMBERS - 1]}
+                        index={TOTAL_MEMBERS - 1}
+                        isMobile
+                      />
+                    </div>
+                  ) : (
+                    <DetailsContent
+                      member={TEAM_MEMBERS[TOTAL_MEMBERS - 1]}
+                      index={TOTAL_MEMBERS - 1}
+                      isMobile={false}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Flippable sheets */}
+              {renderSheets()}
+
+              {/* Book spine */}
+              <div
+                className="absolute top-1 bottom-1 left-1/2 -translate-x-1/2 pointer-events-none"
+                style={{
+                  width: isMobile ? 8 : 12,
+                  background:
+                    "linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,0,0,0.1), rgba(0,0,0,0.4))",
+                  borderRadius: "2px",
+                  zIndex: TOTAL_SHEETS + 20,
+                }}
+              />
+            </div>
+          </div>
         </div>
 
+        {/* Page dots */}
+        <div
+          className="absolute z-30 flex gap-1.5 sm:gap-2"
+          style={
+            isMobile
+              ? {
+                bottom: 16,
+                left: "50%",
+                transform: "translateX(-50%)",
+                flexDirection: "row",
+                alignItems: "center",
+              }
+              : {
+                right: 24,
+                top: "50%",
+                transform: "translateY(-50%)",
+                flexDirection: "column",
+                alignItems: "center",
+              }
+          }
+        >
+          {TEAM_MEMBERS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => jumpToPage(i)}
+              className="transition-all duration-300 cursor-pointer"
+              style={{
+                width: displayPage === i ? 14 : 8,
+                height: displayPage === i ? 14 : 8,
+                borderRadius: "2px",
+                background:
+                  displayPage === i
+                    ? "#DA100C"
+                    : "rgba(255,255,255,0.3)",
+                border: `2px solid ${displayPage === i ? "#000" : "rgba(255,255,255,0.2)"}`,
+                boxShadow:
+                  displayPage === i ? "2px 2px 0px #000" : "none",
+                transform: `rotate(${displayPage === i ? 45 : 0}deg)`,
+              }}
+              title={`Member ${i + 1}`}
+            />
+          ))}
+          <div
+            style={{
+              width: isMobile ? 8 : 1,
+              height: isMobile ? 1 : 8,
+              background: "rgba(255,255,255,0.2)",
+            }}
+          />
+          <button
+            onClick={() => {
+              if (isAnimating.current) return;
+              showFooterRef.current = true;
+              setShowFooter(true);
+            }}
+            className="transition-all duration-300 cursor-pointer"
+            style={{
+              width: showFooter ? 14 : 8,
+              height: showFooter ? 14 : 8,
+              borderRadius: "50%",
+              background: showFooter
+                ? "#fff"
+                : "rgba(255,255,255,0.2)",
+              border: `2px solid ${showFooter ? "#000" : "rgba(255,255,255,0.15)"}`,
+              boxShadow: showFooter ? "2px 2px 0px #000" : "none",
+            }}
+            title="Footer"
+          />
+        </div>
+
+        {/* Scroll hint desktop */}
+        {!showFooter && !isMobile && (
+          <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-1">
+            <div
+              className="w-6 h-10 rounded-full flex items-start justify-center pt-2"
+              style={{ border: "2px solid rgba(255,255,255,0.3)" }}
+            >
+              <div
+                className="w-1.5 h-3 rounded-full bg-white/60"
+                style={{
+                  animation:
+                    "scroll-dot-bounce 1.5s ease-in-out infinite",
+                }}
+              />
+            </div>
+            <span
+              className="comic-sans text-white/40"
+              style={{ fontSize: "0.6rem" }}
+            >
+              SCROLL TO TURN PAGE
+            </span>
+          </div>
+        )}
+
+        {/* Scroll hint mobile */}
+        {!showFooter && isMobile && (
+          <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+            <span
+              className="comic-sans text-white/40"
+              style={{ fontSize: "0.55rem" }}
+            >
+              ↕ SWIPE TO TURN
+            </span>
+          </div>
+        )}
+
         {/* Page counter */}
-        <div className="absolute bottom-20 right-3 sm:right-6 z-30">
+        <div
+          className="absolute z-30"
+          style={
+            isMobile
+              ? { bottom: 40, right: 16 }
+              : { bottom: 80, right: 24 }
+          }
+        >
           <span
             className="hero-title text-white/60"
-            style={{ fontSize: "clamp(0.6rem, 1.3vw, 0.9rem)" }}
+            style={{
+              fontSize: isMobile
+                ? "0.65rem"
+                : "clamp(0.6rem, 1.3vw, 0.9rem)",
+            }}
           >
-            {String(currentPage + 1).padStart(2, "0")}{" "}
+            {String(displayPage + 1).padStart(2, "0")}{" "}
             <span className="text-white/30">/</span>{" "}
             <span className="text-white/30">
-              {String(totalPages).padStart(2, "0")}
+              {String(TOTAL_MEMBERS).padStart(2, "0")}
             </span>
           </span>
         </div>
-
-        {/* Footer */}
-        <Footer ref={footerRef} />
       </div>
       <Navbar />
     </>

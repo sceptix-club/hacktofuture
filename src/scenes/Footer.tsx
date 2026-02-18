@@ -51,7 +51,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
             className="rounded-xl overflow-hidden border border-white/10 flex items-center justify-center"
             style={{ minHeight: 200 }}
           >
-            <Barcode height={40} />
+            <Barcode height={100} />
           </div>
 
           <div className="flex flex-col gap-4">
