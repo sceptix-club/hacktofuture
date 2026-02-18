@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Canvas } from "@react-three/fiber";
 import Experience from "./Experience";
@@ -7,12 +7,36 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import TextContent from "./scenes/TextContent";
 import Navbar from "./components/ui/Navbar";
+import Loader from "./components/Loader";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Team from "./pages/Team";
-import { Environment, Stats } from "@react-three/drei";
+import { Environment, Stats, useProgress } from "@react-three/drei";
 import Themes from "./pages/Themes";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+function LoaderOverlay() {
+  const { progress, active } = useProgress();
+  const [visible, setVisible] = useState(true);
+  const max = useRef(0);
+
+  if (progress > max.current) max.current = progress;
+
+  useEffect(() => {
+    if (!active) {
+      const t = setTimeout(() => setVisible(false), 800);
+      return () => clearTimeout(t);
+    }
+  }, [active]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
+      <Loader progress={max.current} />
+    </div>
+  );
+}
 
 function HomePage() {
   const SCENES = 4;
@@ -20,6 +44,15 @@ function HomePage() {
   const smootherRef = useRef<ScrollSmoother | null>(null);
   const textTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const [currentScene, setCurrentScene] = useState<number>(0);
+  const { active } = useProgress();
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!active) {
+      const t = setTimeout(() => setLoaded(true), 600);
+      return () => clearTimeout(t);
+    }
+  }, [active]);
 
   useEffect(() => {
     // Small delay to ensure DOM is ready
@@ -64,25 +97,32 @@ function HomePage() {
 
   return (
     <>
-      <Navbar />
+      <LoaderOverlay />
+      {loaded && <Navbar />}
       <div id="smooth-wrapper">
         <div id="smooth-content" style={{ height: `${SCENES * 400}dvh` }}></div>
       </div>
+
       <div className="fixed inset-0 z-10">
         <Canvas
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
           shadows
         >
           <Stats />
-          <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
-          <Environment files="/textures/background.jpg" background blur={0.5} />
+          <Suspense fallback={null}>
+            <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
+            <Environment files="/textures/background.jpg" background blur={0.5} />
+          </Suspense>
         </Canvas>
       </div>
-      <TextContent
-        getTimelineRef={(tl) => (textTimelineRef.current = tl)}
-        currentScene={currentScene}
-        scenes={SCENES}
-      />
+
+      {loaded && (
+        <TextContent
+          getTimelineRef={(tl) => (textTimelineRef.current = tl)}
+          currentScene={currentScene}
+          scenes={SCENES}
+        />
+      )}
     </>
   );
 }
