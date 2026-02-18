@@ -53,11 +53,12 @@ function PhotoContent({
           }}
         >
           <img
-            src={member.photo}
+            src={member.photo ?? undefined}
             alt={member.name}
             style={{
-              width: isMobile ? "80px" : undefined,
-              height: isMobile ? "80px" : undefined,
+              width: isMobile ? "100px" : undefined,
+              height: isMobile ? "100px" : undefined,
+              objectFit: "cover",
               border: "2px solid #000",
               borderRadius: "2px",
               filter: "contrast(1.1) saturate(1.2)",
@@ -94,7 +95,7 @@ function DetailsContent({
 }) {
   return (
     <div
-      className="w-full h-full flex flex-col justify-center relative"
+      className="w-full h-full flex flex-col justify-center items-center relative"
       style={{ padding: isMobile ? "10px 16px" : "16px 24px 16px 40px" }}
     >
       <div
@@ -132,10 +133,13 @@ function DetailsContent({
           }}
         />
       )}
-      <div className="relative z-10">
+      <div
+        className="relative z-10 flex flex-col items-center text-center"
+        style={{ maxWidth: 400 }}
+      >
         {/* Name - full width banner */}
         <div
-          className="mb-1 inline-block self-start"
+          className="mb-1 inline-block"
           style={{
             background: "#000",
             color: "#fff",
@@ -145,7 +149,7 @@ function DetailsContent({
           }}
         >
           <h2
-            className="hero-title"
+            className="hero-title text-center"
             style={{
               fontSize: isMobile ? "0.95rem" : "clamp(1rem, 3.5vw, 2.2rem)",
               transform: "skewX(3deg)",
@@ -157,7 +161,7 @@ function DetailsContent({
 
         {/* Role & Links - side by side on mobile */}
         {isMobile ? (
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
+          <div className="flex items-center justify-center mt-2 gap-2 mb-2 flex-wrap">
             <div
               className="inline-block px-2 py-0.5"
               style={{
@@ -171,7 +175,7 @@ function DetailsContent({
             >
               {member.role}
             </div>
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-wrap justify-center gap-1.5">
               {member.links.map((link) => (
                 <a
                   key={link.label}
@@ -196,7 +200,7 @@ function DetailsContent({
           </div>
         ) : (
           <div
-            className="mb-2 inline-block px-2 py-0.5"
+            className="mb-2 mt-2 inline-block px-2 py-0.5"
             style={{
               border: "2px solid #DA100C",
               borderRadius: "4px",
@@ -213,7 +217,7 @@ function DetailsContent({
         {/* Quote */}
         {!isMobile && (
           <p
-            className="comic-sans text-black/80 leading-relaxed"
+            className="comic-sans text-black/80 leading-relaxed text-center"
             style={{
               fontSize: isMobile ? "0.7rem" : "clamp(0.75rem, 1.6vw, 1.05rem)",
               marginBottom: isMobile ? "8px" : "20px",
@@ -234,7 +238,7 @@ function DetailsContent({
 
         {/* Links - only on desktop (already rendered above for mobile) */}
         {!isMobile && (
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap justify-center gap-1.5">
             {member.links.map((link) => (
               <a
                 key={link.label}
