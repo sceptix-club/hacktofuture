@@ -11,7 +11,7 @@ const Navbar = ({ className }: NavbarProps) => {
   const isTeamPage = location.pathname === "/team";
 
   const navItems = [
-    { icon: Info, href: "#about", label: "About", route: null },
+    { icon: Info, href: "#about", label: "About", route: "/about" },
     { icon: Users, href: "#team", label: "Team", route: "/team" },
     { icon: Lightbulb, href: "#themes", label: "Themes", route: "/themes" },
     { icon: Heart, href: "#sponsors", label: "Sponsors", route: null },
