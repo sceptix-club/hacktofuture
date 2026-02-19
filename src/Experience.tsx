@@ -91,14 +91,13 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     tl.to(cam2, {
       y: -28,
       z: 1,
-      duration: 0.55,
+      duration: 0.35,
       ease: "power1.inOut",
       onUpdate: () => {
         camera.position.set(cam2.x, cam2.y, cam2.z);
         camera.lookAt(0, -30, 0);
       },
     });
-    // freeze at end before next scene
     tl.to(cam2, {
       duration: 0.15,
       onUpdate: () => {
@@ -311,7 +310,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-height={2048}
         />
 
-        <Comic />
+        <Comic progress={progress} />
       </group>
 
       {/* Scene 3: Blank space for Sponsors */}
