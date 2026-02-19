@@ -1,15 +1,11 @@
+import barcodeImg from "../assets/barcode.png";
+
 type BarcodeProps = {
   width?: number;
   height?: number;
 };
 
-export default function Barcode({ width = 240, height = 80 }: BarcodeProps) {
-  const bars = Array.from({ length: 48 }, (_,) => ({
-    width: Math.random() > 0.7 ? 4 : 2,
-    height: height,
-    marginRight: Math.random() > 0.8 ? 2 : 1,
-  }));
-
+export default function Barcode({ width = 360, height = 140}: BarcodeProps) {
   return (
     <div
       style={{
@@ -22,30 +18,16 @@ export default function Barcode({ width = 240, height = 80 }: BarcodeProps) {
         width,
       }}
     >
-      <div style={{ display: "flex", alignItems: "flex-end" }}>
-        {bars.map((bar, i) => (
-          <div
-            key={i}
-            style={{
-              width: bar.width,
-              height: bar.height,
-              background: "#000",
-              marginRight: bar.marginRight,
-            }}
-          />
-        ))}
-      </div>
-      <div
+      <img
+        src={barcodeImg}
+        alt="HTF4.0 Comic Edition Barcode"
         style={{
-          marginTop: 8,
-          fontSize: 12,
-          letterSpacing: 1,
-          color: "#000",
-          textAlign: "center",
+          width: "100%",
+          height: height,
+          objectFit: "fill",
+          display: "block",
         }}
-      >
-        HackToFuture4.0 Comic Edition
-      </div>
+      />
     </div>
   );
 }

@@ -94,6 +94,20 @@ canvas {
   animation-iteration-count: infinite;
 }
 
+.comic-action-word-popart {
+  font-family: "Dela Gothic One", Impact, sans-serif;
+  -webkit-text-stroke: 3px #111;
+  color: var(--word-color, #E8185A);
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  animation-name: comic-float;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.4));
+}
+
 .comic-halftone {
   background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px);
   background-size: 10px 10px;

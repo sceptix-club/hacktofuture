@@ -57,13 +57,13 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 md:px-12 lg:px-20 pb-6 mt-6">
-              <div
-                className="rounded-xl overflow-hidden border border-white/10 flex items-center justify-center"
-                style={{ minHeight: 200 }}
-              >
-                <Barcode height={40} />
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 md:px-12 lg:px-20 pb-6 mt-6">
+          <div
+            className="overflow-hidden  flex items-center justify-center"
+            style={{ minHeight: 200 }}
+          >
+            <Barcode height={100} />
+          </div>
 
               <div className="flex flex-col gap-4">
                 <h3 className="hero-title text-white font-bold text-lg">

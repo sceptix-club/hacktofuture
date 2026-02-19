@@ -96,17 +96,6 @@ const ComicDots = ({
   />
 );
 
-/* ── Floating action words ── */
-const ACTION_WORDS = [
-  { text: "POW!", x: "6%", y: "10%", size: "clamp(2rem,6vw,4.5rem)", rot: -12, delay: 0 },
-  { text: "ZAP!", x: "82%", y: "8%", size: "clamp(1.8rem,5vw,3.8rem)", rot: 8, delay: 0.6 },
-  { text: "BOOM!", x: "3%", y: "72%", size: "clamp(1.5rem,4.5vw,3.2rem)", rot: 6, delay: 1.2 },
-  { text: "WHAM!", x: "78%", y: "78%", size: "clamp(1.6rem,4vw,3rem)", rot: -8, delay: 1.8 },
-  { text: "BAM!", x: "88%", y: "42%", size: "clamp(1.4rem,3.5vw,2.5rem)", rot: 15, delay: 2.4 },
-  { text: "CRACK!", x: "12%", y: "44%", size: "clamp(1.2rem,3vw,2.2rem)", rot: -18, delay: 3.0 },
-  { text: "KAPOW!", x: "45%", y: "88%", size: "clamp(1.3rem,3.5vw,2.4rem)", rot: 5, delay: 0.9 },
-  { text: "SPLAT!", x: "55%", y: "5%", size: "clamp(1.1rem,2.8vw,2rem)", rot: -10, delay: 2.1 },
-];
 
 /* ── Speed lines ── */
 const SpeedLines = () => {
@@ -346,25 +335,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
           />
         </div>
 
-        {/* ── LAYER 8: Floating action words ── */}
-        {ACTION_WORDS.map((w, i) => (
-          <span
-            key={i}
-            className="comic-action-word"
-            style={{
-              left: w.x,
-              top: w.y,
-              fontSize: w.size,
-              "--rot": `${w.rot}deg`,
-              animationDelay: `${w.delay}s`,
-              animationDuration: `${3.5 + i * 0.3}s`,
-            } as React.CSSProperties}
-          >
-            {w.text}
-          </span>
-        ))}
-
-        {/* ── LAYER 9: Corner panel frames ── */}
+        {/* ── LAYER 8: Corner panel frames ── */}
         <div
           className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none"
           style={{ borderRadius: "4px" }}
@@ -384,59 +355,99 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
 
         {/* ── MAIN CONTENT (centered) ── */}
         <div className="relative z-10 max-w-[85vw] text-center">
-          {/* Decorative top line */}
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-[2px] w-12 md:w-20 bg-gradient-to-r from-transparent to-white/40" />
-            <span
-              className="hero-title text-white/50 tracking-[0.3em]"
-              style={{ fontSize: "clamp(0.6rem, 1.5vw, 0.85rem)" }}
-            >
-              ★ COMIC EDITION ★
-            </span>
-            <div className="h-[2px] w-12 md:w-20 bg-gradient-to-l from-transparent to-white/40" />
-          </div>
 
-          <h2
-            className="hero-title text-white font-bold relative"
+          {/* ── Bubble text box ── */}
+          <div
             style={{
-              fontSize: "clamp(1.75rem, 6.5vw, 4rem)",
-              textShadow:
-                "3px 3px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(255,255,255,0.1)",
+              maxWidth: "min(85vw, 900px)",
+              margin: "0 auto",
+              padding: "1.5rem 2rem 1.75rem",
+              background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
+              backgroundSize: "16px 16px, 100% 100%",
+              border: "0.35rem solid #000",
+              position: "relative",
+              boxShadow: "6px 6px 0 #000",
             }}
           >
-            {title}
-          </h2>
+            {/* Decorative top line */}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="h-[2px] w-12 md:w-20" style={{ background: "linear-gradient(to right, transparent, rgba(0,0,0,0.3))" }} />
+              <span
+                className="hero-title tracking-[0.3em]"
+                style={{ fontSize: "clamp(0.6rem, 1.5vw, 0.8rem)", color: "#555" }}
+              >
+                ★ COMIC EDITION ★
+              </span>
+              <div className="h-[2px] w-12 md:w-20" style={{ background: "linear-gradient(to left, transparent, rgba(0,0,0,0.3))" }} />
+            </div>
 
-          <p
-            className="comic-sans text-white/80 mt-4"
-            style={{
-              fontSize: "clamp(1rem, 2.2vw, 1.35rem)",
-              textShadow: "1px 1px 2px rgba(0,0,0,0.4)",
-            }}
-          >
-            {body}
-          </p>
-
-          <div className="mt-8 flex flex-col items-center gap-3">
-            <Button
-              className="mt-2 bg-white text-black hover:cursor-pointer font-bold tracking-wide comic-panel-border"
+            <h2
+              className="hero-title font-bold relative"
               style={{
-                boxShadow: "4px 4px 0 rgba(255,255,255,0.2)",
-                fontSize: "clamp(0.9rem, 1.8vw, 1.1rem)",
-                padding: "12px 32px",
+                fontSize: "clamp(1.6rem, 5.5vw, 3.25rem)",
+                color: "#111",
+                textShadow: "3px 3px 0 rgba(0,0,0,0.12)",
+                letterSpacing: "0.05em",
               }}
             >
-              {buttonText}
-            </Button>
+              {title}
+            </h2>
 
-            {/* Decorative bottom accent */}
-            <span
-              className="comic-sans text-white/30 tracking-widest"
-              style={{ fontSize: "clamp(0.55rem, 1vw, 0.7rem)" }}
+            <p
+              className="comic-sans mt-4"
+              style={{
+                fontSize: "clamp(0.95rem, 2vw, 1.2rem)",
+                color: "#333",
+                lineHeight: 1.55,
+              }}
             >
-              ▸ LIMITED SEATS ▸ 36 HOURS ▸ INFINITE CHAOS ▸
-            </span>
+              {body}
+            </p>
+
+            <div className="mt-7 flex flex-col items-center gap-3">
+              <Button
+                className="hover:cursor-pointer font-bold tracking-wide"
+                style={{
+                  background: "#FFE105",
+                  color: "#000",
+                  border: "0.25rem solid #000",
+                  boxShadow: "4px 4px 0 #000",
+                  fontSize: "clamp(0.9rem, 1.8vw, 1.1rem)",
+                  padding: "12px 32px",
+                  fontFamily: '"Dekko", cursive',
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  transition: "transform 0.15s, box-shadow 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = "translate(-2px,-2px)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "6px 6px 0 #000";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = "translate(0,0)";
+                  (e.currentTarget as HTMLElement).style.boxShadow = "4px 4px 0 #000";
+                }}
+              >
+                {buttonText}
+              </Button>
+
+              {/* Decorative diagonal tag */}
+              <div
+                className="absolute -bottom-2 -right-3 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider border-2 border-white"
+                style={{
+                  fontFamily: '"Dekko", cursive',
+                  transform: "rotate(-2deg)",
+                  fontSize: "clamp(0.55rem, 1vw, 0.75rem)",
+                  letterSpacing: "0.15em",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                ▸ 36 HOURS ▸ INFINITE CHAOS ▸ LIMITED SEATS ▸
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     );
