@@ -5,6 +5,7 @@ import Button from "../components/ui/Button";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
+import Timer from "../components/Timer";
 
 type TextContentProps = {
   currentScene: number;
@@ -282,18 +283,7 @@ const TextContent = ({
         style={{ opacity: 0 }}
       >
         <div className="max-w-[95vw] overflow-hidden text-center">
-          <h2
-            className="text-white font-bold hero-title"
-            style={{ fontSize: "clamp(2.0rem, 8vw, 4.5rem)" }}
-          >
-            COUNTDOWN
-          </h2>
-          <p
-            className="text-white/80 mt-4 comic-sans"
-            style={{ fontSize: "clamp(1.0rem, 3vw, 1.5rem)" }}
-          >
-            + TIMELINE
-          </p>
+		<Timer/>
         </div>
       </div>
 

@@ -128,15 +128,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 1,
         onUpdate: () => {
-          const p = scene4State.progress;
-          const radius = 5;
-          const angle = p * Math.PI * 2;
-          camera.position.set(
-            Math.sin(angle) * radius,
-            -90 + Math.cos(angle * 0.5) * 2,
-            Math.cos(angle) * radius
-          );
-          camera.lookAt(0, -90, 0);
+          camera.position.set(0, -60, 0);
+          camera.lookAt(0, -60, 0);
         },
       },
       3.0
@@ -336,7 +329,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       </group>
 
       {/* Scene 4 */}
-      <group position={[0, -90, 0]}>
+      <group position={[0, -60, 0]}>
         {/* <mesh position={[0, 0, 0]}>*/}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2, 2, 2, 2]} />

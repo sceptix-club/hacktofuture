@@ -1,0 +1,61 @@
+.alarmBody{
+	background-color: red;
+	font-family: "digital-7-mono";
+	font-size: 3rem;
+	font-weight: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.timer-wrap{
+	padding: 1rem;
+	background-color: radial-gradient(circle at center, red 0, blue, green 100%);
+	border-radius: 0.5rem;
+}
+
+.timer{
+	display: grid;
+	align-items: center;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 2rem;
+	border-radius: 0.5rem;
+	background-color: black;
+}
+
+.time-block{
+	margin: 1rem;
+	display: grid;
+	align-items: center;
+	grid-template-columns: 1fr;
+	gap: 1rem;
+}
+
+.digits{
+	font-size: 6rem;
+	font-family: "digital-7-mono";
+}
+	/*TODO: replace background-image with svg wave animation
+	 * use fit content */
+	/* background-image: radial-gradient( circle at center, white 0.4px, transparent 0); */
+	/* 	background-size: 0.2rem 0.2rem; */
+	/* 	background-clip: text; */
+	/* 	-webkit-background-clip: text; /* For Safari/Chrome */ */
+	/* 	color: transparent; */
+	/* background-clip: text; */
+	/*  background-repeat: round; */
+
+
+.time-unit{
+	text-align: center;
+	color: lightslategray;
+}
+
+.colon{
+	font-size: 6rem;
+}
+
+@font-face {
+	font-family: "digital-7-mono";
+    src: url("../public/fonts/digital-7 (mono).ttf");
+}
