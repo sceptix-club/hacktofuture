@@ -18,7 +18,7 @@ function Comic(props: React.JSX.IntrinsicElements["group"]) {
   }, [actions])
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group ref={group} {...props} dispose={null} rotation={[0, 90, 0]}>
       <group name="Sketchfab_Scene">
         <group name="GLTF_SceneRootNode">
           <group name="Hoja_5" position={[0, -30, 0]} rotation={[-0.262, 0, 0]}>
