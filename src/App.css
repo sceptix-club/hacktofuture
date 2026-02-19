@@ -8,20 +8,26 @@
   font-family : "Comic Relief", sans-serif;
 }
 
-.grid-bg{
-  background-image: url(https://www.svgrepo.com/show/348305/code-alt.svg);
-  background-size: 200px 200px;
-  animation: grid-scroll 4s linear infinite;
+.grid-bg {
+  position: relative;
+  overflow: hidden;
   pointer-events: none;
   opacity: 0.1;
 }
 
+.grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: -200px;
+  background-image: url(https://www.svgrepo.com/show/348305/code-alt.svg);
+  background-size: 200px 200px;
+  animation: grid-scroll 4s linear infinite;
+  will-change: transform;
+}
+
 @keyframes grid-scroll {
-  from {
-    background-position: 0 0;
-  } to {
-    background-position: 200px 200px;
-  }
+  from { transform: translate(0, 0); }
+  to   { transform: translate(200px, 200px); }
 }
 
 html,

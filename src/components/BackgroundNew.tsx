@@ -2,8 +2,6 @@ import * as THREE from "three";
 import { useRef, forwardRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
-  Clouds,
-  Cloud,
   MotionPathControls,
   useMotion,
   useTexture,
