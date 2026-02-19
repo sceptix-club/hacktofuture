@@ -235,7 +235,7 @@ const TextContent = ({
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
       >
         <div className="max-w-[95vw] overflow-hidden">
-          <ScrollIndicator />
+          {/* <ScrollIndicator /> */}
           <h2
             className="text-white whitespace-nowrap font-bold"
             style={{ fontSize: "clamp(0.5rem, 4vw, 1.0rem)" }}

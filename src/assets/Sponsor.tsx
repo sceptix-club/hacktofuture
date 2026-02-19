@@ -12,7 +12,7 @@ type SponsorsProps = {
 
 export function SponsorsBento({ title, platinum, gold, silver }: SponsorsProps) {
   return (
-    <div className="w-full max-w-6xl mx-auto mt-4 md:mt-8 p-3 md:p-4">
+    <div className="w-full max-md:h-screen max-w-6xl mx-auto mt-4 max-md:mt-16 md:mt-8 p-3 md:p-4">
       <div className="sponsor-panel text-center mb-6 md:mb-8">
         <div
           className="inline-block relative px-2"
@@ -39,7 +39,7 @@ export function SponsorsBento({ title, platinum, gold, silver }: SponsorsProps) 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:gap-6">
         {/* Title sponsor — big comic panel */}
         <div
-          className="sponsor-panel md:col-span-2 md:row-span-2 relative min-h-[200px] md:min-h-0"
+          className="sponsor-panel md:col-span-2 md:row-span-2 relative min-h-[150px] md:min-h-0"
           style={{
             background: 'linear-gradient(135deg, #FFE105 0%, #FFD700 100%)',
             border: '4px solid #000',
