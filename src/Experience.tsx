@@ -9,7 +9,7 @@ import gsap from "gsap";
 import MarqueeGrid from "./assets/Wall";
 import { TV } from "./assets/TV";
 import HackToFuture from "./scenes/HackToFuture";
-import { Comic, ComicInstances } from "./scenes/Rulebook";
+import { Comic } from "./scenes/Rulebook";
 import Cards from "./scenes/Cards";
 import { Cloud, Clouds } from "@react-three/drei";
 
@@ -42,7 +42,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       {
         posX: 0,
         posY: 0,
-        posZ: 10,
+        posZ: 14,
         rotZ: Math.PI / 6,
         duration: 1,
         onUpdate: () => {
@@ -61,8 +61,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     tl.to(
       scene1TV,
       {
-        scale: 3 * base,
-        rotY: Math.PI * 2,
+        scale: 2 * base,
+        rotY: Math.PI / 3,
         duration: 1,
         onUpdate: () => {
           if (tvRef.current) {
@@ -76,28 +76,35 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
     // Scene 2: Circular camera around Rulebook (1.0 - 2.0)
     const scene2State = { progress: 0 };
-    tl.to(
-      scene2State,
-      {
-        progress: 1,
-        duration: 1,
-        onUpdate: () => {
-          const p = scene2State.progress;
-          const angle = p * Math.PI * 2;
-          const radius = THREE.MathUtils.lerp(12, 3, p);
-          const height = THREE.MathUtils.lerp(15, 1.5, p);
-          const targetY = -30 + THREE.MathUtils.lerp(0, -0.3, p);
+    const cam2 = { x: 0, y: -28, z: 10 };
 
-          camera.position.set(
-            Math.sin(angle) * radius,
-            -30 + height,
-            Math.cos(angle) * radius
-          );
-          camera.lookAt(0, targetY, 0);
-        },
+    tl.to(cam2, {
+      z: 6,
+      duration: 0.4,
+      ease: "power2.in",
+      onUpdate: () => {
+        camera.position.set(cam2.x, cam2.y, cam2.z);
+        camera.lookAt(0, -30, 0);
       },
-      1.0
-    );
+    }, 1.0);
+
+    tl.to(cam2, {
+      y: -28,
+      z: 1,
+      duration: 0.35,
+      ease: "power1.inOut",
+      onUpdate: () => {
+        camera.position.set(cam2.x, cam2.y, cam2.z);
+        camera.lookAt(0, -30, 0);
+      },
+    });
+    tl.to(cam2, {
+      duration: 0.15,
+      onUpdate: () => {
+        camera.position.set(cam2.x, cam2.y, cam2.z);
+        camera.lookAt(0, -30, 0);
+      },
+    });
 
     // Scene 3: Blank space for Sponsors (2.0 - 3.0)
     const scene3State = { progress: 0 };
@@ -279,7 +286,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           segments={5}
           growth={20}
           opacity={0.2}
-          position={[-10, -35, 0]}
+          position={[-10, -28, 5]}
           speed={0.4}
         />
       </Clouds>
@@ -303,7 +310,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-height={2048}
         />
 
-        <Comic />
+        <Comic progress={progress} />
       </group>
 
       {/* Scene 3: Blank space for Sponsors */}
