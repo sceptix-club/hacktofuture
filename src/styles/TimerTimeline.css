@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+
+.timeline{
+		height: max-content;
+		@apply grid grid-cols-3;
+}
+
+.cards{
+		/*container that controls size of card*/
+		height: max-content;
+		@apply flex justify-center items-center;
+}
+
+.card{
+		display: grid;
+		grid-auto-flow: column;
+		height: max-content;
+		width: fit-content;
+		position: absolute;
+		background-color: pink;
+		gap: 1rem;
+		/*TODO: should be approximately the size of the timer*/
+		margin-top: 4rem;
+}
+
+.card-block{
+		width: fit-content;
+}
+
+.card-time{
+
+}
+.card-event{
+}
+
+.card-btn{
+		background-color: brown;
+		height: 2rem;
+		width: 2rem;
+		border-radius: 100%;
+		z-index: 99;
+}

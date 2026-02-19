@@ -5,7 +5,7 @@ import Button from "../components/ui/Button";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
-import Timer from "../components/Timer";
+import TimerTimeline from "../components/TimerTimeline";
 
 type TextContentProps = {
   currentScene: number;
@@ -283,7 +283,7 @@ const TextContent = ({
         style={{ opacity: 0 }}
       >
         <div className="max-w-[95vw] overflow-hidden text-center">
-		<Timer/>
+				<TimerTimeline/>
         </div>
       </div>
 
