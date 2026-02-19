@@ -5,7 +5,6 @@ type CTAProps = {
   title?: string;
   body?: string;
   buttonText?: string;
-  isActive?: boolean; // NEW: only render expensive layers when active
 };
 
 const Starburst = ({
@@ -226,7 +225,6 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
       title = "READY TO BUILD THE FUTURE?",
       body = "Join HackToFuture 4.0 and turn your wildest ideas into real products. Limited seats. Big energy.",
       buttonText = "Register Now",
-      isActive = false,
     },
     ref
   ) => {
@@ -235,13 +233,12 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         ref={ref}
         className="fixed inset-0 z-20 flex items-center justify-center overflow-hidden"
         style={{
-          opacity: 0,
-          // Use display:none equivalent — removes from compositor entirely when off-screen
-          // GSAP will override visibility when animating in
-          visibility: "hidden",
+          // DO NOT use contain:strict or willChange here on mount —
+          // Chrome allocates a GPU layer immediately for any fixed element
+          // with those properties, even if translateY(100%) off-screen.
+          // GSAP will set transform/opacity/visibility imperatively.
           transform: "translateY(100%)",
-          contain: "strict", // upgraded from "layout style"
-          willChange: "transform", // removed "opacity" — fewer compositor hints = less work
+          opacity: 0,
         }}
       >
         {/* ── LAYER 1: Halftone dot overlay — static, no willChange ── */}
@@ -257,12 +254,12 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         />
 
         {/* ── Animated layers only rendered when CTA is active ── */}
-        {isActive && (
+        {/* {isActive && (
           <>
             <SpeedLines />
             <FloatingShapes />
           </>
-        )}
+        )} */}
 
         {/* ── Comic dot clusters ── */}
         <ComicDots
@@ -285,7 +282,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         />
 
         {/* ── Spinning starburst — only when active ── */}
-        {isActive && (
+        {/* {isActive && (
           <div
             className="absolute pointer-events-none"
             style={{
@@ -307,7 +304,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
               }}
             />
           </div>
-        )}
+        )} */}
 
         {/* ── Corner panel frames ── */}
         <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none" />

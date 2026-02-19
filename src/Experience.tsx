@@ -1,8 +1,4 @@
-import {
-  useRef,
-  useState,
-  useEffect,
-} from "react";
+import { useRef, useState, useEffect } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
@@ -29,7 +25,9 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
   // Capture initial viewport width
   const initialViewportWidth = useRef(viewport.width);
-  const [stableViewportWidth, setStableViewportWidth] = useState(viewport.width);
+  const [stableViewportWidth, setStableViewportWidth] = useState(
+    viewport.width
+  );
 
   // Update viewport width on actual window resize
   useEffect(() => {
@@ -41,8 +39,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       }, 100);
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [viewport.width]);
 
   useEffect(() => {
@@ -97,15 +95,19 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     const scene2State = { progress: 0 };
     const cam2 = { x: 0, y: -28, z: 10 };
 
-    tl.to(cam2, {
-      z: 6,
-      duration: 0.4,
-      ease: "power2.in",
-      onUpdate: () => {
-        camera.position.set(cam2.x, cam2.y, cam2.z);
-        camera.lookAt(0, -30, 0);
+    tl.to(
+      cam2,
+      {
+        z: 6,
+        duration: 0.4,
+        ease: "power2.in",
+        onUpdate: () => {
+          camera.position.set(cam2.x, cam2.y, cam2.z);
+          camera.lookAt(0, -30, 0);
+        },
       },
-    }, 1.0);
+      1.0
+    );
 
     tl.to(cam2, {
       y: -28,
@@ -148,15 +150,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 1,
         onUpdate: () => {
-          const p = scene4State.progress;
-          const radius = 5;
-          const angle = p * Math.PI * 2;
-          camera.position.set(
-            Math.sin(angle) * radius,
-            -90 + Math.cos(angle * 0.5) * 2,
-            Math.cos(angle) * radius
-          );
-          camera.lookAt(0, -90, 0);
+          camera.position.set(0, -60, 0);
+          camera.lookAt(0, -60, 0);
         },
       },
       3.0
@@ -251,32 +246,41 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     };
   }, [scenes, camera, stableViewportWidth]); // Added stableViewportWidth as dependency
 
+  const lastProgressRef = useRef(-1);
+  const lastSceneRef = useRef(-1);
+
   useFrame((state) => {
     const scrollProgress = scrollProgressRef.current || 0;
-    const time = scrollProgress * scenes;
-    const current = Math.min(Math.floor(time), scenes - 1);
-    const progress = time % 1;
 
-    setProgress(progress);
-    currentSceneRef.current = current;
-
-    if (tlRef.current) {
+    if (
+      tlRef.current &&
+      Math.abs(scrollProgress - lastProgressRef.current) > 0.0005
+    ) {
+      lastProgressRef.current = scrollProgress;
       tlRef.current.progress(scrollProgress);
     }
 
+    const time = scrollProgress * scenes;
+    const current = Math.min(Math.floor(time), scenes - 1);
+    const p = time % 1;
+
+    // Only call setProgress if it actually changed — avoids 60 React re-renders/sec
+    if (Math.abs(p - lastSceneRef.current) > 0.005) {
+      lastSceneRef.current = p;
+      setProgress(p);
+    }
+
+    currentSceneRef.current = current;
+
     // Pointer light
     if (pointerRef.current) {
-      const p = state.pointer;
-
-      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
+      const pt = state.pointer;
+      const worldPoint = new THREE.Vector3(pt.x, pt.y, 0.5).unproject(
         state.camera
       );
       const dir = worldPoint.sub(state.camera.position).normalize();
-
       const ray = new THREE.Ray(state.camera.position, dir);
-
       const cardsPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-
       const hit = new THREE.Vector3();
       if (ray.intersectPlane(cardsPlane, hit)) {
         pointerRef.current.position.copy(hit);
@@ -337,7 +341,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       </group>
 
       {/* Scene 4 */}
-      <group position={[0, -90, 0]}>
+      <group position={[0, -60, 0]}>
+        {/* <mesh position={[0, 0, 0]}>*/}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2, 2, 2, 2]} />
           <meshStandardMaterial
@@ -351,7 +356,11 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 5: Cards */}
       <group ref={scene6Ref} position={[0, -150, 0]} />
-      <Cards pointerRef={pointerRef} progress={scrollProgressRef} currentScene={currentSceneRef} />
+      <Cards
+        pointerRef={pointerRef}
+        progress={scrollProgressRef}
+        currentScene={currentSceneRef}
+      />
 
       <pointLight
         ref={pointerRef}

@@ -5,6 +5,7 @@ import Button from "../components/ui/Button";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
+import Timer from "../components/Timer";
 
 type TextContentProps = {
   currentScene: number;
@@ -27,9 +28,9 @@ const TextContent = ({
   const footerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
 
-  // Track whether CTA/Footer are active to gate expensive renders
-  const [ctaActive, setCtaActive] = useState(false);
-  const [footerActive, setFooterActive] = useState(false);
+  // // Track whether CTA/Footer are active to gate expensive renders
+  // const [ctaActive, setCtaActive] = useState(false);
+  // const [footerActive, setFooterActive] = useState(false);
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
@@ -154,34 +155,47 @@ const TextContent = ({
       tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.0);
     }
 
-    // CTA — onStart/onReverseComplete to gate animated layers
+    // CTA
     if (ctaRef.current) {
-      tl.fromTo(
+      // Pre-set off-screen state so it's ready when we un-hide it
+      gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
+
+      tl.to(
         ctaRef.current,
-        { y: "100%", opacity: 0, visibility: "hidden" },
         {
           y: "0%",
           opacity: 1,
-          visibility: "visible",
           duration: 0.5,
           ease: "power2.out",
-          onStart: () => setCtaActive(true), // mount expensive layers
+          // onStart: () => {
+          //   // Un-hide from display:none BEFORE tween starts painting
+          //   if (ctaRef.current) {
+          //     ctaRef.current.style.display = "flex";
+          //   }
+          //   setCtaActive(true);
+          // },
         },
         6.1
       );
     }
 
-    // Footer — gate its own active state
+    // Footer
     if (footerRef.current) {
-      tl.fromTo(
+      gsap.set(footerRef.current, { y: "100%" });
+
+      tl.to(
         footerRef.current,
-        { y: "100%" },
         {
           y: "0%",
           duration: 0.5,
           ease: "power2.out",
           force3D: true,
-          onStart: () => setFooterActive(true),
+          // onStart: () => {
+          //   if (footerRef.current) {
+          //     footerRef.current.style.display = "flex";
+          //   }
+          //   setFooterActive(true);
+          // },
         },
         7.0
       );
@@ -288,18 +302,7 @@ const TextContent = ({
         style={{ opacity: 0 }}
       >
         <div className="max-w-[95vw] overflow-hidden text-center">
-          <h2
-            className="text-white font-bold hero-title"
-            style={{ fontSize: "clamp(2.0rem, 8vw, 4.5rem)" }}
-          >
-            COUNTDOWN
-          </h2>
-          <p
-            className="text-white/80 mt-4 comic-sans"
-            style={{ fontSize: "clamp(1.0rem, 3vw, 1.5rem)" }}
-          >
-            + TIMELINE
-          </p>
+          <Timer />
         </div>
       </div>
 
@@ -329,10 +332,10 @@ const TextContent = ({
       ))}
 
       {/* CTA — pass isActive to gate expensive animated layers */}
-      <CTA ref={ctaRef} isActive={ctaActive} />
+      <CTA ref={ctaRef} />
 
       {/* Footer */}
-      <Footer ref={footerRef} isActive={footerActive} />
+      <Footer ref={footerRef} />
     </>
   );
 };
