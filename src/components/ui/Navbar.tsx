@@ -1,4 +1,4 @@
-import { Info, Users, Lightbulb, Heart, ArrowLeft } from "lucide-react";
+import { Info, Users, Lightbulb, Heart, LogIn, BookText } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface NavbarProps {
@@ -14,7 +14,9 @@ const Navbar = ({ className }: NavbarProps) => {
     { icon: Info, href: "#about", label: "About", route: "/about" },
     { icon: Users, href: "#team", label: "Team", route: "/team" },
     { icon: Lightbulb, href: "#themes", label: "Themes", route: "/themes" },
-    { icon: Heart, href: "#sponsors", label: "Sponsors", route: null },
+    { icon: Heart, href: "#sponsors", label: "Sponsors", route: "/sponsors" },
+    { icon: BookText, href: "/rulebook.pdf", label: "Rulebook", route: "/rulebook.pdf" },
+    { icon: LogIn, href: "https://unstop.com/", label: "Devpost", route: null },
   ];
 
   return (

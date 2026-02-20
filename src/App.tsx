@@ -11,6 +11,7 @@ import Loader from "./components/Loader";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Team from "./pages/Team";
 import { Environment, Stats, useProgress } from "@react-three/drei";
+import Sponsors from "./pages/Sponsors";
 import Themes from "./pages/Themes";
 import About from "./pages/About";
 
@@ -136,6 +137,7 @@ function App() {
         <Route path="/team" element={<Team />} />
         <Route path="/themes" element={<Themes />} />
         <Route path="/about" element={<About />} />
+        <Route path="/sponsors" element={<Sponsors />} />
       </Routes>
     </BrowserRouter>
   );
