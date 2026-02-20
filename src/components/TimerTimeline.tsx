@@ -56,7 +56,6 @@ function Timer() {
 
 function Timeline() {
 
-	const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 	const peek = 32
 	const [currentCard, setCurrentCard] = useState(0)
 
@@ -67,9 +66,7 @@ function Timeline() {
 		{ x: peek, y: 4 + peek / 4, rotation: -1, scale: 0.97, zIndex: 10 },
 	];
 
-	const fanned = { x: -260, y: 20, rotation: -18, scale: 1, zIndex: 20 }
-
-	//TODO: change the grid-rows depending on the number of events within a card
+	const fanned = { x: 260, y: 120, rotation: 18, scale: 1, zIndex: 20 }
 
 	const cards = [
 		[
@@ -109,40 +106,53 @@ function Timeline() {
 			},
 		]
 	]
+
+	const cardRefs = useRef();
+	cardRefs.current = Array(cards.length).fill(null).map((_) => useRef())
+
+	//INFO: array that contains the number of rows that should be present in each card
 	let rowCount = Array(cards.length).fill(null).map((_, i) => cards[i].length / 2)
 
-	useEffect(() => {
-		cardRefs.current.forEach((card, i) => {
-			gsap.set(card, originalPos[i]);
-		});
-	});
-
-	//when > is clicked, the current card should be moved in a certain way
-	//when < is clicked, the previous card should be moved in a certain way
-
 	const flipForward = () => {
-		//fan the current card
-		console.log("click registered")
-		gsap.to(cardRefs[currentCard], {
-			...fanned[currentCard],
+		console.log("current: ", cardRefs.current[currentCard].textContent)
+		gsap.to(cardRefs.current[currentCard], {
+			...fanned,
 			duration: 0.6,
 			ease: "back.out(1.4)",
 			delay: 0.05,
 		})
 		setCurrentCard(currentCard => currentCard + 1)
 	}
+
 	const flipBackward = () => {
-		console.log("click registered")
+
+		//INFO: currentCard - 1 because set wont work fast enough
+		gsap.to(cardRefs.current[currentCard - 1], {
+			...originalPos[currentCard - 1],
+			duration: 0.6,
+			ease: "back.out(0.4)",
+			delay: 0.05,
+		})
 		setCurrentCard(currentCard => currentCard - 1)
 	}
 
-	//error detecting useEffect
+	//INFO: this shit is so restarded
+	const [rendered, setRendered] = useState(false)
+
 	useEffect(() => {
-		console.log("val of rowCount is ", rowCount)
-		// if (originalPos.length != cards.length) {
-		// 	console.error("CARDS COUNT IS INVALID")
-		// }
+		if (!rendered) {
+			console.log("render first")
+			cardRefs.current.forEach((card, i) => {
+				gsap.set(card, originalPos[i]);
+			})
+			setRendered(rendered => true)
+		}
+
+		if (originalPos.length != cards.length) {
+			console.error("CARDS COUNT IS INVALID")
+		}
 	})
+
 
 	//cards contains a card which has details for today
 	return (
@@ -173,7 +183,7 @@ function Timeline() {
 				}
 			</div>
 			{
-				currentCard != cards.length
+				currentCard != cards.length - 1
 				&&
 				(<button className="card-btn m-19" onClick={flipForward}>{'>'}</button>)
 			}
