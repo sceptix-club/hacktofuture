@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import ScrollIndicator from "../components/Scrollindicator";
 import Button from "../components/ui/Button";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
 import Timer from "../components/Timer";
+import FAQ from "./FAQ";
 
 type TextContentProps = {
   currentScene: number;
@@ -27,10 +27,7 @@ const TextContent = ({
   const card4TextRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
-
-  // // Track whether CTA/Footer are active to gate expensive renders
-  // const [ctaActive, setCtaActive] = useState(false);
-  // const [footerActive, setFooterActive] = useState(false);
+  const faqRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
@@ -155,51 +152,50 @@ const TextContent = ({
       tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.0);
     }
 
-    // CTA
+    // ── CTA: slides in at 6.0, slides OUT at 7.0 ──
     if (ctaRef.current) {
-      // Pre-set off-screen state so it's ready when we un-hide it
       gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
-
+      // Slide in
       tl.to(
         ctaRef.current,
-        {
-          y: "0%",
-          opacity: 1,
-          duration: 0.5,
-          ease: "power2.out",
-          // onStart: () => {
-          //   // Un-hide from display:none BEFORE tween starts painting
-          //   if (ctaRef.current) {
-          //     ctaRef.current.style.display = "flex";
-          //   }
-          //   setCtaActive(true);
-          // },
-        },
-        6.1
+        { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
+        6.0
+      );
+      // Slide out before FAQ arrives
+      tl.to(
+        ctaRef.current,
+        { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
+        7.2
       );
     }
 
-    // Footer
-    if (footerRef.current) {
-      gsap.set(footerRef.current, { y: "100%" });
-
+    // ── FAQ: slides in at 7.0, slides OUT at 8.0 ──
+    if (faqRef.current) {
+      gsap.set(faqRef.current, { y: "100%", opacity: 0 });
+      // Slide in
       tl.to(
-        footerRef.current,
-        {
-          y: "0%",
-          duration: 0.5,
-          ease: "power2.out",
-          force3D: true,
-          // onStart: () => {
-          //   if (footerRef.current) {
-          //     footerRef.current.style.display = "flex";
-          //   }
-          //   setFooterActive(true);
-          // },
-        },
+        faqRef.current,
+        { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
         7.0
       );
+      // Slide out before Footer arrives
+      tl.to(
+        faqRef.current,
+        { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
+        8.2
+      );
+    }
 
+    // ── Footer: slides in at 8.0 ──
+    if (footerRef.current) {
+      gsap.set(footerRef.current, { y: "100%" });
+      tl.to(
+        footerRef.current,
+        { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
+        8.0
+      );
+
+      // HackToFuture letters animate at 8.3
       const htfLetters = footerRef.current.querySelectorAll(
         ".hero-title.inline-block"
       );
@@ -214,7 +210,7 @@ const TextContent = ({
             stagger: 0.04,
             ease: "back.out(1.4)",
           },
-          7.3
+          8.3
         );
       }
     }
@@ -235,7 +231,6 @@ const TextContent = ({
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
       >
         <div className="max-w-[95vw] overflow-hidden">
-          {/* <ScrollIndicator /> */}
           <h2
             className="text-white whitespace-nowrap font-bold"
             style={{ fontSize: "clamp(0.5rem, 4vw, 1.0rem)" }}
@@ -306,7 +301,7 @@ const TextContent = ({
         </div>
       </div>
 
-      {/* Cards 1-4 (unchanged structure) */}
+      {/* Cards 1-4 */}
       {[1, 2, 3, 4].map((n, i) => (
         <div
           key={n}
@@ -331,10 +326,9 @@ const TextContent = ({
         </div>
       ))}
 
-      {/* CTA — pass isActive to gate expensive animated layers */}
+      {/* z-index layering: CTA(z-30) → FAQ(z-40) → Footer(z-50) */}
       <CTA ref={ctaRef} />
-
-      {/* Footer */}
+      <FAQ ref={faqRef} />
       <Footer ref={footerRef} />
     </>
   );

@@ -224,13 +224,13 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       onUpdate: updateCardCamera,
     });
 
-    // Scene6: CTA section
+    // Scene6: CTA + FAQ section (extended duration)
     const scene6State = { progress: 0 };
     tl.to(
       scene6State,
       {
         progress: 1,
-        duration: 1,
+        duration: 2, // extended from 1 → 2 to cover CTA (6.1) + FAQ (6.8) + Footer (7.0)
         onUpdate: () => {
           camera.position.set(0, -150, 0);
           camera.lookAt(0, -150, 0);
