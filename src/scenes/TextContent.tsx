@@ -56,11 +56,11 @@ const TextContent = ({
       const panels = scene3TextRef.current.querySelectorAll(".sponsor-panel");
       gsap.set(panels, {
         x: (index) => {
-          const positions = [2000, -2000, 1500, 0, 2000];
+          const positions = [2000, -2000, 1500, 0, 2000, -1500];
           return positions[index] || 0;
         },
         y: (index) => {
-          const positions = [-2000, -2000, 0, 1500, 2000];
+          const positions = [-2000, -2000, 0, 1500, 2000,1500];
           return positions[index] || 0;
         },
         opacity: 0,
@@ -82,11 +82,11 @@ const TextContent = ({
         panels,
         {
           x: (index) => {
-            const positions = [0, -2000, 1500, 0, 0];
+            const positions = [0, -2000, 1500, 0, 0,-1500];
             return positions[index] || 0;
           },
           y: (index) => {
-            const positions = [-1000, 2000, -1500, 1500, 2000];
+            const positions = [-1000, 2000, -1500, 1500, 2000,1500];
             return positions[index] || 0;
           },
           opacity: 0,

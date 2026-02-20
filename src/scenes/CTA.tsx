@@ -443,7 +443,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   whiteSpace: "nowrap",
                 }}
               >
-                ▸ 36 HOURS ▸ INFINITE CHAOS ▸ LIMITED SEATS ▸
+                ▸ 36 HOURS ▸ LIMITED SEATS ▸ INFINITE CHAOS ▸
               </div>
             </div>
           </div>
