@@ -241,9 +241,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
           opacity: 0,
         }}
       >
-        {/* ── LAYER 1: Halftone dot overlay — static, no willChange ── */}
-        <div className="comic-halftone absolute inset-0" />
-
+ 
         {/* ── LAYER 2: Radial gradient vignette ── */}
         <div
           className="absolute inset-0 pointer-events-none"

@@ -27,12 +27,11 @@ const faqs = [
   },
 ];
 
-// HackToFuture yellow & red (matching CTA / brand)
 const HTF_YELLOW = "#FFE105";
 const HTF_RED = "#E8003D";
 
 const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -41,19 +40,17 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-40 w-full h-screen flex flex-col items-center justify-center overflow-hidden max-md:-mt-12 -mt-6"
-      style={{
+      className="fixed inset-0 z-30 w-full h-screen overflow-y-auto overflow-x-hidden"
+          style={{
         transform: "translateY(100%)",
         willChange: "transform, opacity",
         opacity: 0,
       }}
     >
-      {/* ── LAYER 1: Same halftone dot bg as CTA ── */}
-      <div className="comic-halftone absolute inset-0" />
 
-      {/* ── LAYER 2: Radial gradient vignette (same as CTA) ── */}
+      {/* ── LAYER 2: Radial gradient vignette ── */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="fixed inset-0 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.65) 100%)",
@@ -62,22 +59,22 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* ── LAYER 3: Top-to-bottom colour gradient overlay ── */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="fixed inset-0 pointer-events-none"
         style={{
           background:
             "linear-gradient(180deg, rgba(255,225,5,0.07) 0%, rgba(232,0,61,0.07) 100%)",
         }}
       />
 
-      {/* ── Corner panel frames (same as CTA) ── */}
-      <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
-      <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none" />
-      <div className="absolute bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none" />
-      <div className="absolute bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none" />
+      {/* ── Corner panel frames ── */}
+      <div className="fixed top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="fixed top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="fixed bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="fixed bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none z-10" />
 
-      {/* ── Dot cluster accents (same as CTA ComicDots) ── */}
+      {/* ── Dot cluster accents ── */}
       <div
-        className="absolute rounded-full pointer-events-none"
+        className="fixed rounded-full pointer-events-none"
         style={{
           top: "5%",
           right: "5%",
@@ -89,7 +86,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         }}
       />
       <div
-        className="absolute rounded-full pointer-events-none"
+        className="fixed rounded-full pointer-events-none"
         style={{
           bottom: "8%",
           left: "5%",
@@ -101,15 +98,15 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         }}
       />
 
-      {/* ── MAIN CONTENT ── */}
+      {/* ── SCROLLABLE CONTENT ── */}
       <div
         className="relative z-10 w-full flex flex-col items-center
-                   px-4 py-6
-                   -mt-8 sm:mt-0"           /* phone: nudge up */
-        style={{ maxHeight: "100vh", overflowY: "auto" }}
+                   px-4 pt-8 pb-16
+                   mt-0 -mt-6 sm:mt-0"
+        style={{ minHeight: "100vh" }}
       >
         {/* ── Title block ── */}
-        <div className="text-center mb-6 md:mb-8">
+        <div className="text-center mb-6 md:mb-8 mt-8 md:mt-12">
           {/* Eyebrow line */}
           <div className="flex items-center justify-center gap-3 mb-3">
             <div
@@ -155,26 +152,22 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         </div>
 
         {/* ── Accordion ── */}
-        <div
-          className="w-full"
-          style={{ maxWidth: "min(680px, 90vw)" }}
-        >
+        <div className="w-full" style={{ maxWidth: "min(680px, 90vw)" }}>
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index;
 
             return (
               <div
                 key={index}
-                className="mb-2 md:mb-3 overflow-hidden"
+                className="mb-2 md:mb-3"
                 style={{
                   border: "0.28rem solid #000",
-                  boxShadow: isOpen
-                    ? `4px 4px 0 #000`
-                    : `3px 3px 0 #000`,
+                  boxShadow: isOpen ? `4px 4px 0 #000` : `3px 3px 0 #000`,
                   transition: "box-shadow 0.2s",
+                  // NO overflow:hidden here — that was clipping the expand
                 }}
               >
-                {/* ── Question row — halftone white with dot SVG bg ── */}
+                {/* ── Question row ── */}
                 <button
                   className="w-full flex items-center justify-between px-4 md:px-5 py-3 md:py-4 text-left"
                   style={{
@@ -183,6 +176,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
                     cursor: "pointer",
                     border: "none",
                     outline: "none",
+                    width: "100%",
                   }}
                   onClick={() => toggle(index)}
                   aria-expanded={isOpen}
@@ -198,9 +192,9 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
                     {faq.question}
                   </span>
 
-                  {/* ── Toggle icon — yellow (+) / red (−) ── */}
+                  {/* ── Toggle icon ── */}
                   <span
-                    className="flex items-center justify-center font-black text-black flex-shrink-0 ml-3 rounded-sm"
+                    className="flex items-center justify-center font-black flex-shrink-0 ml-3 rounded-sm"
                     style={{
                       background: isOpen ? HTF_RED : HTF_YELLOW,
                       width: "clamp(26px, 3.5vw, 36px)",
@@ -217,25 +211,28 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
                   </span>
                 </button>
 
-                {/* ── Answer ── */}
+                {/* ── Answer — grows downward, pushes siblings down ── */}
                 <div
                   style={{
-                    maxHeight: isOpen ? "300px" : "0px",
-                    overflow: "hidden",
-                    transition: "max-height 0.35s ease",
+                    display: "grid",
+                    gridTemplateRows: isOpen ? "1fr" : "0fr",
+                    transition: "grid-template-rows 0.35s ease",
                     background: "rgba(255,255,255,0.06)",
                     borderTop: isOpen ? "0.2rem solid #000" : "none",
                   }}
                 >
-                  <p
-                    className="comic-sans px-4 md:px-5 py-3 md:py-4 text-white/85"
-                    style={{
-                      fontSize: "clamp(0.78rem, 1.7vw, 0.98rem)",
-                      lineHeight: 1.65,
-                    }}
-                  >
-                    {faq.answer}
-                  </p>
+                  {/* Inner wrapper must have overflow:hidden for grid trick */}
+                  <div style={{ overflow: "hidden" }}>
+                    <p
+                      className="comic-sans px-4 md:px-5 py-3 md:py-4 text-white/85"
+                      style={{
+                        fontSize: "clamp(0.78rem, 1.7vw, 0.98rem)",
+                        lineHeight: 1.65,
+                      }}
+                    >
+                      {faq.answer}
+                    </p>
+                  </div>
                 </div>
               </div>
             );
