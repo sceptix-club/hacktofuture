@@ -187,23 +187,24 @@ const Sticker = forwardRef<
   ]);
 
   return (
-    <mesh ref={ref} {...props}>
-      <planeGeometry args={[1, 1, 32, 32]} />
-      <MeshWobbleMaterial
-        factor={4}
-        speed={2}
-        depthTest={false}
-        transparent
-        map={smiley}
-        map-flipY={false}
-        roughness={1}
-        roughnessMap={invert}
-        roughnessMap-flipY={false}
-        map-anisotropy={16}
-        metalness={0.8}
-        side={THREE.DoubleSide}
-      />
-    </mesh>
+  // <mesh ref={ref} {...props}>
+  //     <planeGeometry args={[1, 1, 32, 32]} />
+  //     <MeshWobbleMaterial
+  //       factor={4}
+  //       speed={2}
+  //       depthTest={false}
+  //       transparent
+  //       map={smiley}
+  //       map-flipY={false}
+  //       roughness={1}
+  //       roughnessMap={invert}
+  //       roughnessMap-flipY={false}
+  //       map-anisotropy={16}
+  //       metalness={0.8}
+  //       side={THREE.DoubleSide}
+  //     />
+    //   </mesh>
+    <></>
   );
 });
 Sticker.displayName = "Sticker";

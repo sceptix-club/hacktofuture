@@ -3,7 +3,7 @@ import "../App.css";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../scenes/Footer";
 import gsap from "gsap";
-import BackgroundNew from "../components/BackgroundNew";
+import Background from "../components/Background";
 
 export default function About() {
   const footerRef = useRef<HTMLDivElement>(null);
@@ -76,9 +76,10 @@ export default function About() {
       >
         {/* ── 3D Background — pinned to the full viewport ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
-          <BackgroundNew
+          <Background
             path="Circle"
             dotScale={0.5}
+            squares={[]}
             className="w-full h-full"
           />
         </div>
