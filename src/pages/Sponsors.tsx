@@ -1,43 +1,10 @@
 import React, { useRef, useEffect, useState } from "react";
-import Core from "smooothy";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../scenes/Footer";
 import gsap from "gsap";
-import { Stats } from "@react-three/drei";
+import HorizontalSlider from "../components/HorizontalSlider";
+import type { SlideItem } from "../components/HorizontalSlider";
 
-/* ─── Theme data ─── */
-const THEMES = [
-  {
-    title: "AI & Machine Learning",
-    description:
-      "Build intelligent systems that learn, adapt, and transform the way we interact with technology. From neural networks to natural language processing, push the boundaries of what machines can do.",
-    icon: "🤖",
-    color: "#FFFF00",
-  },
-  {
-    title: "Web3 & Blockchain",
-    description:
-      "Decentralize the future. Create trustless applications, smart contracts, and decentralized protocols that empower users and redefine ownership in the digital age.",
-    icon: "⛓️",
-    color: "#55DB9C",
-  },
-  {
-    title: "Health & Sustainability",
-    description:
-      "Hack for a healthier planet and healthier people. Tackle climate change, optimize healthcare delivery, and build solutions that create lasting positive impact on our world.",
-    icon: "🌍",
-    color: "#E9CCFF",
-  },
-  {
-    title: "Open Innovation",
-    description:
-      "No limits, no boundaries. Bring your wildest ideas to life — from creative tools to productivity hacks, gaming experiences to social platforms. If you can dream it, you can build it.",
-    icon: "🚀",
-    color: "#FB4903",
-  },
-];
-
-/* ─── Halftone floating dots background ─── */
 function HalftoneDots() {
   return (
     <div
@@ -53,23 +20,135 @@ function HalftoneDots() {
   );
 }
 
-/* ─── Main Themes Page ─── */
-export default function Sponsors() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
-  const [showFooter, setShowFooter] = useState(false);
-  const sliderRef = useRef<any>(null);
-  const animIdRef = useRef<number>(0);
-  const isFooterVisible = useRef(false);
+const TITLE_SPONSORS: SlideItem[] = [
+  {
+    title: "EGDK India",
+    description:
+      "Title sponsor description goes here. They make this event possible.",
+    icon: "🏆",
+    color: "#FFFF00",
+  },
+];
 
-  // Footer animation
+const GOLD_SPONSORS: SlideItem[] = [
+  {
+    title: "Gold Corp",
+    description: "Gold sponsor powering innovation at every level.",
+    icon: "🥇",
+    color: "#FFD700",
+  },
+  {
+    title: "Gold Tech",
+    description: "Supporting builders and makers across the globe.",
+    icon: "💡",
+    color: "#E9CCFF",
+  },
+  {
+    title: "Gold Ventures",
+    description: "Investing in the next generation of technology leaders.",
+    icon: "🚀",
+    color: "#FB4903",
+  },
+];
+
+const PLATINUM_SPONSORS: SlideItem[] = [
+  {
+    title: "Plat Systems",
+    description: "Platinum tier excellence — shaping the future of tech.",
+    icon: "💎",
+    color: "#E0E0E0",
+  },
+  {
+    title: "Plat Labs",
+    description: "Research-driven sponsor committed to open innovation.",
+    icon: "🔬",
+    color: "#FFCDD2",
+  },
+];
+
+interface SponsorSectionProps {
+  label: string;
+  accentColor: string;
+  slides: SlideItem[];
+  leftHeading: React.ReactNode;
+  onReachEnd?: () => void;
+  onLeaveEnd?: () => void;
+}
+
+function SponsorSection({
+  label,
+  accentColor,
+  slides,
+  leftHeading,
+  onReachEnd,
+  onLeaveEnd,
+}: SponsorSectionProps) {
+  return (
+    <div className="w-full h-screen flex-shrink-0 relative flex flex-col">
+      {/* Section badge — centered on mobile */}
+      <div className="absolute top-4 md:top-6 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
+        <div
+          className="px-3 md:px-4 py-1 md:py-1.5"
+          style={{
+            background: accentColor,
+            border: "3px solid #000",
+            boxShadow: "4px 4px 0px #000",
+            transform: "skewX(-3deg)",
+          }}
+        >
+          <span
+            className="hero-title text-white"
+            style={{
+              fontSize: "clamp(0.6rem, 2vw, 1rem)",
+              transform: "skewX(3deg)",
+              display: "block",
+            }}
+          >
+            ★ {label} ★
+          </span>
+        </div>
+      </div>
+
+      {/* Slider */}
+      <div className="flex-1 pt-12 md:pt-0">
+        <HorizontalSlider
+          slides={slides}
+          leftPanelContent={leftHeading}
+          onReachEnd={onReachEnd}
+          onLeaveEnd={onLeaveEnd}
+        />
+      </div>
+    </div>
+  );
+}
+
+export default function Sponsors() {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const footerWheelRef = useRef<HTMLDivElement>(null);
+  const [showFooter, setShowFooter] = useState(false);
+  const showFooterRef = useRef(false);
+
+  const [activeSection, setActiveSection] = useState(0);
+  const activeSectionRef = useRef(0);
+  const totalSections = 3;
+
+  // Keep refs in sync
+  useEffect(() => {
+    showFooterRef.current = showFooter;
+  }, [showFooter]);
+
+  useEffect(() => {
+    activeSectionRef.current = activeSection;
+  }, [activeSection]);
+
+  // Footer slide animation
   useEffect(() => {
     if (!footerRef.current) return;
     if (showFooter) {
       gsap.to(footerRef.current, {
         y: "0%",
-        duration: 0.4,
+        duration: 0.45,
         ease: "power2.out",
         force3D: true,
       });
@@ -81,210 +160,105 @@ export default function Sponsors() {
         force3D: true,
       });
     }
-    isFooterVisible.current = showFooter;
   }, [showFooter]);
 
+  // Scroll outer container per section
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    const container = containerRef.current;
-    if (!wrapper || !container) return;
-
-    const slides = [...wrapper.children] as HTMLElement[];
-
-    const preventSelect = (e: Event) => e.preventDefault();
-    wrapper.addEventListener("selectstart", preventSelect);
-    wrapper.style.userSelect = "none";
-    wrapper.style.webkitUserSelect = "none";
-    wrapper.style.touchAction = "none";
-
-    const slider = new Core(wrapper, {
-      infinite: false,
-      snap: false,
-      variableWidth: true,
-      lerpFactor: 0.02,
-      speedDecay: 0.97,
-      bounceLimit: 0,
-      setOffset: ({
-        itemWidth,
-        totalWidth,
-      }: {
-        itemWidth: number;
-        totalWidth: number;
-      }) => {
-        const gap = window.innerWidth * 0.02;
-        const lastSlideOffset = (THEMES.length - 1) * (itemWidth + gap);
-        return totalWidth - lastSlideOffset;
-      },
-      onUpdate: (instance: any) => {
-        const vwOffset = window.innerWidth * 0.1;
-
-        slides.forEach((slide, i) => {
-          const slideWidth = slide.offsetWidth;
-          const slideLeft = slide.offsetLeft + instance.current;
-          const bgColor = THEMES[i].color;
-          const isLast = i === THEMES.length - 1;
-
-          if (slideLeft < 0 && !isLast) {
-            const ratio = Math.min(1, Math.abs(slideLeft) / slideWidth);
-            slide.style.cssText = `
-              background-color: ${bgColor};
-              border: 3px solid #000;
-              transform-origin: left 80%;
-              transform: translateX(${
-                instance.current + Math.abs(slideLeft) + ratio * vwOffset
-              }px) rotate(${-15 * ratio}deg) scale(${1 - ratio * 0.4});
-              position: relative;
-              z-index: ${i + 1};
-              box-shadow: 6px 6px 0px #000;
-            `;
-          } else {
-            slide.style.cssText = `
-              background-color: ${bgColor};
-              border: 3px solid #000;
-              transform: translateX(${instance.current}px);
-              z-index: ${i + 1};
-              box-shadow: 6px 6px 0px #000;
-            `;
-          }
-        });
-      },
+    if (!outerRef.current) return;
+    gsap.to(outerRef.current, {
+      y: `-${activeSection * 100}vh`,
+      duration: 0.7,
+      ease: "power3.inOut",
     });
+  }, [activeSection]);
 
-    sliderRef.current = slider;
+  // ── Footer wheel listener — scroll UP on footer to go back to last section ──
+  useEffect(() => {
+    const el = footerWheelRef.current;
+    if (!el) return;
 
-    // Animation loop
-    let momentum = 0;
-    let wasDragging = false;
-    const MOMENTUM_MULTIPLIER = 10;
-    const MOMENTUM_DECAY = 0.96;
+    let cooldown = false;
 
-    function animate() {
-      slider.update();
-
-      if (slider.isDragging) {
-        wasDragging = true;
-        momentum = 0;
-      } else if (wasDragging) {
-        momentum = slider.speed * MOMENTUM_MULTIPLIER;
-        wasDragging = false;
-      }
-
-      if (Math.abs(momentum) > 0.5) {
-        slider.target += momentum;
-        momentum *= MOMENTUM_DECAY;
-        slider.target = Math.max(slider.maxScroll, Math.min(0, slider.target));
-      }
-
-      animIdRef.current = requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // ─── Scroll-driven navigation ───
-    const SCROLL_SENSITIVITY = 1.0;
-    let scrollCooldown = false;
-
-    const handleWheel = (e: WheelEvent) => {
+    const handleFooterWheel = (e: WheelEvent) => {
+      if (!showFooterRef.current) return;
       e.preventDefault();
 
-      // Check if slider is at the end (scrolled to max) and scrolling down → show footer
-      const atEnd = slider.target <= slider.maxScroll + 5;
-      const atStart = slider.target >= -5;
+      if (cooldown) return;
 
-      if (atEnd && e.deltaY > 0) {
-        if (!isFooterVisible.current && !scrollCooldown) {
-          scrollCooldown = true;
-          setShowFooter(true);
-          setTimeout(() => {
-            scrollCooldown = false;
-          }, 600);
-        }
-        return;
-      }
-
-      if (isFooterVisible.current && e.deltaY < 0) {
-        if (!scrollCooldown) {
-          scrollCooldown = true;
-          setShowFooter(false);
-          setTimeout(() => {
-            scrollCooldown = false;
-          }, 600);
-        }
-        return;
-      }
-
-      if (isFooterVisible.current) return;
-
-      // Drive the slider with scroll
-      const delta = e.deltaY * SCROLL_SENSITIVITY;
-      slider.target -= delta;
-      slider.target = Math.max(slider.maxScroll, Math.min(0, slider.target));
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-
-    // ─── Touch-based scroll ───
-    let touchStartY = 0;
-    let touchLastY = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-      touchLastY = touchStartY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-      const currentY = e.touches[0].clientY;
-      const delta = (touchLastY - currentY) * SCROLL_SENSITIVITY;
-      touchLastY = currentY;
-
-      if (isFooterVisible.current) return;
-
-      slider.target -= delta;
-      slider.target = Math.max(slider.maxScroll, Math.min(0, slider.target));
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const totalDelta = touchStartY - e.changedTouches[0].clientY;
-      const atEnd = slider.target <= slider.maxScroll + 5;
-
-      if (atEnd && totalDelta > 50 && !isFooterVisible.current) {
-        setShowFooter(true);
-      } else if (isFooterVisible.current && totalDelta < -50) {
+      // Scroll UP inside footer → hide footer, go back to platinum
+      if (e.deltaY < 0) {
+        cooldown = true;
         setShowFooter(false);
+        setTimeout(() => {
+          cooldown = false;
+        }, 800);
       }
     };
 
-    container.addEventListener("touchstart", handleTouchStart, {
+    const handleFooterTouch = (() => {
+      let startY = 0;
+      const onStart = (e: TouchEvent) => {
+        startY = e.touches[0].clientY;
+      };
+      const onEnd = (e: TouchEvent) => {
+        if (!showFooterRef.current) return;
+        const delta = startY - e.changedTouches[0].clientY;
+        // Swipe UP (negative delta) → go back
+        if (delta < -50) {
+          setShowFooter(false);
+        }
+      };
+      return { onStart, onEnd };
+    })();
+
+    el.addEventListener("wheel", handleFooterWheel, { passive: false });
+    el.addEventListener("touchstart", handleFooterTouch.onStart, {
       passive: true,
     });
-    container.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
-    container.addEventListener("touchend", handleTouchEnd, { passive: true });
+    el.addEventListener("touchend", handleFooterTouch.onEnd, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animIdRef.current);
-      wrapper.removeEventListener("selectstart", preventSelect);
-      container.removeEventListener("wheel", handleWheel);
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchmove", handleTouchMove);
-      container.removeEventListener("touchend", handleTouchEnd);
-      slider.destroy();
+      el.removeEventListener("wheel", handleFooterWheel);
+      el.removeEventListener("touchstart", handleFooterTouch.onStart);
+      el.removeEventListener("touchend", handleFooterTouch.onEnd);
     };
   }, []);
 
+  const goNext = () =>
+    setActiveSection((prev) => Math.min(prev + 1, totalSections - 1));
+
+  const goPrev = () => setActiveSection((prev) => Math.max(prev - 1, 0));
+
+  // Left heading builder
+  const makeHeading = (
+    line1: string,
+    line2: string,
+    accentColor: string,
+    subtitle: string
+  ) => (
+    <div className="flex flex-col items-center md:items-start gap-3 md:gap-[1.5vw]">
+      <h2
+        className="hero-title text-white uppercase leading-[0.85] text-center md:text-left"
+        style={{ fontSize: "clamp(1.8rem, 6vw, 4rem)" }}
+      >
+        {line1}
+        <br />
+        <span style={{ color: accentColor }}>{line2}</span>
+      </h2>
+      <p
+        className="comic-sans text-white/50 w-[85%] md:w-[80%] text-center md:text-left"
+        style={{ fontSize: "clamp(0.7rem, 1.1vw, 0.95rem)" }}
+      >
+        {subtitle}
+      </p>
+    </div>
+  );
+
   return (
     <>
-      <Stats />
       <div
-        ref={containerRef}
         className="fixed inset-0 overflow-hidden"
-        style={{
-          background: "#0a0a0a",
-          overscrollBehavior: "none",
-          touchAction: "none",
-        }}
+        style={{ background: "#0a0a0a", overscrollBehavior: "none" }}
       >
         {/* Background */}
         <div className="absolute inset-0 z-0" style={{ contain: "strict" }}>
@@ -299,159 +273,65 @@ export default function Sponsors() {
           <HalftoneDots />
         </div>
 
-        {/* Header */}
-        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-4 sm:pt-6">
-          <div
-            className="px-4 sm:px-6 py-1.5 sm:py-2 relative"
-            style={{
-              background: "#DA100C",
-              border: "3px solid #000",
-              boxShadow: "4px 4px 0px #000",
-              transform: "skewX(-3deg)",
-            }}
-          >
-            <h1
-              className="hero-title text-white"
-              style={{
-                fontSize: "clamp(0.9rem, 3vw, 2rem)",
-                transform: "skewX(3deg)",
-              }}
-            >
-              ★ THEMES ★
-            </h1>
-          </div>
+        {/* Sections */}
+        <div
+          ref={outerRef}
+          className="absolute inset-x-0 z-20 will-change-transform"
+          style={{ top: 0 }}
+        >
+          <SponsorSection
+            label="TITLE SPONSORS"
+            accentColor="#DA100C"
+            slides={TITLE_SPONSORS}
+            leftHeading={makeHeading(
+              "Title",
+              "Sponsors",
+              "#DA100C",
+              "Our premier partners who make this event possible. Scroll to explore →"
+            )}
+            onReachEnd={goNext}
+            onLeaveEnd={goPrev}
+          />
+
+          <SponsorSection
+            label="GOLD SPONSORS"
+            accentColor="#B8860B"
+            slides={GOLD_SPONSORS}
+            leftHeading={makeHeading(
+              "Gold",
+              "Sponsors",
+              "#FFD700",
+              "Gold-tier supporters fueling innovation. Scroll to explore →"
+            )}
+            onReachEnd={goNext}
+            onLeaveEnd={goPrev}
+          />
+
+          <SponsorSection
+            label="PLATINUM SPONSORS"
+            accentColor="#5C5C8A"
+            slides={PLATINUM_SPONSORS}
+            leftHeading={makeHeading(
+              "Platinum",
+              "Sponsors",
+              "#E0E0E0",
+              "Our platinum partners — the backbone of HTF. Scroll to explore →"
+            )}
+            onReachEnd={() => setShowFooter(true)}
+            onLeaveEnd={() => setShowFooter(false)}
+          />
         </div>
 
-        {/* Slider area */}
-        <div className="absolute inset-0 z-20 flex items-center">
-          <div className="w-full h-full flex flex-col md:flex-row items-center gap-[2vw]">
-            {/* Left/Top text panel */}
-            <div className="w-full md:w-[40%] h-auto md:h-full flex flex-col items-start px-[6vw] md:px-[4vw] justify-center pt-20 md:pt-0 pb-2 md:pb-0">
-              <h2
-                className="hero-title text-white uppercase leading-[0.85]"
-                style={{ fontSize: "clamp(2rem, 10vw, 6rem)" }}
-              >
-                Pick
-                <br />
-                Your
-                <br />
-                <span style={{ color: "#DA100C" }}>Theme</span>
-              </h2>
-              <p
-                className="comic-sans text-white/50 mt-[2vw] w-[90%] md:w-[80%]"
-                style={{ fontSize: "clamp(0.75rem, 1.3vw, 1.1rem)" }}
-              >
-                Choose from one of our exciting tracks and build something
-                extraordinary. Scroll to explore →
-              </p>
-            </div>
-
-            {/* Right/Bottom slider panel */}
-            <div className="w-full md:w-[60%] h-[50vh] md:h-full overflow-clip relative">
-              <div
-                ref={wrapperRef}
-                className="flex h-full items-center will-change-transform"
-              >
-                {THEMES.map((theme, index) => (
-                  <div
-                    key={index}
-                    className={`shrink-0 pointer-events-none w-[60vw] h-[75vw] md:w-[30vw] md:h-[40vw] max-w-[450px] max-h-[600px] rounded-[2vw] flex flex-col justify-between p-[4vw] md:p-[2vw] ${
-                      index < THEMES.length - 1 ? "mr-[4vw] md:mr-[2vw]" : ""
-                    }`}
-                    style={{
-                      backgroundColor: theme.color,
-                      border: "3px solid #000",
-                      boxShadow: "6px 6px 0px #000",
-                    }}
-                  >
-                    {/* Icon */}
-                    <div>
-                      <span
-                        style={{
-                          fontSize: "clamp(2rem, 4vw, 4rem)",
-                          display: "block",
-                          marginBottom: "1vw",
-                        }}
-                      >
-                        {theme.icon}
-                      </span>
-                      {/* Theme number badge */}
-                      <div
-                        className="inline-block px-2 py-0.5 mb-[1vw]"
-                        style={{
-                          background: "#000",
-                          color: "#fff",
-                          borderRadius: "4px",
-                          fontFamily: "'Dela Gothic One', sans-serif",
-                          fontSize: "clamp(0.5rem, 0.9vw, 0.8rem)",
-                        }}
-                      >
-                        THEME #{index + 1}
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <div className="flex-1 flex flex-col justify-center">
-                      <h3
-                        className="font-bold leading-tight text-black"
-                        style={{
-                          fontFamily: "'Dela Gothic One', sans-serif",
-                          fontSize: "clamp(1rem, 2.2vw, 2.2rem)",
-                          marginBottom: "1vw",
-                        }}
-                      >
-                        {theme.title}
-                      </h3>
-                      <p
-                        className="font-sans font-medium leading-snug text-black/70"
-                        style={{
-                          fontSize: "clamp(0.65rem, 1.1vw, 1rem)",
-                        }}
-                      >
-                        {theme.description}
-                      </p>
-                    </div>
-
-                    {/* Bottom decorative element */}
-                    <div className="flex items-center justify-between">
-                      <div
-                        className="h-[3px] w-12"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, #000, transparent)",
-                        }}
-                      />
-                      <svg
-                        width="30"
-                        height="30"
-                        viewBox="0 0 100 100"
-                        className="opacity-20"
-                      >
-                        <polygon
-                          points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
-                          fill="#000"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        {/* Footer — wrapped in wheel listener div */}
+        <div
+          ref={footerWheelRef}
+          className="absolute inset-x-0 bottom-0 z-30"
+          style={{ touchAction: "none" }}
+        >
+          <Footer ref={footerRef} />
         </div>
-
-        {/* Footer */}
-        <Footer ref={footerRef} />
       </div>
       <Navbar />
-
-      {/* Inline keyframes for scroll hint */}
-      <style>{`
-        @keyframes scroll-hint {
-          0%, 100% { transform: translateY(0); opacity: 0.5; }
-          50% { transform: translateY(6px); opacity: 1; }
-        }
-      `}</style>
     </>
   );
 }
