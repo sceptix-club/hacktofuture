@@ -241,7 +241,6 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
           opacity: 0,
         }}
       >
- 
         {/* ── LAYER 2: Radial gradient vignette ── */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -407,7 +406,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
               <div
                 className="absolute -bottom-2 -right-3 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider border-2 border-white"
                 style={{
-                  fontFamily: '"Dekko", cursive',
+                  fontFamily: "comic-sans, cursive",
                   transform: "rotate(-2deg)",
                   fontSize: "clamp(0.55rem, 1vw, 0.75rem)",
                   letterSpacing: "0.15em",

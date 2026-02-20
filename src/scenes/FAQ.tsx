@@ -40,17 +40,18 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-30 w-full h-screen overflow-y-auto overflow-x-hidden"
-          style={{
+      className="fixed inset-0 z-30 w-full h-screen"
+      style={{
         transform: "translateY(100%)",
         willChange: "transform, opacity",
         opacity: 0,
+        /* hide scrollbar cross-browser while still allowing scroll if needed */
+        overflow: "hidden",
       }}
     >
-
       {/* ── LAYER 2: Radial gradient vignette ── */}
       <div
-        className="fixed inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
             "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.65) 100%)",
@@ -59,7 +60,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* ── LAYER 3: Top-to-bottom colour gradient overlay ── */}
       <div
-        className="fixed inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
           background:
             "linear-gradient(180deg, rgba(255,225,5,0.07) 0%, rgba(232,0,61,0.07) 100%)",
@@ -67,14 +68,14 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
       />
 
       {/* ── Corner panel frames ── */}
-      <div className="fixed top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="fixed top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="fixed bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="fixed bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="absolute bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="absolute bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none z-10" />
 
       {/* ── Dot cluster accents ── */}
       <div
-        className="fixed rounded-full pointer-events-none"
+        className="absolute rounded-full pointer-events-none"
         style={{
           top: "5%",
           right: "5%",
@@ -86,7 +87,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         }}
       />
       <div
-        className="fixed rounded-full pointer-events-none"
+        className="absolute rounded-full pointer-events-none"
         style={{
           bottom: "8%",
           left: "5%",
@@ -98,145 +99,159 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         }}
       />
 
-      {/* ── SCROLLABLE CONTENT ── */}
+      {/* ── SCROLLABLE CONTENT — scrollbar hidden ── */}
       <div
-        className="relative z-10 w-full flex flex-col items-center
-                   px-4 pt-8 pb-16
-                   mt-0 -mt-6 sm:mt-0"
-        style={{ minHeight: "100vh" }}
+        className="relative z-10 w-full h-full flex flex-col items-center px-4 pt-4 pb-16 -mt-4 sm:mt-0"
+        style={{
+          overflowY: "auto",
+          overflowX: "hidden",
+          /* Firefox */
+          scrollbarWidth: "none",
+          /* IE / Edge legacy */
+          msOverflowStyle: "none",
+        }}
       >
-        {/* ── Title block ── */}
-        <div className="text-center mb-6 md:mb-8 mt-8 md:mt-12">
-          {/* Eyebrow line */}
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <div
-              className="h-0.5 w-10 md:w-16"
+        {/* hide webkit scrollbar via a style tag injected inline */}
+        <style>{`
+          .faq-scroll::-webkit-scrollbar { display: none; }
+        `}</style>
+
+        {/* re-apply class so the style tag above targets it */}
+        <div
+          className="faq-scroll w-full flex flex-col items-center"
+          style={{ minHeight: "100%" }}
+        >
+          {/* ── Title block ── */}
+          <div className="text-center mb-6 md:mb-8 mt-8 md:mt-12">
+            {/* Eyebrow line */}
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div
+                className="h-0.5 w-10 md:w-16"
+                style={{
+                  background:
+                    "linear-gradient(to right, transparent, rgba(255,255,255,0.4))",
+                }}
+              />
+              <span
+                className="hero-title tracking-[0.3em] text-white/60"
+                style={{ fontSize: "clamp(0.55rem, 1.2vw, 0.75rem)" }}
+              >
+                ★ INTEL BRIEFING ★
+              </span>
+              <div
+                className="h-0.5 w-10 md:w-16"
+                style={{
+                  background:
+                    "linear-gradient(to left, transparent, rgba(255,255,255,0.4))",
+                }}
+              />
+            </div>
+
+            <h1
+              className="hero-title font-black uppercase leading-none"
               style={{
-                background:
-                  "linear-gradient(to right, transparent, rgba(255,255,255,0.4))",
+                fontSize: "clamp(2.8rem, 9vw, 5.5rem)",
+                letterSpacing: "0.02em",
+                textShadow: "4px 4px 0 rgba(0,0,0,0.35)",
               }}
-            />
-            <span
-              className="hero-title tracking-[0.3em] text-white/60"
-              style={{ fontSize: "clamp(0.55rem, 1.2vw, 0.75rem)" }}
             >
-              ★ INTEL BRIEFING ★
-            </span>
-            <div
-              className="h-0.5 w-10 md:w-16"
-              style={{
-                background:
-                  "linear-gradient(to left, transparent, rgba(255,255,255,0.4))",
-              }}
-            />
+              <span className="text-white">THE </span>
+              <span style={{ color: HTF_YELLOW }}>FAQS</span>
+            </h1>
+
+            <p
+              className="comic-sans text-white/70 uppercase tracking-widest mt-2"
+              style={{ fontSize: "clamp(0.6rem, 1.4vw, 0.82rem)" }}
+            >
+              INTELLIGENCE BRIEFING &amp; PROTOCOLS
+            </p>
           </div>
 
-          <h1
-            className="hero-title font-black uppercase leading-none"
-            style={{
-              fontSize: "clamp(2.8rem, 9vw, 5.5rem)",
-              letterSpacing: "0.02em",
-              textShadow: "4px 4px 0 rgba(0,0,0,0.35)",
-            }}
-          >
-            <span className="text-white">THE </span>
-            <span style={{ color: HTF_YELLOW }}>FAQS</span>
-          </h1>
+          {/* ── Accordion ── */}
+          <div className="w-full" style={{ maxWidth: "min(680px, 90vw)" }}>
+            {faqs.map((faq, index) => {
+              const isOpen = openIndex === index;
 
-          <p
-            className="comic-sans text-white/70 uppercase tracking-widest mt-2"
-            style={{ fontSize: "clamp(0.6rem, 1.4vw, 0.82rem)" }}
-          >
-            INTELLIGENCE BRIEFING &amp; PROTOCOLS
-          </p>
-        </div>
-
-        {/* ── Accordion ── */}
-        <div className="w-full" style={{ maxWidth: "min(680px, 90vw)" }}>
-          {faqs.map((faq, index) => {
-            const isOpen = openIndex === index;
-
-            return (
-              <div
-                key={index}
-                className="mb-2 md:mb-3"
-                style={{
-                  border: "0.28rem solid #000",
-                  boxShadow: isOpen ? `4px 4px 0 #000` : `3px 3px 0 #000`,
-                  transition: "box-shadow 0.2s",
-                  // NO overflow:hidden here — that was clipping the expand
-                }}
-              >
-                {/* ── Question row ── */}
-                <button
-                  className="w-full flex items-center justify-between px-4 md:px-5 py-3 md:py-4 text-left"
-                  style={{
-                    background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' opacity='0.08' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='6'/><circle cx='75' cy='75' r='6'/><circle cx='75' cy='25' r='6'/><circle cx='25' cy='75' r='6'/></g></svg>"), rgba(255,255,255,0.92)`,
-                    backgroundSize: "14px 14px, 100% 100%",
-                    cursor: "pointer",
-                    border: "none",
-                    outline: "none",
-                    width: "100%",
-                  }}
-                  onClick={() => toggle(index)}
-                  aria-expanded={isOpen}
-                >
-                  <span
-                    className="comic-sans font-black uppercase"
-                    style={{
-                      fontSize: "clamp(0.8rem, 2vw, 1.05rem)",
-                      color: "#111",
-                      letterSpacing: "0.03em",
-                    }}
-                  >
-                    {faq.question}
-                  </span>
-
-                  {/* ── Toggle icon ── */}
-                  <span
-                    className="flex items-center justify-center font-black flex-shrink-0 ml-3 rounded-sm"
-                    style={{
-                      background: isOpen ? HTF_RED : HTF_YELLOW,
-                      width: "clamp(26px, 3.5vw, 36px)",
-                      height: "clamp(26px, 3.5vw, 36px)",
-                      fontSize: "clamp(1rem, 2.5vw, 1.4rem)",
-                      lineHeight: 1,
-                      border: "0.2rem solid #000",
-                      boxShadow: "2px 2px 0 #000",
-                      color: isOpen ? "#fff" : "#000",
-                      transition: "background 0.2s, color 0.2s",
-                    }}
-                  >
-                    {isOpen ? "−" : "+"}
-                  </span>
-                </button>
-
-                {/* ── Answer — grows downward, pushes siblings down ── */}
+              return (
                 <div
+                  key={index}
+                  className="mb-2 md:mb-3"
                   style={{
-                    display: "grid",
-                    gridTemplateRows: isOpen ? "1fr" : "0fr",
-                    transition: "grid-template-rows 0.35s ease",
-                    background: "rgba(255,255,255,0.06)",
-                    borderTop: isOpen ? "0.2rem solid #000" : "none",
+                    border: "0.28rem solid #000",
+                    boxShadow: isOpen ? `4px 4px 0 #000` : `3px 3px 0 #000`,
+                    transition: "box-shadow 0.2s",
                   }}
                 >
-                  {/* Inner wrapper must have overflow:hidden for grid trick */}
-                  <div style={{ overflow: "hidden" }}>
-                    <p
-                      className="comic-sans px-4 md:px-5 py-3 md:py-4 text-white/85"
+                  {/* ── Question row ── */}
+                  <button
+                    className="w-full flex items-center justify-between px-4 md:px-5 py-3 md:py-4 text-left"
+                    style={{
+                      background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' opacity='0.08' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='6'/><circle cx='75' cy='75' r='6'/><circle cx='75' cy='25' r='6'/><circle cx='25' cy='75' r='6'/></g></svg>"), rgba(255,255,255,0.92)`,
+                      backgroundSize: "14px 14px, 100% 100%",
+                      cursor: "pointer",
+                      border: "none",
+                      outline: "none",
+                      width: "100%",
+                    }}
+                    onClick={() => toggle(index)}
+                    aria-expanded={isOpen}
+                  >
+                    <span
+                      className="comic-sans font-black uppercase"
                       style={{
-                        fontSize: "clamp(0.78rem, 1.7vw, 0.98rem)",
-                        lineHeight: 1.65,
+                        fontSize: "clamp(0.8rem, 2vw, 1.05rem)",
+                        color: "#111",
+                        letterSpacing: "0.03em",
                       }}
                     >
-                      {faq.answer}
-                    </p>
+                      {faq.question}
+                    </span>
+
+                    {/* ── Toggle icon ── */}
+                    <span
+                      className="flex items-center justify-center font-black flex-shrink-0 ml-3 rounded-sm"
+                      style={{
+                        background: isOpen ? HTF_RED : HTF_YELLOW,
+                        width: "clamp(26px, 3.5vw, 36px)",
+                        height: "clamp(26px, 3.5vw, 36px)",
+                        fontSize: "clamp(1rem, 2.5vw, 1.4rem)",
+                        lineHeight: 1,
+                        border: "0.2rem solid #000",
+                        boxShadow: "2px 2px 0 #000",
+                        color: isOpen ? "#fff" : "#000",
+                        transition: "background 0.2s, color 0.2s",
+                      }}
+                    >
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+
+                  {/* ── Answer — grows downward via grid trick ── */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateRows: isOpen ? "1fr" : "0fr",
+                      transition: "grid-template-rows 0.35s ease",
+                      background: "rgba(255,255,255,0.06)",
+                      borderTop: isOpen ? "0.2rem solid #000" : "none",
+                    }}
+                  >
+                    <div style={{ overflow: "hidden" }}>
+                      <p
+                        className="comic-sans px-4 md:px-5 py-3 md:py-4 text-white/85"
+                        style={{
+                          fontSize: "clamp(0.78rem, 1.7vw, 0.98rem)",
+                          lineHeight: 1.65,
+                        }}
+                      >
+                        {faq.answer}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

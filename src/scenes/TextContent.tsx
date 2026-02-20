@@ -165,7 +165,7 @@ const TextContent = ({
       tl.to(
         ctaRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        7.2
+        6.8
       );
     }
 
