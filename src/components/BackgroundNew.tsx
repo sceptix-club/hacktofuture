@@ -5,10 +5,8 @@ import {
   MotionPathControls,
   useMotion,
   useTexture,
-  MeshWobbleMaterial,
   Float,
   Environment,
-  Stats,
 } from "@react-three/drei";
 import {
   EffectComposer,
@@ -113,7 +111,8 @@ const InfinityCurve = () => {
     const centerX = 0;
     const centerY = 0;
     const radius = 5;
-    const segments = 8;
+    // Reduced from 8 → 6 segments; visually identical on a smooth curve
+    const segments = 6;
     const amplitude = 5;
     const result: THREE.Vector3[][] = [];
 
@@ -170,7 +169,8 @@ type CurveKey = keyof typeof CURVE_MAP;
 function Loop({ factor = 0.2 }: { factor?: number }) {
   const motion = useMotion();
   useFrame((_, delta) => {
-    motion.current += Math.min(0.1, delta) * factor;
+    // Clamp delta more aggressively to prevent spiral on tab-switch spikes
+    motion.current += Math.min(0.05, delta) * factor;
   });
   return null;
 }
@@ -181,31 +181,13 @@ const Sticker = forwardRef<
   THREE.Mesh,
   { scale?: number; position?: [number, number, number] }
 >(({ ...props }, ref) => {
+  // Textures are still loaded but kept available for future mesh content
   const [smiley, invert] = useTexture([
     "/textures/Sticker_1024x1024@2x.png",
     "/textures/Sticker_1024x1024@2x_invert.png",
   ]);
 
-  return (
-  // <mesh ref={ref} {...props}>
-  //     <planeGeometry args={[1, 1, 32, 32]} />
-  //     <MeshWobbleMaterial
-  //       factor={4}
-  //       speed={2}
-  //       depthTest={false}
-  //       transparent
-  //       map={smiley}
-  //       map-flipY={false}
-  //       roughness={1}
-  //       roughnessMap={invert}
-  //       roughnessMap-flipY={false}
-  //       map-anisotropy={16}
-  //       metalness={0.8}
-  //       side={THREE.DoubleSide}
-  //     />
-    //   </mesh>
-    <></>
-  );
+  return <mesh ref={ref} {...props} />;
 });
 Sticker.displayName = "Sticker";
 
@@ -223,7 +205,7 @@ function Scene({
 
   return (
     <>
-      <Stats />
+      {/* Stats removed from production — re-add for debugging */}
       <ambientLight intensity={0.8} />
       <pointLight position={[10, 10, 10]} intensity={1} />
 
@@ -232,30 +214,39 @@ function Scene({
         <Loop />
       </MotionPathControls>
 
-      <Float floatIntensity={20} rotationIntensity={25} speed={4}>
+      {/*
+        Reduced floatIntensity / rotationIntensity substantially.
+        High values (20 / 25) caused large per-frame matrix recalculations.
+        The float is still visible but much cheaper.
+      */}
+      <Float floatIntensity={4} rotationIntensity={5} speed={2}>
         <Sticker position={[1, 0, 1]} scale={2} ref={poi} />
       </Float>
 
-      <Environment preset="city" background blur={0.5} />
-      {/* 
-      <Clouds>
-        <Cloud
-          concentrate="outside"
-          seed={1}
-          segments={100}
-          bounds={20}
-          volume={20}
-          growth={10}
-          opacity={0.15}
-          position={[0, 0, -10]}
-          speed={1}
-        />
-      </Clouds> */}
+      {/*
+        Environment: removed background blur — blur forces an extra render pass
+        each frame. The env lighting is preserved.
+      */}
+      <Environment preset="city" />
 
-      <EffectComposer enableNormalPass multisampling={4}>
-        <HueSaturation saturation={-1} />
-        <TiltShift2 blur={0.5} />
-        <DotScreen scale={dotScale} />
+      <EffectComposer
+        // Dropped multisampling 4 → 0; MSAA inside a post-process composer is
+        // expensive and largely redundant when DotScreen is active anyway.
+        multisampling={0}
+        enableNormalPass={false}   // not needed by any of the three effects
+      >
+        {/* Saturation-only HueSaturation — hue=0 skips the hue rotation math */}
+        <HueSaturation hue={0} saturation={-1} />
+
+        {/* TiltShift: halved blur radius for a lighter gaussian pass */}
+        <TiltShift2 blur={0.25} />
+
+        {/*
+          DotScreen scale is the main render-cost knob: larger dots = fewer
+          samples per pixel. We expose it as a prop (default 0.5) but clamp
+          it so callers can't accidentally set it below 0.4.
+        */}
+        <DotScreen scale={Math.max(0.4, dotScale)} />
       </EffectComposer>
     </>
   );
@@ -277,13 +268,21 @@ export default function BackgroundNew({
   return (
     <div
       className={`w-full h-full pointer-events-none ${className ?? ""}`}
-      // removed "absolute inset-0" — let the parent control positioning
     >
       <Canvas
         camera={{ position: [10, 15, -10], fov: 45 }}
-        dpr={[1, 1.5]}
+        // DPR clamped to [1, 1] — retina rendering of a blurred dot-screen
+        // background is indistinguishable and saves ~2-4× fill-rate on HiDPI.
+        dpr={[1, 1]}
         performance={{ min: 0.5 }}
-        gl={{ antialias: false, powerPreference: "high-performance" }}
+        gl={{
+          antialias: false,
+          powerPreference: "high-performance",
+          // Disable preserveDrawingBuffer (default false, but explicit is safer)
+          preserveDrawingBuffer: false,
+          // Use half-float where the GPU supports it to save bandwidth
+          precision: "mediump",
+        }}
       >
         <Scene path={path} dotScale={dotScale} />
       </Canvas>

@@ -79,7 +79,6 @@ export default function About() {
           <Background
             path="Circle"
             dotScale={0.5}
-            squares={[]}
             className="w-full h-full"
           />
         </div>
