@@ -16,8 +16,6 @@ interface ExperienceProps {
 
 const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const { camera, viewport } = useThree();
-  const [progress, setProgress] = useState(0);
-  const currentSceneRef = useRef(0);
   const tvRef = useRef<THREE.Group | null>(null);
   const pointerRef = useRef<THREE.PointLight | null>(null);
   const scene6Ref = useRef<THREE.Group | null>(null);
@@ -28,7 +26,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const [stableViewportWidth, setStableViewportWidth] = useState(
     viewport.width
   );
-
   // Update viewport width on actual window resize
   useEffect(() => {
     const handleResize = () => {
@@ -94,33 +91,18 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     // Scene 2: Circular camera around Rulebook (1.0 - 2.0)
     const scene2State = { progress: 0 };
     const cam2 = { x: 0, y: -28, z: 10 };
-
-    tl.to(
-      cam2,
-      {
-        z: 6,
-        duration: 0.4,
-        ease: "power2.in",
-        onUpdate: () => {
-          camera.position.set(cam2.x, cam2.y, cam2.z);
-          camera.lookAt(0, -30, 0);
-        },
-      },
-      1.0
-    );
-
     tl.to(cam2, {
-      y: -28,
       z: 1,
-      duration: 0.35,
-      ease: "power1.inOut",
+      duration: 0.5,
+      ease: "power2.inOut",
       onUpdate: () => {
         camera.position.set(cam2.x, cam2.y, cam2.z);
         camera.lookAt(0, -30, 0);
       },
-    });
+    }, 1.0);
+
     tl.to(cam2, {
-      duration: 0.15,
+      duration: 0.1,
       onUpdate: () => {
         camera.position.set(cam2.x, cam2.y, cam2.z);
         camera.lookAt(0, -30, 0);
@@ -246,43 +228,24 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     };
   }, [scenes, camera, stableViewportWidth]); // Added stableViewportWidth as dependency
 
-  const lastProgressRef = useRef(-1);
-  const lastSceneRef = useRef(-1);
-
   useFrame((state) => {
     const scrollProgress = scrollProgressRef.current || 0;
-
-    if (
-      tlRef.current &&
-      Math.abs(scrollProgress - lastProgressRef.current) > 0.0005
-    ) {
-      lastProgressRef.current = scrollProgress;
+    if (tlRef.current) {
       tlRef.current.progress(scrollProgress);
     }
 
-    const time = scrollProgress * scenes;
-    const current = Math.min(Math.floor(time), scenes - 1);
-    const p = time % 1;
-
-    // Only call setProgress if it actually changed — avoids 60 React re-renders/sec
-    if (Math.abs(p - lastSceneRef.current) > 0.005) {
-      lastSceneRef.current = p;
-      setProgress(p);
-    }
-
-    currentSceneRef.current = current;
-
-    // Pointer light
+    // pointer light
     if (pointerRef.current) {
-      const pt = state.pointer;
-      const worldPoint = new THREE.Vector3(pt.x, pt.y, 0.5).unproject(
-        state.camera
-      );
+      const p = state.pointer;
+      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5)
+        .unproject(state.camera);
+
       const dir = worldPoint.sub(state.camera.position).normalize();
       const ray = new THREE.Ray(state.camera.position, dir);
-      const cardsPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+      const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+
       const hit = new THREE.Vector3();
-      if (ray.intersectPlane(cardsPlane, hit)) {
+      if (ray.intersectPlane(plane, hit)) {
         pointerRef.current.position.copy(hit);
         pointerRef.current.position.z += 2;
       }
@@ -310,7 +273,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
-      <HackToFuture viewportWidth={stableViewportWidth} progress={progress} />
+      <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
 
       {/* Scene 2 */}
       <group position={[0, -30, 0]}>
@@ -324,7 +287,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-height={2048}
         />
 
-        <Comic progress={progress} />
+        <Comic tlRef={tlRef} />
       </group>
 
       {/* Scene 3: Blank space for Sponsors */}
@@ -358,8 +321,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       <group ref={scene6Ref} position={[0, -150, 0]} />
       <Cards
         pointerRef={pointerRef}
-        progress={scrollProgressRef}
-        currentScene={currentSceneRef}
       />
 
       <pointLight

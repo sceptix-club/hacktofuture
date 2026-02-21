@@ -3,12 +3,10 @@ import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 
 type CardsProps = {
-  progress: React.RefObject<number>;
-  currentScene: React.RefObject<number>;
   pointerRef: React.RefObject<THREE.PointLight | null>
 };
 
-export default function Cards({ progress, currentScene, pointerRef }: CardsProps) {
+export default function Cards({ pointerRef }: CardsProps) {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);
 
   const cardsRef = useRef<THREE.Mesh[]>([])

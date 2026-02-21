@@ -2,45 +2,48 @@ import { useEffect, useRef } from 'react'
 import React from 'react'
 import * as THREE from "three"
 import { useGLTF, useAnimations } from '@react-three/drei'
-import { useFrame, useGraph } from '@react-three/fiber'
+import { useGraph } from '@react-three/fiber'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js'
 
 type ComicProps = {
-  progress: number
+  tlRef: React.RefObject<gsap.core.Timeline | null>
 }
 
-function Comic({ progress }: ComicProps) {
+function Comic({ tlRef }: ComicProps) {
   const group = useRef<THREE.Group>(null)
   const { scene, animations } = useGLTF('/book.glb')
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes, materials } = useGraph(clone)
   const { actions } = useAnimations(animations, group)
 
-  let pr = 0;
-  const startTime = 0.6
-  const endTime = 0.8  // whatever your actual max is
-
-  if (progress > startTime) {
-    pr = (progress - startTime) / (endTime - startTime)
-    pr = Math.min(pr, 1) // clamp to 1
-  }
-
-  // In useEffect - play but freeze at time 0
   useEffect(() => {
     Object.values(actions).forEach((action) => {
       if (!action) return
-      action.reset().play().paused = true
+      action.reset().play()
+      action.paused = true
     })
   }, [actions])
 
-  useFrame(() => {
-    Object.values(actions).forEach((action) => {
-      if (!action) return
-      action.paused = true
-      action.time = action.getClip().duration * pr
-    })
-  })
+  useEffect(() => {
+    if (!actions) return
+    if (!tlRef?.current) return
 
+    const tl = tlRef.current
+    const state = { progress: 0 }
+
+    tl.to(state, {
+      progress: 1,
+      duration: 0.7,
+      ease: "none",
+      onUpdate: () => {
+        Object.values(actions).forEach((action) => {
+          if (!action) return
+          action.time =
+            action.getClip().duration * state.progress
+        })
+      }
+    }, 1.3)
+  }, [actions, tlRef?.current])
 
   return (
     <group ref={group} dispose={null} rotation={[0, -90, 0]} scale={0.8}>
