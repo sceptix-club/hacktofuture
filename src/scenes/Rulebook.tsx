@@ -56,7 +56,7 @@ function Comic({ progress }: ComicProps) {
         <skinnedMesh
           name="Cube001"
           geometry={(nodes as any).Cube001.geometry}
-          material={materials.Base}
+          material={materials.Material}
           skeleton={(nodes as any).Cube001.skeleton}
           morphTargetDictionary={(nodes as any).Cube001.morphTargetDictionary}
           morphTargetInfluences={(nodes as any).Cube001.morphTargetInfluences}
