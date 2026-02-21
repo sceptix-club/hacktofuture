@@ -194,7 +194,7 @@ function Timeline() {
 export default function TimerTimeline() {
 
 	return (
-		<div className="h-full grid grid-rows-[1fr_3fr]">
+		<div className="h-full grid grid-rows-[1fr_3fr] justify-items-center">
 			<Timer />
 			<Timeline />
 		</div>
