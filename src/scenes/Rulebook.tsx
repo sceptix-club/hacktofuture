@@ -1,9 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import React from 'react'
 import * as THREE from "three"
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { useGraph } from '@react-three/fiber'
 import { SkeletonUtils } from 'three/examples/jsm/Addons.js'
+
+const handleDownload = (e: any) => {
+  e.stopPropagation()
+  const link = document.createElement("a")
+  link.href = "/rulebook.pdf"
+  link.download = "HackToFuture-Rulebook.pdf"
+  link.click()
+}
 
 type ComicProps = {
   tlRef: React.RefObject<gsap.core.Timeline | null>
@@ -46,7 +54,13 @@ function Comic({ tlRef }: ComicProps) {
   }, [actions, tlRef?.current])
 
   return (
-    <group ref={group} dispose={null} rotation={[0, -90, 0]} scale={0.8}>
+    <group
+      ref={group}
+      dispose={null}
+      rotation={[0, -90, 0]}
+      scale={0.8}
+      onClick={handleDownload}
+    >
       <group name="Scene">
         <group name="Armature" position={[-0.3, -0.5, 1]}>
           <primitive object={nodes.pbottom} />

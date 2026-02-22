@@ -46,7 +46,7 @@ const TextContent = ({
       tl.fromTo(
         scene2TextRef.current,
         { y: "100vh", opacity: 0 },
-        { y: "0vh", opacity: 1, duration: 0.4 },
+        { y: "20vh", opacity: 1, duration: 0.4 },
         1.0
       );
       tl.to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
@@ -234,11 +234,15 @@ const TextContent = ({
       {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
           }`}
-        style={{ opacity: 0 }}
+        style={{
+          fontSize: "clamp(10px, 3vw, 20px)",
+          opacity: 0
+        }}
         aria-hidden={_currentScene !== 1}
       >
+        CLICK TO DOWNLOAD RULEBOOK
       </div>
 
       {/* Scene 3 */}
