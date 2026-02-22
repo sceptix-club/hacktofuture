@@ -206,9 +206,8 @@ const FloatingShapes = () => {
                 width: s.size,
                 height: s.size,
                 background: `radial-gradient(circle, ${s.color}, transparent 70%)`,
-                animation: `comic-pulse ${s.dur * 0.6}s ease-in-out ${
-                  s.delay
-                }s infinite`,
+                animation: `comic-pulse ${s.dur * 0.6}s ease-in-out ${s.delay
+                  }s infinite`,
                 willChange: "transform, opacity",
               } as React.CSSProperties
             }
@@ -323,32 +322,6 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
               boxShadow: "6px 6px 0 #000",
             }}
           >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div
-                className="h-0.5 w-12 md:w-20"
-                style={{
-                  background:
-                    "linear-gradient(to right, transparent, rgba(0,0,0,0.3))",
-                }}
-              />
-              <span
-                className="hero-title tracking-[0.3em]"
-                style={{
-                  fontSize: "clamp(0.6rem, 1.5vw, 0.8rem)",
-                  color: "#555",
-                }}
-              >
-                ★ COMIC EDITION ★
-              </span>
-              <div
-                className="h-0.5 w-12 md:w-20"
-                style={{
-                  background:
-                    "linear-gradient(to left, transparent, rgba(0,0,0,0.3))",
-                }}
-              />
-            </div>
-
             <h2
               className="hero-title font-bold relative"
               style={{

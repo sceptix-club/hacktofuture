@@ -14,6 +14,7 @@ import { Environment, Stats, useProgress } from "@react-three/drei";
 import Sponsors from "./pages/Sponsors";
 import Themes from "./pages/Themes";
 import About from "./pages/About";
+import { Overlay } from "./scenes/Overlay";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -101,6 +102,7 @@ function HomePage() {
     <>
       <LoaderOverlay />
       {loaded && <Navbar />}
+      <Overlay />
       <div id="smooth-wrapper">
         <div id="smooth-content" style={{ height: `${SCENES * 400}dvh` }}></div>
       </div>

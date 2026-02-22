@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import Button from "../components/ui/Button";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
@@ -62,7 +61,7 @@ const TextContent = ({
           return positions[index] || 0;
         },
         y: (index) => {
-          const positions = [-2000, -2000, 0, 1500, 2000,1500];
+          const positions = [-2000, -2000, 0, 1500, 2000, 1500];
           return positions[index] || 0;
         },
         opacity: 0,
@@ -83,11 +82,11 @@ const TextContent = ({
         panels,
         {
           x: (index) => {
-            const positions = [0, -2000, 1500, 0, 0,-1500];
+            const positions = [0, -2000, 1500, 0, 0, -1500];
             return positions[index] || 0;
           },
           y: (index) => {
-            const positions = [-1000, 2000, -1500, 1500, 2000,1500];
+            const positions = [-1000, 2000, -1500, 1500, 2000, 1500];
             return positions[index] || 0;
           },
           opacity: 0,
@@ -230,47 +229,16 @@ const TextContent = ({
         ref={scene1TextRef}
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
       >
-        <div className="max-w-[95vw] overflow-hidden">
-          <h2
-            className="text-white whitespace-nowrap font-bold"
-            style={{ fontSize: "clamp(0.5rem, 4vw, 1.0rem)" }}
-          >
-            Scroll To Explore
-          </h2>
-        </div>
       </div>
 
       {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
-          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-        }`}
+        className={`fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+          }`}
         style={{ opacity: 0 }}
         aria-hidden={_currentScene !== 1}
       >
-        <div className="max-w-[75vw] overflow-hidden text-center">
-          <h2
-            className="text-white font-bold hero-title"
-            style={{ fontSize: "clamp(1.5rem, 6vw, 3.5rem)" }}
-          >
-            ABOUT HACKTOFUTURE
-          </h2>
-          <p
-            className="text-white/80 mt-4 comic-sans"
-            style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)" }}
-          >
-            "The clock starts ticking… 36 hours. Infinite chaos."
-            <br />
-            <br />
-            HackToFuture 4.0 is back this April (x–y), where ideas collide,
-            caffeine fuels creativity, and legends are coded. Whether you're a
-            seasoned hacker or a first-time hero.
-          </p>
-          <Button className="mt-6 bg-white text-black hover:cursor-pointer">
-            Download Rulebook
-          </Button>
-        </div>
       </div>
 
       {/* Scene 3 */}
@@ -326,7 +294,6 @@ const TextContent = ({
         </div>
       ))}
 
-      {/* z-index layering: CTA(z-30) → FAQ(z-40) → Footer(z-50) */}
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
       <Footer ref={footerRef} />

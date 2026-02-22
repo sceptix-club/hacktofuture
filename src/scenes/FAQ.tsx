@@ -101,7 +101,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* ── SCROLLABLE CONTENT — scrollbar hidden ── */}
       <div
-        className="relative z-10 w-full h-full flex flex-col items-center px-4 pt-4 pb-16 -mt-4 sm:mt-0"
+        className="relative z-10 w-full h-full flex flex-col items-center px-4 pt-28 pb-16 -mt-4 sm:mt-0"
         style={{
           overflowY: "auto",
           overflowX: "hidden",
@@ -123,30 +123,6 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         >
           {/* ── Title block ── */}
           <div className="text-center mb-6 md:mb-8 mt-8 md:mt-12">
-            {/* Eyebrow line */}
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <div
-                className="h-0.5 w-10 md:w-16"
-                style={{
-                  background:
-                    "linear-gradient(to right, transparent, rgba(255,255,255,0.4))",
-                }}
-              />
-              <span
-                className="hero-title tracking-[0.3em] text-white/60"
-                style={{ fontSize: "clamp(0.55rem, 1.2vw, 0.75rem)" }}
-              >
-                ★ INTEL BRIEFING ★
-              </span>
-              <div
-                className="h-0.5 w-10 md:w-16"
-                style={{
-                  background:
-                    "linear-gradient(to left, transparent, rgba(255,255,255,0.4))",
-                }}
-              />
-            </div>
-
             <h1
               className="hero-title font-black uppercase leading-none"
               style={{
@@ -155,16 +131,8 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
                 textShadow: "4px 4px 0 rgba(0,0,0,0.35)",
               }}
             >
-              <span className="text-white">THE </span>
-              <span style={{ color: HTF_YELLOW }}>FAQS</span>
+              <span style={{ color: HTF_YELLOW }}>FAQ</span>
             </h1>
-
-            <p
-              className="comic-sans text-white/70 uppercase tracking-widest mt-2"
-              style={{ fontSize: "clamp(0.6rem, 1.4vw, 0.82rem)" }}
-            >
-              INTELLIGENCE BRIEFING &amp; PROTOCOLS
-            </p>
           </div>
 
           {/* ── Accordion ── */}
