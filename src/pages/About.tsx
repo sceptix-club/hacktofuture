@@ -77,9 +77,6 @@ export default function About() {
         {/* ── 3D Background — pinned to the full viewport ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
           <Background
-            path="Circle"
-            dotScale={0.5}
-            className="w-full h-full"
           />
         </div>
 
