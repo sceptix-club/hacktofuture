@@ -112,7 +112,7 @@ function HomePage() {
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
           shadows
         >
-          <Stats />
+          {/* <Stats /> */}
           <Suspense fallback={null}>
             <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
             <Environment
@@ -144,7 +144,7 @@ function App() {
         <Route path="/themes" element={<Themes />} />
         <Route path="/about" element={<About />} />
         <Route path="/sponsors" element={<Sponsors />} />
-        <Route path="/ps/:theme" element={<PSPage />} />
+        <Route path="/theme/:theme" element={<PSPage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,457 +1,373 @@
-import React, { useRef, useEffect, useState } from "react";
-import Core from "smooothy";
+import { useRef, useEffect, useState } from "react";
 import Navbar from "../components/ui/Navbar";
 import Footer from "../scenes/Footer";
 import gsap from "gsap";
-import { Stats } from "@react-three/drei";
+import { useNavigate } from "react-router-dom";
+import { themes, type ThemeSlug } from "../content/data";
+import Background from "../components/Background";
 
-/* ─── Theme data ─── */
-const THEMES = [
+/* ─── Theme card data ─── */
+const THEME_CARDS = [
   {
-    title: "AI & Machine Learning",
+    slug: "healthcare-and-citizen-welfare" as ThemeSlug,
+    title: "Healthcare & Citizen Welfare",
     description:
-      "Build intelligent systems that learn, adapt, and transform the way we interact with technology. From neural networks to natural language processing, push the boundaries of what machines can do.",
-    icon: "🤖",
-    color: "#FFFF00",
+      "Build solutions that improve public health outcomes, enhance citizen welfare, and make healthcare accessible for all. From diagnostics to mental health, drive meaningful change.",
+    accent: "#E8003D",
+    number: "01",
   },
   {
-    title: "Web3 & Blockchain",
+    slug: "industry-and-trade" as ThemeSlug,
+    title: "Industry & Trade",
     description:
-      "Decentralize the future. Create trustless applications, smart contracts, and decentralized protocols that empower users and redefine ownership in the digital age.",
-    icon: "⛓️",
-    color: "#55DB9C",
+      "Optimize supply chains, streamline manufacturing, and empower businesses with intelligent tools for procurement, forecasting, and trade compliance.",
+    accent: "#FFE105",
+    number: "02",
   },
   {
-    title: "Health & Sustainability",
+    slug: "infrastructure-and-smart-cities" as ThemeSlug,
+    title: "Infrastructure & Smart Cities",
     description:
-      "Hack for a healthier planet and healthier people. Tackle climate change, optimize healthcare delivery, and build solutions that create lasting positive impact on our world.",
-    icon: "🌍",
-    color: "#E9CCFF",
-  },
-  {
-    title: "Open Innovation",
-    description:
-      "No limits, no boundaries. Bring your wildest ideas to life — from creative tools to productivity hacks, gaming experiences to social platforms. If you can dream it, you can build it.",
-    icon: "🚀",
-    color: "#FB4903",
+      "Design the cities of tomorrow — smarter waste management, connected transit, road safety systems, and data-driven urban planning for a better quality of life.",
+    accent: "#00C6FF",
+    number: "03",
   },
 ];
 
-/* ─── Halftone floating dots background ─── */
-function HalftoneDots() {
+/* ─── Individual Theme Card ─── */
+function ThemeCard({
+  theme,
+  index,
+  onClick,
+}: {
+  theme: (typeof THEME_CARDS)[number];
+  index: number;
+  onClick: () => void;
+}) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseEnter = () => {
+    if (!cardRef.current) return;
+    gsap.to(cardRef.current, {
+      y: -8,
+      scale: 1.02,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (!cardRef.current) return;
+    gsap.to(cardRef.current, {
+      y: 0,
+      scale: 1,
+      duration: 0.3,
+      ease: "power2.out",
+    });
+  };
+
   return (
     <div
-      className="absolute inset-0 pointer-events-none"
+      ref={cardRef}
+      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="relative flex flex-col justify-between cursor-pointer select-none"
       style={{
-        backgroundImage:
-          "radial-gradient(circle, rgba(255,255,255,0.15) 2px, transparent 1px)",
-        backgroundSize: "20px 20px",
-        animation: "float-dots 60s linear infinite",
+        background: "rgba(255,255,255,0.03)",
+        border: "1px solid rgba(255,255,255,0.1)",
+        borderTop: `3px solid ${theme.accent}`,
+        borderRadius: "0.75rem",
+        padding: "clamp(1.5rem, 3vw, 2.5rem)",
+        minHeight: "clamp(280px, 35vh, 380px)",
+        backdropFilter: "blur(12px)",
         willChange: "transform",
+        transition: "box-shadow 0.3s ease",
+        boxShadow: `0 0 0 rgba(0,0,0,0)`,
       }}
-    />
+    >
+      {/* Number badge */}
+      <div className="flex items-start justify-between mb-6">
+        <span
+          className="hero-title font-black"
+          style={{
+            fontSize: "clamp(3rem, 7vw, 5rem)",
+            color: theme.accent,
+            opacity: 0.15,
+            lineHeight: 1,
+            userSelect: "none",
+          }}
+        >
+          {theme.number}
+        </span>
+
+        {/* Arrow icon */}
+        <div
+          className="flex items-center justify-center"
+          style={{
+            width: 36,
+            height: 36,
+            border: `1px solid ${theme.accent}`,
+            borderRadius: "50%",
+            color: theme.accent,
+            flexShrink: 0,
+          }}
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
+            <line x1="7" y1="17" x2="17" y2="7" />
+            <polyline points="7 7 17 7 17 17" />
+          </svg>
+        </div>
+      </div>
+
+      {/* Title */}
+      <h3
+        className="hero-title font-black uppercase mb-4"
+        style={{
+          fontSize: "clamp(1.1rem, 2.5vw, 1.75rem)",
+          color: "#fff",
+          lineHeight: 1.1,
+        }}
+      >
+        {theme.title}
+      </h3>
+
+      {/* Description */}
+      <p
+        className="comic-sans"
+        style={{
+          fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+          color: "rgba(255,255,255,0.55)",
+          lineHeight: 1.6,
+          flexGrow: 1,
+        }}
+      >
+        {theme.description}
+      </p>
+
+      {/* Bottom — PS count + CTA */}
+      <div
+        className="flex items-center justify-between mt-6 pt-4"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+      >
+        <span
+          className="comic-sans"
+          style={{
+            fontSize: "clamp(0.7rem, 1.1vw, 0.8rem)",
+            color: "rgba(255,255,255,0.35)",
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+          }}
+        >
+          {themes[theme.slug].problemStatements.length} Problem Statement
+          {themes[theme.slug].problemStatements.length > 1 ? "s" : ""}
+        </span>
+
+        <span
+          className="comic-sans"
+          style={{
+            fontSize: "clamp(0.7rem, 1.1vw, 0.8rem)",
+            color: theme.accent,
+            textTransform: "uppercase",
+            letterSpacing: "0.12em",
+          }}
+        >
+          Explore →
+        </span>
+      </div>
+    </div>
   );
 }
 
 /* ─── Main Themes Page ─── */
 export default function Themes() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
   const [showFooter, setShowFooter] = useState(false);
-  const sliderRef = useRef<any>(null);
-  const animIdRef = useRef<number>(0);
   const isFooterVisible = useRef(false);
+  const touchStartY = useRef(0);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  // Entrance animation
+  useEffect(() => {
+    if (!cardsRef.current || !headerRef.current) return;
+
+    const cards = cardsRef.current.querySelectorAll(".theme-card-wrapper");
+
+    gsap.fromTo(
+      headerRef.current,
+      { opacity: 0, y: -30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
+    );
+
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power3.out",
+        stagger: 0.12,
+        delay: 0.25,
+      }
+    );
+  }, []);
 
   // Footer animation
   useEffect(() => {
     if (!footerRef.current) return;
     if (showFooter) {
-      gsap.to(footerRef.current, {
-        y: "0%",
-        duration: 0.4,
-        ease: "power2.out",
-        force3D: true,
-      });
+      gsap.to(footerRef.current, { y: 0, duration: 1.0, ease: "power3.out" }); 
     } else {
       gsap.to(footerRef.current, {
         y: "100%",
-        duration: 0.35,
-        ease: "power2.in",
-        force3D: true,
+        duration: 0.6,
+        ease: "power3.in",
       });
     }
     isFooterVisible.current = showFooter;
   }, [showFooter]);
 
+  // Footer scroll trigger
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    const container = containerRef.current;
-    if (!wrapper || !container) return;
-
-    const slides = [...wrapper.children] as HTMLElement[];
-
-    const preventSelect = (e: Event) => e.preventDefault();
-    wrapper.addEventListener("selectstart", preventSelect);
-    wrapper.style.userSelect = "none";
-    wrapper.style.webkitUserSelect = "none";
-    wrapper.style.touchAction = "none";
-
-    const slider = new Core(wrapper, {
-      infinite: false,
-      snap: false,
-      variableWidth: true,
-      lerpFactor: 0.02,
-      speedDecay: 0.97,
-      bounceLimit: 0,
-      setOffset: ({
-        itemWidth,
-        totalWidth,
-      }: {
-        itemWidth: number;
-        totalWidth: number;
-      }) => {
-        const gap = window.innerWidth * 0.02;
-        const lastSlideOffset = (THEMES.length - 1) * (itemWidth + gap);
-        return totalWidth - lastSlideOffset;
-      },
-      onUpdate: (instance: any) => {
-        const vwOffset = window.innerWidth * 0.1;
-
-        slides.forEach((slide, i) => {
-          const slideWidth = slide.offsetWidth;
-          const slideLeft = slide.offsetLeft + instance.current;
-          const bgColor = THEMES[i].color;
-          const isLast = i === THEMES.length - 1;
-
-          if (slideLeft < 0 && !isLast) {
-            const ratio = Math.min(1, Math.abs(slideLeft) / slideWidth);
-            slide.style.cssText = `
-              background-color: ${bgColor};
-              border: 3px solid #000;
-              transform-origin: left 80%;
-              transform: translateX(${
-                instance.current + Math.abs(slideLeft) + ratio * vwOffset
-              }px) rotate(${-15 * ratio}deg) scale(${1 - ratio * 0.4});
-              position: relative;
-              z-index: ${i + 1};
-              box-shadow: 6px 6px 0px #000;
-            `;
-          } else {
-            slide.style.cssText = `
-              background-color: ${bgColor};
-              border: 3px solid #000;
-              transform: translateX(${instance.current}px);
-              z-index: ${i + 1};
-              box-shadow: 6px 6px 0px #000;
-            `;
-          }
-        });
-      },
-    });
-
-    sliderRef.current = slider;
-
-    // Animation loop
-    let momentum = 0;
-    let wasDragging = false;
-    const MOMENTUM_MULTIPLIER = 10;
-    const MOMENTUM_DECAY = 0.96;
-
-    function animate() {
-      slider.update();
-
-      if (slider.isDragging) {
-        wasDragging = true;
-        momentum = 0;
-      } else if (wasDragging) {
-        momentum = slider.speed * MOMENTUM_MULTIPLIER;
-        wasDragging = false;
-      }
-
-      if (Math.abs(momentum) > 0.5) {
-        slider.target += momentum;
-        momentum *= MOMENTUM_DECAY;
-        slider.target = Math.max(slider.maxScroll, Math.min(0, slider.target));
-      }
-
-      animIdRef.current = requestAnimationFrame(animate);
-    }
-
-    animate();
-
-    // ─── Scroll-driven navigation ───
-    const SCROLL_SENSITIVITY = 1.0;
-    let scrollCooldown = false;
+    let footerTimeout: ReturnType<typeof setTimeout> | null = null;
 
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-
-      // Check if slider is at the end (scrolled to max) and scrolling down → show footer
-      const atEnd = slider.target <= slider.maxScroll + 5;
-      const atStart = slider.target >= -5;
-
-      if (atEnd && e.deltaY > 0) {
-        if (!isFooterVisible.current && !scrollCooldown) {
-          scrollCooldown = true;
-          setShowFooter(true);
-          setTimeout(() => {
-            scrollCooldown = false;
-          }, 600);
+      if (e.deltaY > 0 && !isFooterVisible.current) {
+        const atBottom =
+          window.innerHeight + window.scrollY >=
+          document.body.scrollHeight - 10;
+        if (atBottom) {
+          if (!footerTimeout) {
+            footerTimeout = setTimeout(() => {
+              setShowFooter(true);
+              footerTimeout = null;
+            }, 600); // delay before footer appears
+          }
         }
-        return;
-      }
-
-      if (isFooterVisible.current && e.deltaY < 0) {
-        if (!scrollCooldown) {
-          scrollCooldown = true;
-          setShowFooter(false);
-          setTimeout(() => {
-            scrollCooldown = false;
-          }, 600);
+      } else if (e.deltaY < 0 && isFooterVisible.current) {
+        if (footerTimeout) {
+          clearTimeout(footerTimeout);
+          footerTimeout = null;
         }
-        return;
-      }
-
-      if (isFooterVisible.current) return;
-
-      // Drive the slider with scroll
-      const delta = e.deltaY * SCROLL_SENSITIVITY;
-      slider.target -= delta;
-      slider.target = Math.max(slider.maxScroll, Math.min(0, slider.target));
-    };
-
-    container.addEventListener("wheel", handleWheel, { passive: false });
-
-    // ─── Touch-based scroll ───
-    let touchStartY = 0;
-    let touchLastY = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-      touchLastY = touchStartY;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-      const currentY = e.touches[0].clientY;
-      const delta = (touchLastY - currentY) * SCROLL_SENSITIVITY;
-      touchLastY = currentY;
-
-      if (isFooterVisible.current) return;
-
-      slider.target -= delta;
-      slider.target = Math.max(slider.maxScroll, Math.min(0, slider.target));
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const totalDelta = touchStartY - e.changedTouches[0].clientY;
-      const atEnd = slider.target <= slider.maxScroll + 5;
-
-      if (atEnd && totalDelta > 50 && !isFooterVisible.current) {
-        setShowFooter(true);
-      } else if (isFooterVisible.current && totalDelta < -50) {
         setShowFooter(false);
       }
     };
 
-    container.addEventListener("touchstart", handleTouchStart, {
-      passive: true,
-    });
-    container.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
-    container.addEventListener("touchend", handleTouchEnd, { passive: true });
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
+      if (deltaY > 40 && !isFooterVisible.current) {
+        const atBottom =
+          window.innerHeight + window.scrollY >=
+          document.body.scrollHeight - 10;
+        if (atBottom) {
+          footerTimeout = setTimeout(() => {
+            setShowFooter(true);
+            footerTimeout = null;
+          }, 600);
+        }
+      } else if (deltaY < -40 && isFooterVisible.current) {
+        if (footerTimeout) {
+          clearTimeout(footerTimeout);
+          footerTimeout = null;
+        }
+        setShowFooter(false);
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animIdRef.current);
-      wrapper.removeEventListener("selectstart", preventSelect);
-      container.removeEventListener("wheel", handleWheel);
-      container.removeEventListener("touchstart", handleTouchStart);
-      container.removeEventListener("touchmove", handleTouchMove);
-      container.removeEventListener("touchend", handleTouchEnd);
-      slider.destroy();
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+      if (footerTimeout) clearTimeout(footerTimeout);
     };
   }, []);
 
   return (
     <>
-      <Stats />
-      <div
-        ref={containerRef}
-        className="fixed inset-0 overflow-hidden"
-        style={{
-          background: "#0a0a0a",
-          overscrollBehavior: "none",
-          touchAction: "none",
-        }}
-      >
-        {/* Background */}
-        <div className="absolute inset-0 z-0" style={{ contain: "strict" }}>
-          <div className="comic-halftone absolute inset-0" />
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%)",
-            }}
-          />
-          <HalftoneDots />
-        </div>
-
-        {/* Header */}
-        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-4 sm:pt-6">
-          <div
-            className="px-4 sm:px-6 py-1.5 sm:py-2 relative"
-            style={{
-              background: "#DA100C",
-              border: "3px solid #000",
-              boxShadow: "4px 4px 0px #000",
-              transform: "skewX(-3deg)",
-            }}
-          >
-            <h1
-              className="hero-title text-white"
-              style={{
-                fontSize: "clamp(0.9rem, 3vw, 2rem)",
-                transform: "skewX(3deg)",
-              }}
-            >
-              ★ THEMES ★
-            </h1>
-          </div>
-        </div>
-
-        {/* Slider area */}
-        <div className="absolute inset-0 z-20 flex items-center">
-          <div className="w-full h-full flex flex-col md:flex-row items-center gap-[2vw]">
-            {/* Left/Top text panel */}
-            <div className="w-full md:w-[40%] h-auto md:h-full flex flex-col items-start px-[6vw] md:px-[4vw] justify-center pt-20 md:pt-0 pb-2 md:pb-0">
-              <h2
-                className="hero-title text-white uppercase leading-[0.85]"
-                style={{ fontSize: "clamp(2rem, 10vw, 6rem)" }}
-              >
-                Pick
-                <br />
-                Your
-                <br />
-                <span style={{ color: "#DA100C" }}>Theme</span>
-              </h2>
-              <p
-                className="comic-sans text-white/50 mt-[2vw] w-[90%] md:w-[80%]"
-                style={{ fontSize: "clamp(0.75rem, 1.3vw, 1.1rem)" }}
-              >
-                Choose from one of our exciting tracks and build something
-                extraordinary. Scroll to explore →
-              </p>
-            </div>
-
-            {/* Right/Bottom slider panel */}
-            <div className="w-full md:w-[60%] h-[50vh] md:h-full overflow-clip relative">
-              <div
-                ref={wrapperRef}
-                className="flex h-full items-center will-change-transform"
-              >
-                {THEMES.map((theme, index) => (
-                  <div
-                    key={index}
-                    className={`shrink-0 pointer-events-none w-[60vw] h-[75vw] md:w-[30vw] md:h-[40vw] max-w-[450px] max-h-[600px] rounded-[2vw] flex flex-col justify-between p-[4vw] md:p-[2vw] ${
-                      index < THEMES.length - 1 ? "mr-[4vw] md:mr-[2vw]" : ""
-                    }`}
-                    style={{
-                      backgroundColor: theme.color,
-                      border: "3px solid #000",
-                      boxShadow: "6px 6px 0px #000",
-                    }}
-                  >
-                    {/* Icon */}
-                    <div>
-                      <span
-                        style={{
-                          fontSize: "clamp(2rem, 4vw, 4rem)",
-                          display: "block",
-                          marginBottom: "1vw",
-                        }}
-                      >
-                        {theme.icon}
-                      </span>
-                      {/* Theme number badge */}
-                      <div
-                        className="inline-block px-2 py-0.5 mb-[1vw]"
-                        style={{
-                          background: "#000",
-                          color: "#fff",
-                          borderRadius: "4px",
-                          fontFamily: "'Dela Gothic One', sans-serif",
-                          fontSize: "clamp(0.5rem, 0.9vw, 0.8rem)",
-                        }}
-                      >
-                        THEME #{index + 1}
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <div className="flex-1 flex flex-col justify-center">
-                      <h3
-                        className="font-bold leading-tight text-black"
-                        style={{
-                          fontFamily: "'Dela Gothic One', sans-serif",
-                          fontSize: "clamp(1rem, 2.2vw, 2.2rem)",
-                          marginBottom: "1vw",
-                        }}
-                      >
-                        {theme.title}
-                      </h3>
-                      <p
-                        className="font-sans font-medium leading-snug text-black/70"
-                        style={{
-                          fontSize: "clamp(0.65rem, 1.1vw, 1rem)",
-                        }}
-                      >
-                        {theme.description}
-                      </p>
-                    </div>
-
-                    {/* Bottom decorative element */}
-                    <div className="flex items-center justify-between">
-                      <div
-                        className="h-[3px] w-12"
-                        style={{
-                          background:
-                            "linear-gradient(90deg, #000, transparent)",
-                        }}
-                      />
-                      <svg
-                        width="30"
-                        height="30"
-                        viewBox="0 0 100 100"
-                        className="opacity-20"
-                      >
-                        <polygon
-                          points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
-                          fill="#000"
-                        />
-                      </svg>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <Footer ref={footerRef} />
-      </div>
       <Navbar />
 
-      {/* Inline keyframes for scroll hint */}
-      <style>{`
-        @keyframes scroll-hint {
-          0%, 100% { transform: translateY(0); opacity: 0.5; }
-          50% { transform: translateY(6px); opacity: 1; }
-        }
-      `}</style>
+      <div
+        className="relative w-full min-h-screen"
+        style={{ background: "#0a0a0a" }}
+      >
+        {/* ── Same 3D background as HomePage ── */}
+        <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
+          <Background path="Circle" dotScale={0.5} className="w-full h-full" />
+        </div>
+
+        {/* ── Foreground ── */}
+        <div
+          className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
+          style={{ zIndex: 1 }}
+        >
+          {/* Header */}
+          <div ref={headerRef} className="-mt-12 mb-14">
+            <p
+              className="comic-sans uppercase tracking-widest mb-3"
+              style={{
+                fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+                color: "rgba(255,255,255,0.6)",
+              }}
+            >
+              HackToFuture 4.0
+            </p>
+            <h1
+              className="hero-title font-black uppercase"
+              style={{
+                fontSize: "clamp(2.5rem, 8vw, 5rem)",
+                lineHeight: 0.9,
+                color: "#fff",
+              }}
+            >
+              Themes
+            </h1>
+            <div
+              className="mt-4"
+              style={{
+                height: 3,
+                width: "clamp(60px, 8vw, 100px)",
+                background: "#E8003D",
+              }}
+            />
+          </div>
+
+          {/* Cards grid */}
+          <div
+            ref={cardsRef}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6"
+          >
+            {THEME_CARDS.map((theme, index) => (
+              <div key={theme.slug} className="theme-card-wrapper">
+                <ThemeCard
+                  theme={theme}
+                  index={index}
+                  onClick={() => navigate(`/theme/${theme.slug}`)}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Footer ref={footerRef} />
     </>
   );
 }
