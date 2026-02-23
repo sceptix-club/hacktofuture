@@ -310,7 +310,7 @@ export default function Themes() {
       >
         {/* ── Same 3D background as HomePage ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
-          <Background path="Circle" dotScale={0.5} className="w-full h-full" />
+          <Background />
         </div>
 
         {/* ── Foreground ── */}

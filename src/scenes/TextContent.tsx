@@ -6,6 +6,10 @@ import CTA from "./CTA";
 import Timer from "../components/Timer";
 import FAQ from "./FAQ";
 
+const handleThemeNavigate = (slug: string) => {
+  window.location.href = `/theme/${slug}`;
+};
+
 type TextContentProps = {
   currentScene: number;
   scenes: number;
@@ -228,17 +232,17 @@ const TextContent = ({
       <div
         ref={scene1TextRef}
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
-      >
-      </div>
+      ></div>
 
       {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-          }`}
+        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
+          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+        }`}
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
-          opacity: 0
+          opacity: 0,
         }}
         aria-hidden={_currentScene !== 1}
       >
@@ -274,29 +278,55 @@ const TextContent = ({
       </div>
 
       {/* Cards 1-4 */}
-      {[1, 2, 3, 4].map((n, i) => (
-        <div
-          key={n}
-          ref={[card1TextRef, card2TextRef, card3TextRef, card4TextRef][i]}
-          className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
-          style={{ opacity: 0 }}
-        >
-          <div className="max-w-[95vw] overflow-hidden text-center">
-            <h2
-              className="text-white font-bold"
-              style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}
-            >
-              THEME {n}
-            </h2>
-            <p
-              className="text-white/80 mt-2"
-              style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)" }}
-            >
-              Theme {n} description here
-            </p>
+      {[1, 2, 3, 4].map((n, i) => {
+        const slugs: (string | null)[] = [
+          "healthcare-and-citizen-welfare",
+          "industry-and-trade",
+          "infrastructure-and-smart-cities",
+          null,
+        ];
+        const slug = slugs[i];
+        const isClickable = slug !== null;
+
+        return (
+          <div
+            key={n}
+            ref={[card1TextRef, card2TextRef, card3TextRef, card4TextRef][i]}
+            className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
+            style={{
+              opacity: 0,
+              pointerEvents: isClickable ? "auto" : "none",
+              cursor: isClickable ? "pointer" : "default",
+            }}
+            onClick={() => {
+              if (slug) handleThemeNavigate(slug);
+            }}
+          >
+            <div className="max-w-[95vw] overflow-hidden text-center">
+              <h2
+                className="text-white font-bold"
+                style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}
+              >
+                THEME {n}
+              </h2>
+              <p
+                className="text-white/80 mt-2"
+                style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)" }}
+              >
+                Theme {n} description here
+              </p>
+              {isClickable && (
+                <p
+                  className="text-white/50 mt-3 uppercase tracking-widest"
+                  style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)" }}
+                >
+                  Click to explore →
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
