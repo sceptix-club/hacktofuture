@@ -15,6 +15,7 @@ import Sponsors from "./pages/Sponsors";
 import Themes from "./pages/Themes";
 import About from "./pages/About";
 import { Overlay } from "./scenes/Overlay";
+import PSPage from "./pages/ps";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -60,8 +61,7 @@ function HomePage() {
   useEffect(() => {
     // Small delay to ensure DOM is ready
     const timer = setTimeout(() => {
-
-      ScrollTrigger.config({ ignoreMobileResize: true })
+      ScrollTrigger.config({ ignoreMobileResize: true });
       // this fixes the address bar hiding on scroll on mobile devices
       ScrollTrigger.normalizeScroll(true);
 
@@ -115,7 +115,11 @@ function HomePage() {
           <Stats />
           <Suspense fallback={null}>
             <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
-            <Environment files="/textures/background.jpg" background blur={0.5} />
+            <Environment
+              files="/textures/background.jpg"
+              background
+              blur={0.5}
+            />
           </Suspense>
         </Canvas>
       </div>
@@ -140,6 +144,7 @@ function App() {
         <Route path="/themes" element={<Themes />} />
         <Route path="/about" element={<About />} />
         <Route path="/sponsors" element={<Sponsors />} />
+        <Route path="/ps/:theme" element={<PSPage />} />
       </Routes>
     </BrowserRouter>
   );

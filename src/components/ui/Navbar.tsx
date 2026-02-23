@@ -16,7 +16,7 @@ const Navbar = ({ className }: NavbarProps) => {
     { icon: Lightbulb, href: "#themes", label: "Themes", route: "/themes" },
     { icon: Heart, href: "#sponsors", label: "Sponsors", route: "/sponsors" },
     { icon: BookText, href: "/rulebook.pdf", label: "Rulebook", route: "/rulebook.pdf" },
-    { icon: LogIn, href: "https://unstop.com/", label: "Devpost", route: null },
+    { icon: LogIn, href: "https://unstop.com/", label: "UnStop", route: null },
   ];
 
   return (

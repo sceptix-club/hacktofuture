@@ -122,7 +122,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
           style={{ minHeight: "100%" }}
         >
           {/* ── Title block ── */}
-          <div className="text-center mb-6 md:mb-8 mt-8 md:mt-12">
+          <div className="text-center mb-6 md:mb-8 mt-8 md:-mt-12">
             <h1
               className="hero-title font-black uppercase leading-none"
               style={{
