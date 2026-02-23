@@ -116,8 +116,8 @@ function Timeline() {
 				event: "Mentoring session"
 			},
 			{
-					time: "7:30PM",
-					event: "Cultural Program in Amphitheatre"
+				time: "7:30PM",
+				event: "Cultural Program in Amphitheatre"
 			},
 			{
 				time: "7:00PM",
@@ -142,16 +142,16 @@ function Timeline() {
 				event: "8:00AM"
 			},
 			{
-					time: "9:30AM",
-					event: "Team presentation"
+				time: "9:30AM",
+				event: "Team presentation"
 			},
 			{
-					time: "12:00PM",
-					event: "Valedictory ceremony"
+				time: "12:00PM",
+				event: "Valedictory ceremony"
 			},
 			{
-					time: "1:00PM",
-					event: "Lunch and networking"
+				time: "1:00PM",
+				event: "Lunch and networking"
 			}
 		]
 	]
@@ -269,6 +269,7 @@ function Timeline() {
 		}
 	})
 
+	const Header = ["6th April", "7th April", "8th April"]
 
 	//cards contains a card which has details for today
 	return (
@@ -277,20 +278,24 @@ function Timeline() {
 				{
 					cards.map((card, i) => (
 
-						<div className="card top-1/9"
-							ref={(el) => (cardRefs.current[i] = el)}
-							style={{
-								// gridTemplateRows: `repeat(${rowCount[i]}, 1fr)`,
-								gridTemplateRows: `repeat(${maxRow}, 1fr)`,
-								gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-							}}
+						<div className="card-wrapper"
+						ref={(el) => (cardRefs.current[i] = el)}
 						>
-							{card.map((info) => (
-								<div className="card-block">
-									<div className="card-event">{info.event}</div>
-									<div className="card-time">{info.time}</div>
-								</div>
-							))}
+						<div className="card-header">{Header[i]}</div>
+							<div className="card-content top-1/9"
+								style={{
+									// gridTemplateRows: `repeat(${rowCount[i]}, 1fr)`,
+									gridTemplateRows: `repeat(${maxRow}, 1fr)`,
+									gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+								}}
+							>
+								{card.map((info) => (
+									<div className="card-block">
+										<div className="card-event">{info.event}</div>
+										<div className="card-time">{info.time}</div>
+									</div>
+								))}
+							</div>
 						</div>
 					))
 				}
