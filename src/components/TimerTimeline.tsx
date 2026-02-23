@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react"
 // import "@/styles/Timer.css" //TODO: figure out how to fix this
 import "../styles/Timer.css";
 import "../styles/TimerTimeline.css";
-import {gsap} from "gsap";
+import { gsap } from "gsap";
 
 function Timer() {
 
@@ -60,80 +60,196 @@ function Timeline() {
 	const [currentCard, setCurrentCard] = useState(0)
 
 	const originalPos = [
-		{ x: 0, y: 0, rotation: 0, scale: 1, zIndex: 30 },
-		{ x: -peek, y: 4, rotation: -2, scale: 0.97, zIndex: 20 },
-		{ x: peek / 3, y: 4 + peek, rotation: 2, scale: 0.97, zIndex: 10 },
-		{ x: peek, y: 4 + peek / 4, rotation: -1, scale: 0.97, zIndex: 10 },
+		{ x: 0, y: 0, rotation: 0, scale: 1 },
+		{ x: -peek, y: 4, rotation: -2, scale: 0.97 },
+		{ x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
+		{ x: peek, y: 4 + peek / 4, rotation: -3, scale: 0.97 },
 	];
 
-	const fanned = { x: 260, y: 120, rotation: 18, scale: 1, zIndex: 20 }
+	const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 }
+	const fannedForward = { x: "90%", y: 100, rotation: 5, scale: 1 }
+	const shiftStart = { x: "-5%", duration: 0.5, ease: "back.in(1.4)" }
+	const shiftEnd = { x: 0, duration: 0.5, ease: "back.in(1.4)" }
 
 	const cards = [
 		[
 			{
-				time: "3:00AM",
+				time: "3:00PM",
+				event: "Start Registrations"
+			},
+			{
+				time: "4:00PM",
+				event: "Snacks"
+			},
+			{
+				time: "5:00PM",
+				event: "Event inauguration"
+			},
+			{
+				time: "6:00AM",
+				event: "Hackathon Officially Begins"
+			},
+			{
+				time: "7:00PM",
 				event: "Dinner"
-			},
-			{
-				time: "5:00AM",
-				event: "Dinner"
-			},
-			{
-				time: "15:00AM",
-				event: "Toilet"
-			},
-			{
-				time: "15:00AM",
-				event: "Toilet"
 			},
 		],
 		[
 			{
-				time: "3:00AM",
-				event: "coombaya"
+				time: "1:00AM",
+				event: "Refreshments"
+			},
+			{
+				time: "8:00AM",
+				event: "Breakfast"
+			},
+			{
+				time: "10:00AM",
+				event: "Lunch"
+			},
+			{
+				time: "4:00PM",
+				event: "Snacks"
+			},
+			{
+				time: "4:30PM",
+				event: "Mentoring session"
+			},
+			{
+					time: "7:30PM",
+					event: "Cultural Program in Amphitheatre"
+			},
+			{
+				time: "7:00PM",
+				event: "Dinner"
+			},
+		],
+		[
+			{
+				time: "Refreshments",
+				event: "1:00AM"
 			},
 			{
 				time: "5:00AM",
-				event: "coombaya"
+				event: "Participation certificate"
 			},
 			{
-				time: "15:00AM",
-				event: "lgima"
+				time: "6:00AM",
+				event: "Hackathon ends"
 			},
 			{
-				time: "15:00AM",
-				event: "lgima"
+				time: "Breakfast",
+				event: "8:00AM"
 			},
+			{
+					time: "9:30AM",
+					event: "Team presentation"
+			},
+			{
+					time: "12:00PM",
+					event: "Valedictory ceremony"
+			},
+			{
+					time: "1:00PM",
+					event: "Lunch and networking"
+			}
 		]
 	]
+	const totalCards = cards.length
 
 	const cardRefs = useRef();
 	cardRefs.current = Array(cards.length).fill(null).map((_) => useRef())
 
 	//INFO: array that contains the number of rows that should be present in each card
-	let rowCount = Array(cards.length).fill(null).map((_, i) => cards[i].length / 2)
+	let rowCount = Array(cards.length).fill(null).map((_, i) => Math.ceil(cards[i].length / 2))
+	const maxRow = rowCount.slice().sort((a, b) => b - a)[0]
 
+	// move the current to last
+
+	const setZIndex = (curr) => {
+		cardRefs.current.forEach((card, i) => {
+			if (i < curr) {
+				card.style.zIndex = totalCards - curr
+			}
+			else {
+				card.style.zIndex = totalCards - Math.abs(curr - i)
+			}
+			console.log(i, "z-index: ", card.zIndex)
+		});
+
+	}
+
+	//TODO: make the rest of the deck shuffle too
 	const flipForward = () => {
-		console.log("current: ", cardRefs.current[currentCard].textContent)
-		gsap.to(cardRefs.current[currentCard], {
-			...fanned,
-			duration: 0.6,
-			ease: "back.out(1.4)",
-			delay: 0.05,
+		setCurrentCard(prev => {
+			const next = prev + 1
+			const tl1 = gsap.timeline()
+			tl1.to(cardRefs.current[prev], {
+				...fannedForward,
+				duration: 0.5,
+				ease: "back.in(1.4)",
+				rotationY: 60,
+				delay: 0.05,
+			}).to(cardRefs.current[prev], {
+				...originalPos[next], // also fix typo here
+				zIndex: 1,
+				rotationY: 0,
+				duration: 0.5,
+				ease: "back.in(1.4)",
+			})
+			setTimeout(() => {
+				setZIndex(next);
+			}, 500)
+
+			//INFO: animate the remaining cards as well
+			const filterCards = cardRefs.current.filter((card, i) => i != prev)
+			const tl2 = gsap.timeline()
+			tl2.to(filterCards, {
+				x: "-5%",
+				// y: 10,
+				duration: 0.5,
+				ease: "back.in(1.4)",
+			}).to(filterCards, {
+				x: 0,
+				duration: 0.5,
+				ease: "back.in(1.4)",
+			})
+
+			return next
 		})
-		setCurrentCard(currentCard => currentCard + 1)
 	}
 
 	const flipBackward = () => {
+		setCurrentCard(next => {
+			const prev = next - 1
+			const tl = gsap.timeline()
+			tl.to(cardRefs.current[prev], {
+				...fannedBack,
+				duration: 0.5,
+				ease: "back.in(1.4)",
+				rotationY: 60,
+				delay: 0.05,
+			}).to(cardRefs.current[prev], {
+				...originalPos[next], // also fix typo here
+				zIndex: 60,
+				rotationY: 0,
+				duration: 0.5,
+				ease: "back.in(1.4)",
+				delay: 0.05,
+			})
 
-		//INFO: currentCard - 1 because set wont work fast enough
-		gsap.to(cardRefs.current[currentCard - 1], {
-			...originalPos[currentCard - 1],
-			duration: 0.6,
-			ease: "back.out(0.4)",
-			delay: 0.05,
+			const filterCards = cardRefs.current.filter((card, i) => i != prev)
+			const tl2 = gsap.timeline()
+			tl2.to(filterCards, {
+				...shiftStart
+			}).to(filterCards, {
+			})
+
+			setTimeout(() => {
+				setZIndex(prev);
+			}, 800)
+			return prev
 		})
-		setCurrentCard(currentCard => currentCard - 1)
 	}
 
 	//INFO: this shit is so restarded
@@ -141,10 +257,10 @@ function Timeline() {
 
 	useEffect(() => {
 		if (!rendered) {
-			console.log("render first")
 			cardRefs.current.forEach((card, i) => {
 				gsap.set(card, originalPos[i]);
 			})
+			setZIndex(currentCard)
 			setRendered(rendered => true)
 		}
 
@@ -157,18 +273,15 @@ function Timeline() {
 	//cards contains a card which has details for today
 	return (
 		<div className="timeline">
-			{
-				currentCard != 0
-				&&
-				(<button className="card-btn" onClick={flipBackward}>{'<'}</button>)
-			}
-			<div className="cards">
+			<div className="cards text-left">
 				{
 					cards.map((card, i) => (
-						<div className="card"
+
+						<div className="card top-1/9"
 							ref={(el) => (cardRefs.current[i] = el)}
 							style={{
-								gridTemplateRows: `repeat(${rowCount[i]}, 1fr)`,
+								// gridTemplateRows: `repeat(${rowCount[i]}, 1fr)`,
+								gridTemplateRows: `repeat(${maxRow}, 1fr)`,
 								gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
 							}}
 						>
@@ -182,11 +295,27 @@ function Timeline() {
 					))
 				}
 			</div>
-			{
-				currentCard != cards.length - 1
-				&&
-				(<button className="card-btn m-19" onClick={flipForward}>{'>'}</button>)
-			}
+			<div className="card-btns">
+
+				<button className="card-btn"
+					onClick={flipBackward}
+					style={{
+						opacity: (currentCard == 0) ? 0 : 1,
+						pointerEvents: (currentCard == 0) ? "none" : "all"
+					}}
+				>{'<'}
+				</button>
+
+				<button className="card-btn"
+					onClick={flipForward}
+					style={{
+						opacity: (currentCard == totalCards - 1) ? 0 : 1,
+						pointerEvents: (currentCard == totalCards - 1) ? "none" : "all"
+					}}
+				>{'>'}
+				</button>
+
+			</div>
 		</div>
 	)
 }
@@ -194,7 +323,8 @@ function Timeline() {
 export default function TimerTimeline() {
 
 	return (
-		<div className="h-full grid grid-rows-[1fr_3fr] justify-items-center">
+		// <div className="h-screen w-full grid grid-rows-[1fr_3fr] justify-items-center">
+		<div className="h-full w-full grid grid-rows-[auto_1fr] justify-items-center">
 			<Timer />
 			<Timeline />
 		</div>

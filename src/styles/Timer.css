@@ -5,13 +5,10 @@
 	--time-padding: 0.5rem;
 	--timer-gap: 0.5rem;
 	--timer-border: 1rem;
-	/* --timer-m-bottom: 0rem; */
 }
 
 @media (min-width: 375px) {
-	:root {
-			--timer-m-bottom: 2rem;
-	}
+	:root {}
 }
 
 @media (min-width: 576px) {
@@ -19,7 +16,6 @@
 		--text-size: 3.9rem;
 		--time-padding: 0.7rem;
 		--timer-gap: 0.6rem;
-		--timer-m-bottom: 0.5rem;
 	}
 }
 
@@ -64,8 +60,11 @@
 }
 
 .timer-wrap {
-	padding: var(--timer-border);
-	background-color: pink;
+	background-image: url("../../public/comic-dialog.png");
+	background-size: cover;
+	padding: 10rem;
+	/* padding: var(--timer-border); */
+	/* background-color: pink; */
 	border-radius: 0.5rem;
 }
 
@@ -77,19 +76,30 @@
 	grid-template-columns: repeat(4, 1fr);
 	gap: var(--timer-gap);
 	border-radius: 0.5rem;
-	background-color: black;
 	padding-bottom: calc(var(--time-padding)/2);
 }
 
 .time-block {
+	margin-top: 2rem;
+	/* top needs to be remove */
 	display: grid;
 	align-items: center;
 	grid-template-columns: 1fr;
+	font-size: var(--text-size);
+	font-family: "komigo";
+}
+
+.time-unit {
+	color: black;
+	font-size: 1.5rem;
+	font-family: "Badabom";
 }
 
 .digits {
-	font-size: var(--text-size);
-	font-family: "digital-7-mono";
+	font-family: "Super Squad";
+  color: white;
+	text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
+	              1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
 }
 
 /*TODO: replace background-image with svg wave animation
@@ -98,17 +108,28 @@
 /* 	background-size: 0.2rem 0.2rem; */
 /* 	background-clip: text; */
 /* 	-webkit-background-clip: text; /* For Safari/Chrome */
-*/
+
 /* 	color: transparent; */
 /* background-clip: text; */
 /*  background-repeat: round; */
 
 
-.time-unit {
-	color: lightslategray;
-}
-
 @font-face {
 	font-family: "digital-7-mono";
 	src: url("../public/fonts/digital-7 (mono).ttf");
+}
+
+@font-face {
+	font-family: "komigo";
+	src: url("../public/fonts/Komigo3D-Regular.ttf");
+}
+
+@font-face {
+	font-family: "Badabom";
+	src: url("../public/fonts/BADABB__.TTF");
+}
+
+@font-face {
+	font-family: "Super Squad";
+	src: url("../../public/fonts/Super Squad Italic.ttf");
 }

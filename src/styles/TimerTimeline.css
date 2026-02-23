@@ -1,43 +1,57 @@
 @import "tailwindcss";
 
 
-.timeline{
-		height: max-content;
-		@apply grid grid-cols-3;
+.timeline {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	margin-top: 5rem;
 }
 
-.cards{
-		/*container that controls size of card*/
-		height: max-content;
-		@apply flex justify-center items-center;
+.cards {
+	/*container that controls size of card*/
+	position: relative;
+	bottom: 3rem;
+	grid-area: 1/1;
+	display: grid;
+	align-items: center;
 }
 
-.card{
-		display: grid;
-		grid-auto-flow: column;
-		height: max-content;
-		width: fit-content;
-		position: absolute;
-		background-color: pink;
-		gap: 1rem;
-		/*TODO: should be approximately the size of the timer*/
-		margin-top: 4rem;
+.card {
+	display: grid;
+	grid-auto-flow: column;
+	user-select: none;
+	background-color: antiquewhite;
+	color: grey;
+	gap: 1rem;
+	padding: 1rem;
+	border: 0.5rem solid orange;
+	height: 110%;
+	border-radius: 5%;
+	grid-area: stack;
+	/*TODO: should be approximately the size of the timer*/
 }
 
-.card-block{
-		width: fit-content;
+.card-block {
+	width: fit-content;
 }
 
-.card-time{
+.card-time {}
 
-}
-.card-event{
+.card-event {}
+
+.card-btns {
+	height: 10rem;
+	width: 10rem;
+	display: flex;
 }
 
-.card-btn{
-		background-color: brown;
-		height: 2rem;
-		width: 2rem;
-		border-radius: 100%;
-		z-index: 99;
+.card-btn {
+  margin: 1rem;
+	background-color: brown;
+	height: 2rem;
+	width: 2rem;
+	border-radius: 100%;
+	z-index: 99;
 }
