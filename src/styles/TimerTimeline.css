@@ -18,20 +18,20 @@
 	align-items: center;
 }
 
-.card-wrapper{
-		display: grid;
-		grid-template-rows: 1fr, 6fr;
-		grid-area: stack;
-		border: 4px solid #fece00;
-		box-shadow: 10px 5px 5px 10px rgba(20,20,20,0.4);
+.card-wrapper {
+	display: grid;
+	grid-template-rows: 1fr, 6fr;
+	grid-area: stack;
+	border: 4px solid #fece00;
+	box-shadow: 10px 5px 5px 10px rgba(20, 20, 20, 0.4);
 }
 
-.card-header{
-		font-size: 1.5rem;
-		background-color: #ff2e30;
-		font-family: "Super Squad";
-		padding: 0.5rem;
-		border: 3px solid #fece00;
+.card-header {
+	font-size: 1.5rem;
+	background-color: #ff2e30;
+	font-family: "Super Squad";
+	padding: 0.5rem;
+	border: 3px solid #fece00;
 }
 
 .card-content {
@@ -42,7 +42,7 @@
 	color: grey;
 	gap: 1rem;
 	padding: 1rem;
-	height: max-content;
+	height: fit-content;
 	/*TODO: should be approximately the size of the timer*/
 }
 
@@ -50,11 +50,8 @@
 	width: fit-content;
 }
 
-.card-time {
-}
-
 .card-event {
-		color: #000;
+	color: #000;
 }
 
 .card-btns {
@@ -64,10 +61,11 @@
 }
 
 .card-btn {
-  margin: 1rem;
+	margin: 1rem;
 	background-color: brown;
+	opacity: transparent;
 	height: 2rem;
 	width: 2rem;
 	border-radius: 100%;
-	z-index: 99;
+	z-index: 1;
 }
