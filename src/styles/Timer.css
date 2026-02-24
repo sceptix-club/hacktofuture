@@ -60,7 +60,7 @@
 }
 
 .timer-wrap {
-	background-image: url("../../public/comic-dialog.png");
+	background-image: url("/comicDialog.svg");
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center center;
@@ -70,7 +70,7 @@
 	justify-content: center;
 	/* let it grow with the content + breathing room */
 	padding: clamp(2rem, 8vw, 6rem) clamp(2.5rem, 10vw, 8rem);
-	width: clamp(500px, 100vw, 2000px);
+	width: clamp(500px, 250vw, 3000px);
 	aspect-ratio: 16 / 9;
 }
 
@@ -91,7 +91,7 @@
 
 .digits {
 	font-family: "Super Squad";
-	font-size: clamp(2rem, 9vw, 6.5rem);
+	font-size: clamp(2rem, 9vw, 5rem);
 	line-height: 1;
 	color: white;
 	text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
@@ -133,5 +133,5 @@
 
 @font-face {
 	font-family: "Super Squad";
-	src: url("../../public/fonts/Super Squad Italic.ttf");
+	src: url("/fonts/Super Squad Italic.ttf");
 }
