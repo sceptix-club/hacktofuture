@@ -1,74 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import "../styles/Timer.css";
 import "../styles/TimerTimeline.css";
 import { gsap } from "gsap";
 
-function Timer() {
-  const [timer, setTimer] = useState({
-    seconds: 0,
-    minutes: 0,
-    hours: 0,
-    days: 0,
-  });
-
-  // FIX: Use ISO 8601 with IST offset (+05:30) to ensure correct timezone
-  const HtfDate = Date.parse("2026-04-15T18:36:20+05:30");
-
-  function setTimeLeft() {
-    const difference = HtfDate - Date.now();
-    if (difference <= 0)
-      return setTimer({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-    const total = Math.floor(difference / 1000);
-    const seconds = total % 60;
-    const minutes = Math.floor(total / 60) % 60;
-    const hours = Math.floor(total / 3600) % 24;
-    const days = Math.floor(total / 86400);
-    setTimer({ days, hours, minutes, seconds });
-  }
-
-  useEffect(() => {
-    setTimeLeft(); // run immediately on mount
-    const id = setInterval(() => setTimeLeft(), 1000);
-    return () => clearInterval(id);
-  }, []); // FIX: add empty dependency array to avoid infinite re-render
-
-  return (
-    <div className="timer-wrap">
-      <div className="timer">
-        <div className="time-block">
-          <div className="digits">
-            {timer.days > 9 ? "" : "0"}
-            {timer.days}
-          </div>
-          <div className="time-unit">days</div>
-        </div>
-        <div className="time-block">
-          <div className="digits">
-            {timer.hours > 9 ? "" : "0"}
-            {timer.hours}
-          </div>
-          <div className="time-unit">hours</div>
-        </div>
-        <div className="time-block">
-          <div className="digits">
-            {timer.minutes > 9 ? "" : "0"}
-            {timer.minutes}
-          </div>
-          <div className="time-unit">minutes</div>
-        </div>
-        <div className="time-block">
-          <div className="digits">
-            {timer.seconds > 9 ? "" : "0"}
-            {timer.seconds}
-          </div>
-          <div className="time-unit">seconds</div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Timeline() {
+export default function Timeline() {
   const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
 
@@ -87,13 +21,13 @@ function Timeline() {
       { time: "3:00PM", event: "Start Registrations" },
       { time: "4:00PM", event: "Snacks" },
       { time: "5:00PM", event: "Event inauguration" },
-      { time: "6:00PM", event: "Hackathon Officially Begins" }, // FIX: was 6:00AM
+      { time: "6:00PM", event: "Hackathon Officially Begins" },
       { time: "7:00PM", event: "Dinner" },
     ],
     [
       { time: "1:00AM", event: "Refreshments" },
       { time: "8:00AM", event: "Breakfast" },
-      { time: "10:00AM", event: "Lunch" }, // FIX: was out of order (1PM -> 8AM etc)
+      { time: "10:00AM", event: "Lunch" },
       { time: "4:00PM", event: "Snacks" },
       { time: "4:30PM", event: "Mentoring session" },
       { time: "7:00PM", event: "Dinner" },
@@ -111,16 +45,12 @@ function Timeline() {
   ];
 
   const totalCards = cards.length;
-
-  // FIX: useRef<HTMLDivElement[]> initialized as empty array, no hooks in map
   const cardRefs = useRef<HTMLDivElement[]>([]);
-
   const rowCount = cards.map((card) => Math.ceil(card.length / 2));
-  const maxRow = [...rowCount].sort((a, b) => b - a)[0];
 
   const setZIndex = (curr: number) => {
     cardRefs.current.forEach((card, i) => {
-      if (!card) return; // FIX: null guard
+      if (!card) return;
       if (i < curr) {
         card.style.zIndex = String(curr - i);
       } else {
@@ -132,8 +62,8 @@ function Timeline() {
   const flipForward = () => {
     setCurrentCard((prev) => {
       const next = prev === totalCards - 1 ? 0 : prev + 1;
-      const tl1 = gsap.timeline();
-      tl1
+      gsap
+        .timeline()
         .to(cardRefs.current[prev], {
           ...fannedForward,
           duration: 0.5,
@@ -152,7 +82,8 @@ function Timeline() {
       setTimeout(() => setZIndex(next), 500);
 
       const filterCards = cardRefs.current.filter((_, i) => i !== prev);
-      gsap.timeline()
+      gsap
+        .timeline()
         .to(filterCards, { x: "-5%", duration: 0.5, ease: "back.in(1.4)" })
         .to(filterCards, { x: 0, duration: 0.5, ease: "back.in(1.4)" });
 
@@ -163,7 +94,8 @@ function Timeline() {
   const flipBackward = () => {
     setCurrentCard((next) => {
       const prev = next === 0 ? totalCards - 1 : next - 1;
-      gsap.timeline()
+      gsap
+        .timeline()
         .to(cardRefs.current[prev], {
           ...fannedBack,
           duration: 0.5,
@@ -181,9 +113,10 @@ function Timeline() {
         });
 
       const filterCards = cardRefs.current.filter((_, i) => i !== prev);
-      gsap.timeline()
+      gsap
+        .timeline()
         .to(filterCards, { ...shiftStart })
-        .to(filterCards, { x: 0, duration: 0.5, ease: "back.in(1.4)" }); // FIX: shiftEnd was empty
+        .to(filterCards, { x: 0, duration: 0.5, ease: "back.in(1.4)" });
 
       setTimeout(() => setZIndex(prev), 800);
       return prev;
@@ -192,7 +125,6 @@ function Timeline() {
 
   const [rendered, setRendered] = useState(false);
 
-  // FIX: cardClicked should compare x against half the card's own width
   const cardClicked = (event: React.MouseEvent) => {
     const card = cardRefs.current[currentCard];
     if (!card) return;
@@ -217,59 +149,74 @@ function Timeline() {
         console.error("CARDS COUNT IS INVALID: originalPos length mismatch");
       }
     }
-  }, []); // FIX: empty dep array — only run once on mount
+  }, []);
 
   const Header = ["15th April", "16th April", "17th April"];
   const times = ["15", "16", "17"];
 
   return (
-    <div className="timeline">
+    <div className="timeline w-full h-full flex flex-col items-center px-2 sm:px-4">
+      {/* Date indicator */}
       <div
-        className="timeline-indicator"
+        className="timeline-indicator w-full max-w-xl mb-3 sm:mb-4"
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${times.length}, 1fr)`, // FIX: was maxRow (wrong)
+          gridTemplateColumns: `repeat(${times.length}, 1fr)`,
         }}
       >
         {times.map((time) => (
-          <div className="time" key={time}>{time}</div> // FIX: added key
+          <div
+            key={time}
+            className="time text-white/60 text-center text-xs sm:text-sm tracking-widest uppercase"
+          >
+            {time}
+          </div>
         ))}
       </div>
-      <div className="cards text-left">
+
+      {/* Card stack */}
+      <div className="cards text-left relative w-full max-w-xl sm:max-w-2xl min-h-[260px] sm:min-h-[320px]">
         {cards.map((card, i) => (
           <div
-            className="card-wrapper"
-            ref={(el) => { if (el) cardRefs.current[i] = el; }} // FIX: proper ref callback with null guard
+            className="card-wrapper absolute w-full"
+            ref={(el) => {
+              if (el) cardRefs.current[i] = el;
+            }}
             key={i}
           >
-            <div className="card-header">{Header[i]}</div>
+            <div className="card-header text-white font-bold text-sm sm:text-base md:text-lg px-3 pt-3">
+              {Header[i]}
+            </div>
             <div
-              className="card-content top-1/9"
+              className="card-content grid p-2 sm:p-3 gap-1 sm:gap-2 cursor-pointer"
               onClick={cardClicked}
               style={{
-                gridTemplateRows: `repeat(${rowCount[i]}, 1fr)`, // FIX: use per-card rowCount
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gridTemplateRows: `repeat(${rowCount[i]}, auto)`,
+                gridTemplateColumns: "repeat(2, 1fr)",
               }}
             >
               {card.map((info, j) => (
-                <div className="card-block" key={j}> // FIX: added key
-                  <div className="card-event">{info.event}</div>
-                  <div className="card-time">{info.time}</div>
+                <div
+                  className="card-block flex flex-col p-1.5 sm:p-2 rounded"
+                  key={j}
+                >
+                  <div className="card-event text-white text-[11px] sm:text-xs md:text-sm font-medium leading-tight">
+                    {info.event}
+                  </div>
+                  <div className="card-time text-white/50 text-[10px] sm:text-xs mt-0.5">
+                    {info.time}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         ))}
       </div>
-    </div>
-  );
-}
 
-export default function TimerTimeline() {
-  return (
-    <div className="h-full w-full grid grid-rows-[auto_1fr] justify-items-center">
-      <Timer />
-      <Timeline />
+      {/* Navigation hint */}
+      <p className="text-white/30 text-[10px] sm:text-xs mt-auto pt-2 tracking-wider">
+        TAP LEFT / RIGHT TO NAVIGATE
+      </p>
     </div>
   );
 }

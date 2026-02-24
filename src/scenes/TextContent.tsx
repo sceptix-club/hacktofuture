@@ -4,11 +4,12 @@ import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
 import FAQ from "./FAQ";
+import Timer from "../components/Timer";
+import Timeline from "../components/Timeline";
 
 const handleThemeNavigate = (slug: string) => {
   window.location.href = `/theme/${slug}`;
 };
-import TimerTimeline from "../components/TimerTimeline";
 
 type TextContentProps = {
   currentScene: number;
@@ -23,7 +24,8 @@ const TextContent = ({
   const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
-  const scene4TextRef = useRef<HTMLDivElement>(null);
+  const scene4TextRef = useRef<HTMLDivElement>(null); // Timer
+  const scene4bTextRef = useRef<HTMLDivElement>(null); // Timeline
   const card1TextRef = useRef<HTMLDivElement>(null);
   const card2TextRef = useRef<HTMLDivElement>(null);
   const card3TextRef = useRef<HTMLDivElement>(null);
@@ -102,18 +104,33 @@ const TextContent = ({
       );
     }
 
-    // Scene 4
+    // Scene 4a: Timer — slides in at 3.2, slides out at 3.7
     if (scene4TextRef.current) {
-      tl.fromTo(
+      gsap.set(scene4TextRef.current, { y: "60px", opacity: 0 });
+      tl.to(
         scene4TextRef.current,
-        { scale: 0.6, opacity: 0, y: 40 },
-        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+        { y: "0px", opacity: 1, duration: 0.4, ease: "power3.out" },
         3.2
       );
       tl.to(
         scene4TextRef.current,
-        { opacity: 0, scale: 1.1, duration: 0.25 },
+        { y: "-60px", opacity: 0, duration: 0.25, ease: "power2.in" },
+        3.7
+      );
+    }
+
+    // Scene 4b: Timeline — slides in at 3.8, slides out at 4.0
+    if (scene4bTextRef.current) {
+      gsap.set(scene4bTextRef.current, { y: "60px", opacity: 0 });
+      tl.to(
+        scene4bTextRef.current,
+        { y: "0px", opacity: 1, duration: 0.4, ease: "power3.out" },
         3.8
+      );
+      tl.to(
+        scene4bTextRef.current,
+        { y: "-60px", opacity: 0, duration: 0.25, ease: "power2.in" },
+        4.9
       );
     }
 
@@ -155,16 +172,14 @@ const TextContent = ({
       tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.0);
     }
 
-    // ── CTA: slides in at 6.0, slides OUT at 7.0 ──
+    // CTA
     if (ctaRef.current) {
       gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
-      // Slide in
       tl.to(
         ctaRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
         6.0
       );
-      // Slide out before FAQ arrives
       tl.to(
         ctaRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
@@ -172,16 +187,14 @@ const TextContent = ({
       );
     }
 
-    // ── FAQ: slides in at 7.0, slides OUT at 8.0 ──
+    // FAQ
     if (faqRef.current) {
       gsap.set(faqRef.current, { y: "100%", opacity: 0 });
-      // Slide in
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
         7.0
       );
-      // Slide out before Footer arrives
       tl.to(
         faqRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
@@ -189,7 +202,7 @@ const TextContent = ({
       );
     }
 
-    // ── Footer: slides in at 8.0 ──
+    // Footer
     if (footerRef.current) {
       gsap.set(footerRef.current, { y: "100%" });
       tl.to(
@@ -198,7 +211,6 @@ const TextContent = ({
         8.0
       );
 
-      // HackToFuture letters animate at 8.3
       const htfLetters = footerRef.current.querySelectorAll(
         ".hero-title.inline-block"
       );
@@ -232,7 +244,7 @@ const TextContent = ({
       <div
         ref={scene1TextRef}
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
-      ></div>
+      />
 
       {/* Scene 2 */}
       <div
@@ -240,10 +252,7 @@ const TextContent = ({
         className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
           _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
         }`}
-        style={{
-          fontSize: "clamp(10px, 3vw, 20px)",
-          opacity: 0,
-        }}
+        style={{ fontSize: "clamp(10px, 3vw, 20px)", opacity: 0 }}
         aria-hidden={_currentScene !== 1}
       >
         CLICK TO DOWNLOAD RULEBOOK
@@ -266,14 +275,25 @@ const TextContent = ({
         />
       </div>
 
-      {/* Scene 4 */}
+      {/* Scene 4a: Timer */}
       <div
         ref={scene4TextRef}
-        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
+        className="fixed inset-0 z-20 flex items-center justify-center pointer-events-none px-4"
         style={{ opacity: 0 }}
       >
-        <div className="w-full h-full overflow-hidden text-center">
-				<TimerTimeline/>
+        <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl">
+          <Timer />
+        </div>
+      </div>
+
+      {/* Scene 4b: Timeline */}
+      <div
+        ref={scene4bTextRef}
+        className="fixed inset-0 z-20 flex items-center justify-center pointer-events-auto px-2 sm:px-4"
+        style={{ opacity: 0 }}
+      >
+        <div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl h-full max-h-[80vh] flex items-center">
+          <Timeline />
         </div>
       </div>
 
@@ -292,7 +312,7 @@ const TextContent = ({
           <div
             key={n}
             ref={[card1TextRef, card2TextRef, card3TextRef, card4TextRef][i]}
-            className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
+            className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center px-4"
             style={{
               opacity: 0,
               pointerEvents: isClickable ? "auto" : "none",

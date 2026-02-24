@@ -45,15 +45,14 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
             <div className="px-6 md:px-12 lg:px-20 pt-6">
               <div className="w-full rounded-xl overflow-hidden border border-white/10">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4263.66930063788!2d74.89606981102712!3d12.91077313734648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba359dfac132663%3A0xa7bf228838232d32!2sSt%20Joseph%20Engineering%20College!5e1!3m2!1sen!2sin!4v1770539822992!5m2!1sen!2sin"
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7777.959147664792!2d74.892065!3d12.9090343!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba359dfac132663%3A0xa7bf228838232d32!2sSt%20Joseph%20Engineering%20College!5e0!3m2!1sen!2sin!4v1771914591035!5m2!1sen!2sin"
                   width="100%"
                   height="300"
-                  style={{ border: 0 }}
+                  style={{border:0}}
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  title="St Joseph Engineering College Map"
-                />
+                ></iframe>
               </div>
             </div>
 
