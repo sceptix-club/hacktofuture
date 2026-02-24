@@ -3,12 +3,12 @@ import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
-import Timer from "../components/Timer";
 import FAQ from "./FAQ";
 
 const handleThemeNavigate = (slug: string) => {
   window.location.href = `/theme/${slug}`;
 };
+import TimerTimeline from "../components/TimerTimeline";
 
 type TextContentProps = {
   currentScene: number;
@@ -269,11 +269,11 @@ const TextContent = ({
       {/* Scene 4 */}
       <div
         ref={scene4TextRef}
-        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
+        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
         style={{ opacity: 0 }}
       >
-        <div className="max-w-[95vw] overflow-hidden text-center">
-          <Timer />
+        <div className="w-full h-full overflow-hidden text-center">
+				<TimerTimeline/>
         </div>
       </div>
 
