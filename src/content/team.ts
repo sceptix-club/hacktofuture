@@ -10,7 +10,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Ms Diana Monteiro",
     role: "Faculty Convenor",
-    photo: null,
+    photo: "/core_team/diana.webp",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -20,7 +20,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Dr Shrisha H.S",
     role: "Faculty Convenor",
-    photo: null,
+    photo: "/core_team/shirsha.webp",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -30,7 +30,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Ashley Cleon Pinto",
     role: "Lead Organizer",
-    photo: "https://gdgsjec.in/images/output/Ashley.webp",
+    photo: "/core_team/ashley.webp",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -40,7 +40,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Shovin Jeson Dsouza",
     role: "Lead Organizer",
-    photo: null,
+    photo: "/core_team/shovin.webp",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -50,7 +50,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Priyal Saldanha",
     role: "Lead Organizer",
-    photo: null,
+    photo: "/core_team/priyal.webp",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -60,7 +60,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Ankit Shah",
     role: "Lead Organizer",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Roche",
+    photo: "/core_team/ankit.webp",
     bio: "Mastermind behind HackToFuture. Loves chaos, coffee, and clean code.",
     links: [
       { label: "GitHub", url: "#" },
@@ -70,7 +70,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Viona Noronha",
     role: "Logistics & Accomodation Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
+    photo: "/core_team/viona.webp",
     bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
     links: [
       { label: "GitHub", url: "#" },
@@ -80,7 +80,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
   {
     name: "Melroy Almeida",
     role: "Logistics & Accomodation Lead",
-    photo: "https://api.dicebear.com/9.x/adventurer/svg?seed=Alice",
+    photo: "/core_team/melroy.webp",
     bio: "Full-stack wizard. Turns caffeine into APIs at alarming speed.",
     links: [
       { label: "GitHub", url: "#" },
