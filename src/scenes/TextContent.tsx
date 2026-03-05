@@ -3,12 +3,12 @@ import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
 import CTA from "./CTA";
-import Timer from "../components/Timer";
 import FAQ from "./FAQ";
 
 const handleThemeNavigate = (slug: string) => {
   window.location.href = `/theme/${slug}`;
 };
+import TimerTimeline from "../components/TimerTimeline";
 
 type TextContentProps = {
   currentScene: number;
@@ -104,101 +104,122 @@ const TextContent = ({
 
     // Scene 4
     if (scene4TextRef.current) {
-      tl.fromTo(
-        scene4TextRef.current,
-        { scale: 0.6, opacity: 0, y: 40 },
-        { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+      const panels = scene4TextRef.current.querySelectorAll(".htf-panel");
+      // 8 panels: heading, timer, day1, day2, day3, card0, card1, card2
+      const enterX = [   0, -1800,  -800,    0,  800,  1800,  1800, -1800];
+      const enterY = [-800,  -300, -1000, -1200, -1000,  600,  -600,   600];
+
+      gsap.set(panels, {
+        x: (i) => enterX[i] ?? 0,
+        y: (i) => enterY[i] ?? 0,
+        opacity: 0,
+      });
+      tl.to(
+        panels,
+        {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 0.4,
+          stagger: 0.06,
+          ease: "back.out(0.8)",
+        },
         3.2
       );
       tl.to(
-        scene4TextRef.current,
-        { opacity: 0, scale: 1.1, duration: 0.25 },
-        3.8
+        panels,
+        {
+          x: (i) => enterX[i] ?? 0,
+          y: (i) => enterY[i] ?? 0,
+          opacity: 0,
+          duration: 0.3,
+          stagger: 0.04,
+          ease: "back.in(0.8)",
+        },
+        4.2
       );
     }
 
-    // Cards
+    // Card 1 text (camera dwell: 5.0 – 5.5)
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        4.0
+        5.05
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 4.5);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 5.35);
     }
+    // Card 2 text (camera dwell: 5.8 – 6.2)
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        4.8
+        5.85
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 5.0);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 6.1);
     }
+    // Card 3 text (camera dwell: 6.5 – 6.9)
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        5.3
+        6.55
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 5.5);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 6.8);
     }
+    // Card 4 text (camera dwell: 7.2 – 7.6)
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.1 },
-        5.8
+        7.25
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 6.0);
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 7.5);
     }
-
-    // ── CTA: slides in at 6.0, slides OUT at 7.0 ──
+    // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
     if (ctaRef.current) {
       gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
-      // Slide in
       tl.to(
         ctaRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        6.0
+        8.0
       );
-      // Slide out before FAQ arrives
       tl.to(
         ctaRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        6.8
+        8.8
       );
     }
 
-    // ── FAQ: slides in at 7.0, slides OUT at 8.0 ──
+    // ── FAQ: slides in at 9.2, slides OUT at 10.4 ──
     if (faqRef.current) {
       gsap.set(faqRef.current, { y: "100%", opacity: 0 });
-      // Slide in
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        7.0
+        9.2
       );
-      // Slide out before Footer arrives
       tl.to(
         faqRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        8.2
+        10.4
       );
     }
 
-    // ── Footer: slides in at 8.0 ──
+    // ── Footer: slides in at 10.2 ──
     if (footerRef.current) {
       gsap.set(footerRef.current, { y: "100%" });
       tl.to(
         footerRef.current,
         { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
-        8.0
+        10.2
       );
 
-      // HackToFuture letters animate at 8.3
+      // HackToFuture letters animate at 10.5
       const htfLetters = footerRef.current.querySelectorAll(
         ".hero-title.inline-block"
       );
@@ -213,12 +234,12 @@ const TextContent = ({
             stagger: 0.04,
             ease: "back.out(1.4)",
           },
-          8.3
+          10.5
         );
       }
     }
 
-    tl.set({}, {}, 10.0);
+    tl.set({}, {}, 12.2);
 
     if (getTimelineRef) getTimelineRef(tl);
     return () => {
@@ -269,60 +290,48 @@ const TextContent = ({
       {/* Scene 4 */}
       <div
         ref={scene4TextRef}
-        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
-        style={{ opacity: 0 }}
+        className="fixed left-0 right-0 top-[50%] -translate-y-1/2 z-20 flex items-center justify-center px-4"
       >
-        <div className="max-w-[95vw] overflow-hidden text-center">
-          <Timer />
-        </div>
+        <TimerTimeline/>
       </div>
 
-      {/* Cards 1-4 */}
+      {/* Cards 1-4 – Themes */}
       {[1, 2, 3, 4].map((n, i) => {
-        const slugs: (string | null)[] = [
-          "healthcare-and-citizen-welfare",
-          "industry-and-trade",
-          "infrastructure-and-smart-cities",
-          null,
+        const themeData = [
+          { slug: "healthcare-and-citizen-welfare", title: "Healthcare & Citizen Welfare" },
+          { slug: "industry-and-trade", title: "Industry & Trade" },
+          { slug: "infrastructure-and-smart-cities", title: "Infrastructure & Smart Cities" },
+          { slug: "open-innovation", title: "Open Innovation" },
         ];
-        const slug = slugs[i];
-        const isClickable = slug !== null;
+        const { slug, title } = themeData[i];
 
         return (
           <div
             key={n}
             ref={[card1TextRef, card2TextRef, card3TextRef, card4TextRef][i]}
             className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
-            style={{
-              opacity: 0,
-              pointerEvents: isClickable ? "auto" : "none",
-              cursor: isClickable ? "pointer" : "default",
-            }}
-            onClick={() => {
-              if (slug) handleThemeNavigate(slug);
-            }}
+            style={{ opacity: 0, pointerEvents: "auto", cursor: "pointer" }}
+            onClick={() => handleThemeNavigate(slug)}
           >
             <div className="max-w-[95vw] overflow-hidden text-center">
               <h2
                 className="text-white font-bold"
                 style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}
               >
-                THEME {n}
+                THEME {n}: {title}
               </h2>
               <p
                 className="text-white/80 mt-2"
                 style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)" }}
               >
-                Theme {n} description here
+                Click to view problem statements
               </p>
-              {isClickable && (
-                <p
-                  className="text-white/50 mt-3 uppercase tracking-widest"
-                  style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)" }}
-                >
-                  Click to explore →
-                </p>
-              )}
+              <p
+                className="text-white/50 mt-3 uppercase tracking-widest"
+                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)" }}
+              >
+                Click to explore →
+              </p>
             </div>
           </div>
         );

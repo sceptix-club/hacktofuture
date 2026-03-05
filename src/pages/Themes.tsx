@@ -32,6 +32,14 @@ const THEME_CARDS = [
     accent: "#00C6FF",
     number: "03",
   },
+  {
+    slug: "open-innovation" as ThemeSlug,
+    title: "Open Innovation",
+    description:
+      "Push the boundaries of what's possible — tackle unconventional problems, build creative solutions, and leverage open collaboration to drive breakthrough innovation.",
+    accent: "#A855F7",
+    number: "04",
+  },
 ];
 
 /* ─── Individual Theme Card ─── */
@@ -352,7 +360,7 @@ export default function Themes() {
           {/* Cards grid */}
           <div
             ref={cardsRef}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
           >
             {THEME_CARDS.map((theme, index) => (
               <div key={theme.slug} className="theme-card-wrapper">

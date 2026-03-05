@@ -1,88 +1,135 @@
-.alarmBody {
-    background-color: red;
-    font-family: "digital-7-mono";
-    font-size: 3rem;
-    font-weight: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/*BUG: the timer isnt centered */
+
+:root {
+	--text-size: 3.1rem;
+	--time-padding: 0.5rem;
+	--timer-gap: 0.5rem;
+	--timer-border: 1rem;
+}
+
+@media (min-width: 375px) {
+	:root {}
+}
+
+@media (min-width: 576px) {
+	:root {
+		--text-size: 3.9rem;
+		--time-padding: 0.7rem;
+		--timer-gap: 0.6rem;
+	}
+}
+
+@media (min-width: 768px) {
+	:root {
+		--text-size: 4.3rem;
+		--time-padding: 1rem;
+		--timer-gap: 0.8rem;
+	}
+}
+
+@media (min-width: 992px) {
+	:root {
+		--text-size: 5rem;
+		--time-padding: 1.5rem;
+		--timer-gap: 1.1rem;
+	}
+}
+
+@media (min-width: 1200px) {
+	:root {
+		--text-size: 5rem;
+		--time-padding: 1.9rem;
+		--timer-gap: 1.2rem;
+	}
+}
+
+@media (min-width: 1400px) {
+	:root {
+		--text-size: 5.6rem;
+		--time-padding: 2rem;
+		--timer-gap: 1.5rem;
+	}
+}
+
+@media (min-width: 1920px) {
+	:root {
+		--text-size: 6rem;
+		--time-padding: 2rem;
+		--timer-gap: 1.7rem;
+	}
 }
 
 .timer-wrap {
-    padding: 1rem;
-    background-color: radial-gradient(
-        circle at center,
-        red 0,
-        blue,
-        green 100%
-    );
-    border-radius: 0.5rem;
+	background-image: url("../../public/comic-dialog.png");
+	background-size: cover;
+	padding: 10rem;
+	/* padding: var(--timer-border); */
+	/* background-color: pink; */
+	border-radius: 0.5rem;
 }
 
 .timer {
-    display: grid;
-    align-items: center;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    border-radius: 0.5rem;
-    background-color: black;
+	display: grid;
+	padding-left: var(--time-padding);
+	padding-right: var(--time-padding);
+	align-items: center;
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--timer-gap);
+	border-radius: 0.5rem;
+	padding-bottom: calc(var(--time-padding)/2);
 }
 
 .time-block {
-    margin: 1rem;
-    display: grid;
-    align-items: center;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+	margin-top: 2rem;
+	/* top needs to be remove */
+	display: grid;
+	align-items: center;
+	grid-template-columns: 1fr;
+	font-size: var(--text-size);
+	font-family: "komigo";
+}
+
+.time-unit {
+	color: black;
+	font-size: 1.5rem;
+	font-family: "Badabom";
 }
 
 .digits {
-    font-size: 6rem;
-    font-family: "digital-7-mono";
+	font-family: "Super Squad";
+  color: white;
+	text-shadow: 2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000,
+	              1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
 }
+
 /*TODO: replace background-image with svg wave animation
 	 * use fit content */
 /* background-image: radial-gradient( circle at center, white 0.4px, transparent 0); */
 /* 	background-size: 0.2rem 0.2rem; */
 /* 	background-clip: text; */
 /* 	-webkit-background-clip: text; /* For Safari/Chrome */
-*/
-	/* 	color: transparent; */
-	/* background-clip: text; */
-	/*  background-repeat: round; */
+
+/* 	color: transparent; */
+/* background-clip: text; */
+/*  background-repeat: round; */
 
 
-.time-unit {
-    text-align: center;
-    color: lightslategray;
-}
-
-.colon {
-    font-size: 6rem;
+@font-face {
+	font-family: "digital-7-mono";
+	src: url("../public/fonts/digital-7 (mono).ttf");
 }
 
 @font-face {
-    font-family: "digital-7-mono";
-    src: url("/fonts/digital-7\ \(mono\).ttf");
+	font-family: "komigo";
+	src: url("../public/fonts/Komigo3D-Regular.ttf");
 }
 
-/* Mobile styles */
-@media (max-width: 600px) {
-    .timer {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
-    }
+@font-face {
+	font-family: "Badabom";
+	src: url("../public/fonts/BADABB__.TTF");
+}
 
-    .digits {
-        font-size: 3.5rem;
-    }
-
-    .time-block {
-        margin: 0.5rem;
-        gap: 0.5rem;
-    }
-
-    .timer-wrap {
-        padding: 0.5rem;
-    }
+@font-face {
+	font-family: "Super Squad";
+	src: url("../../public/fonts/Super Squad Italic.ttf");
 }

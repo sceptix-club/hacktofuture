@@ -9,7 +9,8 @@ export type Theme = {
   slug:
     | "healthcare-and-citizen-welfare"
     | "industry-and-trade"
-    | "infrastructure-and-smart-cities";
+    | "infrastructure-and-smart-cities"
+    | "open-innovation";
   label: string;
   icon: string; // path to image or emoji placeholder
   problemStatements: ProblemStatement[];
@@ -19,6 +20,7 @@ export const VALID_THEME_SLUGS = [
   "healthcare-and-citizen-welfare",
   "industry-and-trade",
   "infrastructure-and-smart-cities",
+  "open-innovation",
 ] as const;
 
 export type ThemeSlug = (typeof VALID_THEME_SLUGS)[number];
@@ -106,6 +108,21 @@ export const themes: Record<ThemeSlug, Theme> = {
           "Citizens in metropolitan areas struggle with fragmented public transport systems offering no unified real-time route planning across buses, metros, and autos.",
         solution:
           "Create a unified transit planner app that aggregates real-time data from multiple transport providers, offers multi-modal routing, estimated arrival times, and dynamic updates on delays.",
+      },
+    ],
+  },
+  "open-innovation": {
+    slug: "open-innovation",
+    label: "Open Innovation",
+    icon: "/icons/open-innovation.png",
+    problemStatements: [
+      {
+        id: "PS-1",
+        title: "Open Innovation Challenge",
+        problem:
+          "Traditional innovation models limit collaboration across organizations, hindering the development of breakthrough solutions. Many promising ideas remain siloed within individual teams or companies.",
+        solution:
+          "Build a platform or solution that fosters open collaboration, enabling cross-organizational innovation through shared resources, open data, and community-driven development.",
       },
     ],
   },
