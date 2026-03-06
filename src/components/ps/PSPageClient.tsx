@@ -54,12 +54,17 @@ export default function PSPageClient({ data }: Props) {
 
         {/* ── Foreground ── */}
         <div className="relative" style={{ zIndex: 1 }}>
-          <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 pb-24">
+          <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 pb-24 -mt-12">
             {/* Back button */}
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-white/50 hover:text-white transition-colors mb-10 comic-sans"
-              style={{ fontSize: "clamp(0.8rem, 1.5vw, 0.95rem)" }}
+              className="flex items-center gap-2 transition-colors mb-10 comic-sans px-4 py-2"
+              style={{
+                fontSize: "clamp(0.8rem, 1.5vw, 0.95rem)",
+                backgroundColor: "white",
+                color: "black",
+                borderRadius: "8px",
+              }}
             >
               <span>←</span> Back
             </button>
@@ -78,11 +83,12 @@ export default function PSPageClient({ data }: Props) {
                 <button
                   key={ps.id}
                   onClick={() => setActivePSId(ps.id)}
-                  className="px-5 py-2 text-sm font-medium transition-all comic-sans"
+                  className="hover:cursor-pointer px-5 py-2 text-sm font-medium transition-all comic-sans"
                   style={{
                     background: activePSId === ps.id ? "#fff" : "transparent",
                     color: activePSId === ps.id ? "#000" : "#fff",
                     border: "2px solid",
+                    borderRadius: "8px",
                     borderColor:
                       activePSId === ps.id ? "#fff" : "rgba(255,255,255,0.3)",
                     boxShadow:
@@ -97,7 +103,7 @@ export default function PSPageClient({ data }: Props) {
             </div>
 
             {/* Icon */}
-            <div className="flex justify-center mb-14">
+            {/* <div className="flex justify-center mb-14">
               <div
                 className="relative w-52 h-52 md:w-64 md:h-64 flex items-center justify-center overflow-hidden"
                 style={{
@@ -116,7 +122,7 @@ export default function PSPageClient({ data }: Props) {
                   }}
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Divider */}
             <div
@@ -135,7 +141,7 @@ export default function PSPageClient({ data }: Props) {
                 className="comic-sans uppercase tracking-widest mb-3"
                 style={{
                   fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
-                  color: "rgba(255,255,255,0.4)",
+                  color: "rgba(255,255,255,0.9)",
                 }}
               >
                 T2 · {activePS.id}
@@ -153,9 +159,13 @@ export default function PSPageClient({ data }: Props) {
               <div
                 className="mb-8 p-6 md:p-8"
                 style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderLeft: "3px solid rgba(232, 0, 61, 0.7)",
+                  background: "#FFFEF2",
+                  backgroundImage:
+                    "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px)",
+                  border: "3px solid #000",
+                  borderLeft: "4px solid #E8003D",
+                  borderRadius: "0.75rem",
+                  boxShadow: "4px 4px 0px rgba(0,0,0,0.5)",
                 }}
               >
                 <h3
@@ -171,7 +181,7 @@ export default function PSPageClient({ data }: Props) {
                   className="comic-sans leading-relaxed"
                   style={{
                     fontSize: "clamp(0.9rem, 1.6vw, 1.05rem)",
-                    color: "rgba(255,255,255,0.75)",
+                    color: "rgba(0,0,0,0.7)",
                   }}
                 >
                   {activePS.problem}
@@ -183,16 +193,20 @@ export default function PSPageClient({ data }: Props) {
                 <div
                   className="p-6 md:p-8"
                   style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    borderLeft: "3px solid rgba(255, 225, 5, 0.7)",
+                    background: "#FFFEF2",
+                    backgroundImage:
+                      "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px)",
+                    border: "3px solid #000",
+                    borderLeft: "4px solid #FFE105",
+                    borderRadius: "0.75rem",
+                    boxShadow: "4px 4px 0px rgba(0,0,0,0.5)",
                   }}
                 >
                   <h3
                     className="hero-title font-bold mb-3"
                     style={{
                       fontSize: "clamp(1rem, 2vw, 1.2rem)",
-                      color: "#FFE105",
+                      color: "#b8a000",
                     }}
                   >
                     THE SOLUTION
@@ -201,7 +215,7 @@ export default function PSPageClient({ data }: Props) {
                     className="comic-sans leading-relaxed"
                     style={{
                       fontSize: "clamp(0.9rem, 1.6vw, 1.05rem)",
-                      color: "rgba(255,255,255,0.75)",
+                      color: "rgba(0,0,0,0.7)",
                     }}
                   >
                     {activePS.solution}
