@@ -8,20 +8,26 @@
   font-family : "Comic Relief", sans-serif;
 }
 
-.grid-bg{
-  background-image: url(https://www.svgrepo.com/show/348305/code-alt.svg);
-  background-size: 200px 200px;
-  animation: grid-scroll 4s linear infinite;
+.grid-bg {
+  position: relative;
+  overflow: hidden;
   pointer-events: none;
   opacity: 0.1;
 }
 
+.grid-bg::before {
+  content: "";
+  position: absolute;
+  inset: -200px;
+  background-image: url(https://www.svgrepo.com/show/348305/code-alt.svg);
+  background-size: 200px 200px;
+  animation: grid-scroll 4s linear infinite;
+  will-change: transform;
+}
+
 @keyframes grid-scroll {
-  from {
-    background-position: 0 0;
-  } to {
-    background-position: 200px 200px;
-  }
+  from { transform: translate(0, 0); }
+  to   { transform: translate(200px, 200px); }
 }
 
 html,
@@ -39,4 +45,108 @@ canvas {
 .stroke-text {
   -webkit-text-stroke: 1px white;
   color: transparent;
+}
+
+/* ── Comic CTA Animations ── */
+
+@keyframes comic-float {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-18px) rotate(calc(var(--rot, 0deg) + 4deg)); }
+}
+
+@keyframes comic-pulse {
+  0%, 100% { transform: scale(1); opacity: var(--base-o, 0.15); }
+  50% { transform: scale(1.12); opacity: calc(var(--base-o, 0.15) + 0.06); }
+}
+
+@keyframes comic-spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes comic-drift {
+  0% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(12px, -8px) rotate(3deg); }
+  50% { transform: translate(-6px, -16px) rotate(-2deg); }
+  75% { transform: translate(-14px, -4px) rotate(4deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes speed-lines-pulse {
+  0%, 100% { opacity: 0.08; transform: scaleX(1); }
+  50% { opacity: 0.18; transform: scaleX(1.08); }
+}
+
+@keyframes halftone-scroll {
+  from { background-position: 0 0; }
+  to { background-position: 40px 40px; }
+}
+
+@keyframes starburst-rotate {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.comic-action-word {
+  font-family: "Dela Gothic One", Impact, sans-serif;
+  -webkit-text-stroke: 2px rgba(255,255,255,0.3);
+  color: transparent;
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  animation-name: comic-float;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.comic-action-word-popart {
+  font-family: "Dela Gothic One", Impact, sans-serif;
+  -webkit-text-stroke: 3px #111;
+  color: var(--word-color, #E8185A);
+  pointer-events: none;
+  user-select: none;
+  position: absolute;
+  animation-name: comic-float;
+  animation-duration: 4s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.4));
+}
+
+.comic-halftone {
+  background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+  animation: halftone-scroll 6s linear infinite;
+  pointer-events: none;
+}
+
+.comic-panel-border {
+  border: 3px solid rgba(255,255,255,0.12);
+  box-shadow: 4px 4px 0 rgba(255,255,255,0.06), inset 0 0 30px rgba(255,255,255,0.03);
+}
+
+.comic-speech-bubble {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50% 50% 50% 12%;
+  pointer-events: none;
+}
+
+.comic-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 18px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 14px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes scroll-dot-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
 }

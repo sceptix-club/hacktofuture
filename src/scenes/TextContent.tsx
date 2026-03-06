@@ -1,117 +1,350 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
+import { SponsorsBento } from "../assets/Sponsor";
+import Footer from "./Footer";
+import CTA from "./CTA";
+import FAQ from "./FAQ";
+
+const handleThemeNavigate = (slug: string) => {
+  window.location.href = `/theme/${slug}`;
+};
+import TimerTimeline from "../components/TimerTimeline";
 
 type TextContentProps = {
   currentScene: number;
   scenes: number;
+  getTimelineRef?: (tl: gsap.core.Timeline) => void;
 };
 
-const TextContent = ({ currentScene, scenes }: TextContentProps) => {
+const TextContent = ({
+  currentScene: _currentScene,
+  getTimelineRef,
+}: TextContentProps) => {
+  const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
+  const scene4TextRef = useRef<HTMLDivElement>(null);
+  const card1TextRef = useRef<HTMLDivElement>(null);
+  const card2TextRef = useRef<HTMLDivElement>(null);
+  const card3TextRef = useRef<HTMLDivElement>(null);
+  const card4TextRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const faqRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const width =
-      typeof window !== "undefined" ? window.innerWidth : (1024 as number);
-    const multiplier = width <= 640 ? 650 : 1000;
+  useLayoutEffect(() => {
+    const tl = gsap.timeline({ paused: true });
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#smooth-content",
-        start: "top top",
-        end: `+=${scenes * multiplier}`,
-        scrub: true,
-        pin: false,
-      },
-    });
+    // Scene 1
+    if (scene1TextRef.current) {
+      tl.fromTo(
+        scene1TextRef.current,
+        { opacity: 1 },
+        { opacity: 0, duration: 0.1 },
+        0.05
+      );
+    }
 
+    // Scene 2
     if (scene2TextRef.current) {
       tl.fromTo(
         scene2TextRef.current,
         { y: "100vh", opacity: 0 },
-        { y: "0vh", opacity: 1, duration: 0.4 },
+        { y: "20vh", opacity: 1, duration: 0.4 },
         1.0
-      ).to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 1.4);
+      );
+      tl.to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
     }
 
-    // Animate Scene 3 text: from bottom to middle, replacing scene 2 text
+    // Scene 3
     if (scene3TextRef.current) {
-      tl.fromTo(
-        scene3TextRef.current,
-        {
-          y: "100vh",
-          opacity: 0,
+      const panels = scene3TextRef.current.querySelectorAll(".sponsor-panel");
+      gsap.set(panels, {
+        x: (index) => {
+          const positions = [2000, -2000, 1500, 0, 2000, -1500];
+          return positions[index] || 0;
         },
+        y: (index) => {
+          const positions = [-2000, -2000, 0, 1500, 2000, 1500];
+          return positions[index] || 0;
+        },
+        opacity: 0,
+      });
+      tl.to(
+        panels,
         {
-          y: "0vh",
+          x: 0,
+          y: 0,
           opacity: 1,
           duration: 0.3,
+          stagger: 0.01,
+          ease: "back.out(0.8)",
         },
-        1.8
+        2.0
       );
-      tl.to(scene3TextRef.current, { opacity: 0 }, 2.8);
+      tl.to(
+        panels,
+        {
+          x: (index) => {
+            const positions = [0, -2000, 1500, 0, 0, -1500];
+            return positions[index] || 0;
+          },
+          y: (index) => {
+            const positions = [-1000, 2000, -1500, 1500, 2000, 1500];
+            return positions[index] || 0;
+          },
+          opacity: 0,
+          duration: 0.4,
+          stagger: 0.08,
+          ease: "back.in(0.8)",
+        },
+        2.6
+      );
     }
-  });
+
+    // Scene 4
+    if (scene4TextRef.current) {
+      const panels = scene4TextRef.current.querySelectorAll(".htf-panel");
+      // 8 panels: heading, timer, day1, day2, day3, card0, card1, card2
+      const enterX = [0, -1800, -800, 0, 800, 1800, 1800, -1800];
+      const enterY = [-800, -300, -1000, -1200, -1000, 600, -600, 600];
+
+      gsap.set(panels, {
+        x: (i) => enterX[i] ?? 0,
+        y: (i) => enterY[i] ?? 0,
+        opacity: 0,
+      });
+      tl.to(
+        panels,
+        {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 0.4,
+          stagger: 0.06,
+          ease: "back.out(0.8)",
+        },
+        3.2
+      );
+      tl.to(
+        panels,
+        {
+          x: (i) => enterX[i] ?? 0,
+          y: (i) => enterY[i] ?? 0,
+          opacity: 0,
+          duration: 0.3,
+          stagger: 0.04,
+          ease: "back.in(0.8)",
+        },
+        4.2
+      );
+    }
+
+    // Card 1 text (camera dwell: 5.0 – 5.5)
+    if (card1TextRef.current) {
+      tl.fromTo(
+        card1TextRef.current,
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
+        5.05
+      );
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.35);
+    }
+    // Card 2 text (camera dwell: 5.8 – 6.2)
+    if (card2TextRef.current) {
+      tl.fromTo(
+        card2TextRef.current,
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
+        5.85
+      );
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.1);
+    }
+    // Card 3 text (camera dwell: 6.5 – 6.9)
+    if (card3TextRef.current) {
+      tl.fromTo(
+        card3TextRef.current,
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
+        6.55
+      );
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.8);
+    }
+    // Card 4 text (camera dwell: 7.2 – 7.6)
+    if (card4TextRef.current) {
+      tl.fromTo(
+        card4TextRef.current,
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
+        7.25
+      );
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.2, pointerEvents: "none" }, 7.6);
+    }
+    // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
+    if (ctaRef.current) {
+      gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
+      tl.to(
+        ctaRef.current,
+        { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
+        8.0
+      );
+      tl.to(
+        ctaRef.current,
+        { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
+        8.8
+      );
+    }
+
+    // ── FAQ: slides in at 8.9, slides OUT at 10.4 ──
+    if (faqRef.current) {
+      gsap.set(faqRef.current, { y: "100%", opacity: 0 });
+      tl.to(
+        faqRef.current,
+        { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
+        8.9
+      );
+      tl.to(
+        faqRef.current,
+        { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
+        10.4
+      );
+    }
+
+    // ── Footer: slides in at 10.2 ──
+    if (footerRef.current) {
+      gsap.set(footerRef.current, { y: "100%" });
+      tl.to(
+        footerRef.current,
+        { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
+        10.2
+      );
+
+      // HackToFuture letters animate at 10.5
+      const htfLetters = footerRef.current.querySelectorAll(
+        ".hero-title.inline-block"
+      );
+      if (htfLetters.length) {
+        tl.fromTo(
+          htfLetters,
+          { y: 200, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.3,
+            stagger: 0.04,
+            ease: "back.out(1.4)",
+          },
+          10.5
+        );
+      }
+    }
+
+    tl.set({}, {}, 12.2);
+
+    if (getTimelineRef) getTimelineRef(tl);
+    return () => {
+      tl.kill();
+    };
+  }, [getTimelineRef]);
 
   return (
     <>
-      {/* Scene 1 text - static at bottom */}
-      {currentScene === 0 && (
-        <div className="fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center pointer-events-none">
-          <div className="max-w-[95vw] overflow-hidden">
-            <h2
-              className="text-white whitespace-nowrap font-bold"
-              style={{ fontSize: "clamp(1.0rem, 4vw, 2.0rem)" }}
-            >
-              REGISTER NOW!!!
-            </h2>
-          </div>
-        </div>
-      )}
+      {/* Scene 1 */}
+      <div
+        ref={scene1TextRef}
+        className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
+      ></div>
 
-      {/* Scene 2 text - animates from bottom to middle */}
+      {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
-        style={{ opacity: 0 }}
+        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+          }`}
+        style={{
+          fontSize: "clamp(10px, 3vw, 20px)",
+          opacity: 0,
+        }}
+        aria-hidden={_currentScene !== 1}
       >
-        <div className="max-w-[95vw] overflow-hidden text-center">
-          <h2
-            className="text-white font-bold"
-            style={{ fontSize: "clamp(1.5rem, 6vw, 3.5rem)" }}
-          >
-            ABOUT HACKTOFUTURE
-          </h2>
-          <p
-            className="text-white/80 mt-4"
-            style={{ fontSize: "clamp(0.8rem, 2vw, 1.2rem)" }}
-          >
-            Download the Rulebook here
-          </p>
-        </div>
+        CLICK TO DOWNLOAD RULEBOOK
       </div>
 
-      {/* Scene 3 text - animates from bottom to middle */}
+      {/* Scene 3 */}
       <div
         ref={scene3TextRef}
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
-        style={{ opacity: 0 }}
       >
-        <div className="max-w-[95vw] overflow-hidden text-center">
-          <h2
-            className="text-white font-bold"
-            style={{ fontSize: "clamp(2.0rem, 8vw, 4.5rem)" }}
-          >
-            COMING SOON!
-          </h2>
-          <p
-            className="text-white/80 mt-4"
-            style={{ fontSize: "clamp(1.0rem, 3vw, 1.5rem)" }}
-          >
-            36 Hour Hackathon
-          </p>
-        </div>
+        <SponsorsBento
+          title={{ name: "EGDK" }}
+          platinum={[{ name: "Company A" }, { name: "Company B" }]}
+          gold={[{ name: "Company C" }, { name: "Company D" }]}
+          silver={[
+            { name: "Company E" },
+            { name: "Company F" },
+            { name: "Company G" },
+          ]}
+        />
       </div>
+
+      {/* Scene 4 */}
+      <div
+        ref={scene4TextRef}
+        className="fixed left-0 right-0 top-[50%] -translate-y-1/2 z-20 flex items-center justify-center px-4"
+      >
+        <TimerTimeline />
+      </div>
+
+      {/* Cards 1-4 – Themes */}
+      {[1, 2, 3, 4].map((n, i) => {
+        const themeData = [
+          {
+            slug: "healthcare-and-citizen-welfare",
+            title: "Healthcare & Citizen Welfare",
+          },
+          { slug: "industry-and-trade", title: "Industry & Trade" },
+          {
+            slug: "infrastructure-and-smart-cities",
+            title: "Infrastructure & Smart Cities",
+          },
+          { slug: "open-innovation", title: "Open Innovation" },
+        ];
+        const { slug, title } = themeData[i];
+
+        return (
+          <div
+            key={n}
+            ref={[card1TextRef, card2TextRef, card3TextRef, card4TextRef][i]}
+            className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
+            style={{ opacity: 0, pointerEvents: "none", cursor: "pointer" }}
+            onClick={() => handleThemeNavigate(slug)}
+          >
+            <div className="max-w-[95vw] overflow-hidden text-center">
+              <h2
+                className="text-white font-bold"
+                style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}
+              >
+                THEME {n}: {title}
+              </h2>
+              <p
+                className="text-white/80 mt-2"
+                style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)" }}
+              >
+                Click to view problem statements
+              </p>
+              <p
+                className="text-white/50 mt-3 uppercase tracking-widest"
+                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)" }}
+              >
+                Click to explore →
+              </p>
+            </div>
+          </div>
+        );
+      })}
+
+      <CTA ref={ctaRef} />
+      <FAQ ref={faqRef} />
+      <Footer ref={footerRef} />
     </>
   );
 };
