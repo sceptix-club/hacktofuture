@@ -55,6 +55,8 @@ function PhotoContent({
           <img
             src={member.photo ?? undefined}
             alt={member.name}
+            loading="eager"
+            decoding="async"
             style={{
               width: isMobile ? "100px" : undefined,
               height: isMobile ? "100px" : undefined,
@@ -62,6 +64,7 @@ function PhotoContent({
               border: "2px solid #000",
               borderRadius: "2px",
               filter: "contrast(1.1) saturate(1.2)",
+              willChange: "transform",
             }}
             className={
               isMobile
@@ -310,6 +313,17 @@ export default function Team() {
   const [displayPage, setDisplayPage] = useState(0);
   const [showFooter, setShowFooter] = useState(false);
   const isMobile = useIsMobile();
+
+  // Preload & pre-decode all team photos so flips never stall
+  useEffect(() => {
+    TEAM_MEMBERS.forEach((m) => {
+      if (!m.photo) return;
+      const img = new Image();
+      img.src = m.photo;
+      img.decoding = "async";
+      img.decode?.().catch(() => {});
+    });
+  }, []);
 
   const currentMemberRef = useRef(0);
   const isAnimating = useRef(false);
