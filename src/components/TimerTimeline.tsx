@@ -53,9 +53,8 @@ function Timer() {
         ].map((block, i) => (
           <div key={i} className="flex flex-col items-center">
             <div
-              className="text-white leading-none"
+              className="hero-title text-white leading-none"
               style={{
-                fontFamily: "Super Squad",
                 fontSize: "clamp(1.8rem, 5vw, 4.5rem)",
                 textShadow:
                   "2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000",
@@ -65,9 +64,8 @@ function Timer() {
               {block.value}
             </div>
             <div
-              className="text-black"
+              className="comic-sans text-black"
               style={{
-                fontFamily: "Badabom",
                 fontSize: "clamp(0.75rem, 1.8vw, 1.2rem)",
               }}
             >
@@ -347,8 +345,8 @@ function Timeline() {
                   className="flex items-baseline gap-2 border-b border-black/10 pb-1"
                 >
                   <span
-                    className="font-extrabold text-xs sm:text-sm md:text-base whitespace-nowrap hero-title"
-                    style={{ color: cardColors[i] }}
+                    className="font-extrabold text-xs sm:text-sm md:text-base whitespace-nowrap hero-title text-black/80"
+                 
                   >
                     {info.time}
                   </span>

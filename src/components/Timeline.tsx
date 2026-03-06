@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import "../styles/TimerTimeline.css";
 import { gsap } from "gsap";
 
 export default function Timeline() {
@@ -155,7 +154,7 @@ export default function Timeline() {
   const times = ["15", "16", "17"];
 
   return (
-    <div className="timeline w-full h-full flex flex-col items-center px-2 sm:px-4">
+    <div className="flex justify-center items-center flex-col mt-20 w-full h-full px-2 sm:px-4">
       {/* Date indicator */}
       <div
         className="timeline-indicator w-full max-w-xl mb-3 sm:mb-4"
@@ -175,20 +174,20 @@ export default function Timeline() {
       </div>
 
       {/* Card stack */}
-      <div className="cards text-left relative w-full max-w-xl sm:max-w-2xl min-h-[260px] sm:min-h-[320px]">
+      <div className="relative bottom-12 grid items-center [grid-area:1/1] text-left w-full max-w-xl sm:max-w-2xl min-h-[260px] sm:min-h-80">
         {cards.map((card, i) => (
           <div
-            className="card-wrapper absolute w-full"
+            className="grid grid-rows-[1fr_6fr] [grid-area:stack] border-4 border-[#fece00] shadow-[10px_5px_5px_10px_rgba(20,20,20,0.4)] absolute w-full"
             ref={(el) => {
               if (el) cardRefs.current[i] = el;
             }}
             key={i}
           >
-            <div className="card-header text-white font-bold text-sm sm:text-base md:text-lg px-3 pt-3">
+            <div className="bg-[#ff2e30] font-['Super_Squad'] border-[3px] border-[#fece00] text-white font-bold text-sm sm:text-base md:text-lg px-3 pt-3">
               {Header[i]}
             </div>
             <div
-              className="card-content grid p-2 sm:p-3 gap-1 sm:gap-2 cursor-pointer"
+              className="grid grid-flow-col select-none bg-[antiquewhite] text-gray-500 h-fit p-2 sm:p-3 gap-1 sm:gap-2 cursor-pointer"
               onClick={cardClicked}
               style={{
                 gridTemplateRows: `repeat(${rowCount[i]}, auto)`,
@@ -197,10 +196,10 @@ export default function Timeline() {
             >
               {card.map((info, j) => (
                 <div
-                  className="card-block flex flex-col p-1.5 sm:p-2 rounded"
+                  className="w-fit flex flex-col p-1.5 sm:p-2 rounded"
                   key={j}
                 >
-                  <div className="card-event text-white text-[11px] sm:text-xs md:text-sm font-medium leading-tight">
+                  <div className="text-black text-[11px] sm:text-xs md:text-sm font-medium leading-tight">
                     {info.event}
                   </div>
                   <div className="card-time text-white/50 text-[10px] sm:text-xs mt-0.5">

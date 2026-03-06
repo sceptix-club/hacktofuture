@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "../styles/Timer.css";
 
 export default function Timer() {
   const [timer, setTimer] = useState({
@@ -40,16 +39,32 @@ export default function Timer() {
       </p>
 
       {/* comic-dialog background lives here */}
-      <div className="timer-wrap">
-        <div className="timer">
+      <div
+        className="flex flex-col items-center justify-center bg-[url('/comicDialog.svg')] bg-contain bg-no-repeat bg-center aspect-video"
+        style={{
+          padding: "clamp(2rem, 8vw, 6rem) clamp(2.5rem, 10vw, 8rem)",
+          width: "clamp(500px, 250vw, 3000px)",
+        }}
+      >
+        <div
+          className="flex flex-row items-end justify-center w-full"
+          style={{ gap: "clamp(0.5rem, 3vw, 2.5rem)" }}
+        >
           {[
             { value: timer.days, label: "days" },
             { value: timer.hours, label: "hours" },
             { value: timer.minutes, label: "minutes" },
             { value: timer.seconds, label: "seconds" },
           ].map(({ value, label }) => (
-            <div className="time-block comic-sans" key={label}>
-              <div className="digits">
+            <div className="flex flex-col items-center comic-sans" key={label}>
+              <div
+                className="font-['Super_Squad'] leading-none text-white"
+                style={{
+                  fontSize: "clamp(2rem, 9vw, 5rem)",
+                  textShadow:
+                    "2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000",
+                }}
+              >
                 {value > 9 ? "" : "0"}
                 {value}
               </div>
