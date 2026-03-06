@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
 import { themes, type ThemeSlug } from "../content/data";
 import Background from "../components/Background";
+import { useWebHaptics } from "web-haptics/react";
 
 /* ─── Theme card data ─── */
 const THEME_CARDS = [
@@ -199,6 +200,7 @@ export default function Themes() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { trigger } = useWebHaptics();
 
   // Entrance animation
   useEffect(() => {

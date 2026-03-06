@@ -4,6 +4,7 @@ import gsap from "gsap";
 import Navbar from "../ui/Navbar";
 import type { Theme } from "../../content/data";
 import Background from "../Background";
+import { useWebHaptics } from "web-haptics/react";
 
 type Props = {
   data: Theme;
@@ -14,6 +15,7 @@ export default function PSPageClient({ data }: Props) {
     data.problemStatements[0].id
   );
   const navigate = useNavigate();
+  const { trigger } = useWebHaptics({debug: true});
   const contentRef = useRef<HTMLDivElement>(null);
 
   const activePS = data.problemStatements.find((ps) => ps.id === activePSId)!;
@@ -57,7 +59,7 @@ export default function PSPageClient({ data }: Props) {
           <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 pb-24 -mt-12">
             {/* Back button */}
             <button
-              onClick={() => navigate(-1)}
+              onClick={() => { trigger("heavy"); navigate(-1); }}
               className="flex items-center gap-2 transition-colors mb-10 comic-sans px-4 py-2"
               style={{
                 fontSize: "clamp(0.8rem, 1.5vw, 0.95rem)",
@@ -82,7 +84,7 @@ export default function PSPageClient({ data }: Props) {
               {data.problemStatements.map((ps) => (
                 <button
                   key={ps.id}
-                  onClick={() => setActivePSId(ps.id)}
+                  onClick={() => { trigger("heavy");  setActivePSId(ps.id)}}
                   className="hover:cursor-pointer px-5 py-2 text-sm font-medium transition-all comic-sans"
                   style={{
                     background: activePSId === ps.id ? "#fff" : "transparent",

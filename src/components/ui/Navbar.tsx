@@ -1,5 +1,6 @@
 import { Info, Users, Lightbulb, Heart, LogIn, BookText } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useWebHaptics } from "web-haptics/react";
 
 interface NavbarProps {
   className?: string;
@@ -10,12 +11,19 @@ const Navbar = ({ className }: NavbarProps) => {
   const navigate = useNavigate();
   const isTeamPage = location.pathname === "/team";
 
+  const { trigger } = useWebHaptics({ debug: true });
+
   const navItems = [
     { icon: Info, href: "#about", label: "About", route: "/about" },
     { icon: Users, href: "#team", label: "Team", route: "/team" },
     { icon: Lightbulb, href: "#themes", label: "Themes", route: "/themes" },
     { icon: Heart, href: "#sponsors", label: "Sponsors", route: "/sponsors" },
-    { icon: BookText, href: "/rulebook.pdf", label: "Rulebook", route: "/rulebook.pdf" },
+    {
+      icon: BookText,
+      href: "/rulebook.pdf",
+      label: "Rulebook",
+      route: "/rulebook.pdf",
+    },
     { icon: LogIn, href: "https://unstop.com/", label: "UnStop", route: null },
   ];
 
@@ -34,7 +42,7 @@ const Navbar = ({ className }: NavbarProps) => {
         }}
       >
         {/* Comic tail */}
-       <div
+        <div
           className="absolute -bottom-3.5 left-8 w-0 h-0"
           style={{
             borderLeft: "12px solid transparent",
@@ -78,6 +86,10 @@ const Navbar = ({ className }: NavbarProps) => {
           <button
             key={item.label}
             onClick={() => {
+              trigger([
+                { duration: 30 },
+                { delay: 60, duration: 40, intensity: 1 },
+              ]);
               if (item.route) {
                 navigate(item.route);
               } else if (item.href) {
@@ -93,9 +105,9 @@ const Navbar = ({ className }: NavbarProps) => {
             }}
             title={item.label}
           >
-            <item.icon 
+            <item.icon
               className="w-4 h-4 sm:w-[18px] sm:h-[18px] md:w-5 md:h-5"
-              strokeWidth={2.5} 
+              strokeWidth={2.5}
             />
             {/* Tooltip - hidden on mobile, visible on hover for desktop */}
             <span
