@@ -1,6 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import "../styles/Timer.css";
-import "../styles/TimerTimeline.css";
 import { gsap } from "gsap";
 
 function Timer() {
@@ -11,8 +9,7 @@ function Timer() {
     days: 0,
   });
 
-  // FIX: Use ISO 8601 with IST offset (+05:30) to ensure correct timezone
-  const HtfDate = Date.parse("2026-04-15T18:36:20+05:30");
+  const HtfDate = Date.parse("February 18, 2026 18:36:20");
 
   function setTimeLeft() {
     const difference = HtfDate - Date.now();
@@ -27,42 +24,57 @@ function Timer() {
   }
 
   useEffect(() => {
-    setTimeLeft(); // run immediately on mount
-    const id = setInterval(() => setTimeLeft(), 1000);
+    const tick = () => setTimeLeft();
+    const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, []); // FIX: add empty dependency array to avoid infinite re-render
+  });
 
   return (
-    <div className="timer-wrap">
-      <div className="timer">
-        <div className="time-block">
-          <div className="digits">
-            {timer.days > 9 ? "" : "0"}
-            {timer.days}
+    <div
+      className="relative flex items-center justify-center w-full"
+      style={{
+        width: "clamp(280px, 60vw, 620px)",
+        aspectRatio: "3 / 2",
+      }}
+    >
+      {/* Background bubble */}
+      <img
+        src="/comic-dialog.png"
+        alt=""
+        className="absolute inset-0 w-full h-full object-fill select-none pointer-events-none"
+      />
+      {/* Timer content centered inside bubble */}
+      <div className="relative z-10 grid grid-cols-4 items-center gap-[clamp(0.2rem,2vw,2rem)] px-[8%] pb-[4%]">
+        {[
+          { value: timer.days, label: "days" },
+          { value: timer.hours, label: "hours" },
+          { value: timer.minutes, label: "minutes" },
+          { value: timer.seconds, label: "seconds" },
+        ].map((block, i) => (
+          <div key={i} className="flex flex-col items-center">
+            <div
+              className="text-white leading-none"
+              style={{
+                fontFamily: "Super Squad",
+                fontSize: "clamp(1.8rem, 5vw, 4.5rem)",
+                textShadow:
+                  "2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000",
+              }}
+            >
+              {block.value > 9 ? "" : "0"}
+              {block.value}
+            </div>
+            <div
+              className="text-black"
+              style={{
+                fontFamily: "Badabom",
+                fontSize: "clamp(0.75rem, 1.8vw, 1.2rem)",
+              }}
+            >
+              {block.label}
+            </div>
           </div>
-          <div className="time-unit">days</div>
-        </div>
-        <div className="time-block">
-          <div className="digits">
-            {timer.hours > 9 ? "" : "0"}
-            {timer.hours}
-          </div>
-          <div className="time-unit">hours</div>
-        </div>
-        <div className="time-block">
-          <div className="digits">
-            {timer.minutes > 9 ? "" : "0"}
-            {timer.minutes}
-          </div>
-          <div className="time-unit">minutes</div>
-        </div>
-        <div className="time-block">
-          <div className="digits">
-            {timer.seconds > 9 ? "" : "0"}
-            {timer.seconds}
-          </div>
-          <div className="time-unit">seconds</div>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -78,49 +90,43 @@ function Timeline() {
     { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
   ];
 
-  const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 };
   const fannedForward = { x: "90%", y: 100, rotation: 5, scale: 1 };
-  const shiftStart = { x: "-5%", duration: 0.5, ease: "back.in(1.4)" };
+  const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 };
 
   const cards = [
     [
       { time: "3:00PM", event: "Start Registrations" },
       { time: "4:00PM", event: "Snacks" },
       { time: "5:00PM", event: "Event inauguration" },
-      { time: "6:00PM", event: "Hackathon Officially Begins" }, // FIX: was 6:00AM
+      { time: "6:00AM", event: "Hackathon Officially Begins" },
       { time: "7:00PM", event: "Dinner" },
     ],
     [
       { time: "1:00AM", event: "Refreshments" },
       { time: "8:00AM", event: "Breakfast" },
-      { time: "10:00AM", event: "Lunch" }, // FIX: was out of order (1PM -> 8AM etc)
+      { time: "10:00AM", event: "Lunch" },
       { time: "4:00PM", event: "Snacks" },
       { time: "4:30PM", event: "Mentoring session" },
-      { time: "7:00PM", event: "Dinner" },
       { time: "7:30PM", event: "Cultural Program in Amphitheatre" },
+      { time: "7:00PM", event: "Dinner" },
     ],
     [
       { time: "1:00AM", event: "Refreshments" },
       { time: "5:00AM", event: "Participation certificate" },
       { time: "6:00AM", event: "Hackathon ends" },
-      { time: "8:00AM", event: "Breakfast" },
+      { event: "Breakfast", time: "8:00AM" },
       { time: "9:30AM", event: "Team presentation" },
       { time: "12:00PM", event: "Valedictory ceremony" },
       { time: "1:00PM", event: "Lunch and networking" },
     ],
   ];
-
   const totalCards = cards.length;
 
-  // FIX: useRef<HTMLDivElement[]> initialized as empty array, no hooks in map
-  const cardRefs = useRef<HTMLDivElement[]>([]);
-
-  const rowCount = cards.map((card) => Math.ceil(card.length / 2));
-  const maxRow = [...rowCount].sort((a, b) => b - a)[0];
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const setZIndex = (curr: number) => {
     cardRefs.current.forEach((card, i) => {
-      if (!card) return; // FIX: null guard
+      if (!card) return;
       if (i < curr) {
         card.style.zIndex = String(curr - i);
       } else {
@@ -132,29 +138,46 @@ function Timeline() {
   const flipForward = () => {
     setCurrentCard((prev) => {
       const next = prev === totalCards - 1 ? 0 : prev + 1;
-      const tl1 = gsap.timeline();
-      tl1
-        .to(cardRefs.current[prev], {
-          ...fannedForward,
+
+      const prevCard = cardRefs.current[prev];
+      if (prevCard) {
+        const tl1 = gsap.timeline();
+        tl1
+          .to(prevCard, {
+            ...fannedForward,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+            rotationY: 60,
+            delay: 0.05,
+          })
+          .to(prevCard, {
+            ...originalPos[next],
+            zIndex: 1,
+            rotationY: 0,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+          });
+      }
+
+      setTimeout(() => {
+        setZIndex(next);
+      }, 500);
+
+      const filterCards = cardRefs.current.filter(
+        (card, i): card is HTMLDivElement => card != null && i !== prev
+      );
+      const tl2 = gsap.timeline();
+      tl2
+        .to(filterCards, {
+          x: "-5%",
           duration: 0.5,
           ease: "back.in(1.4)",
-          rotationY: 60,
-          delay: 0.05,
         })
-        .to(cardRefs.current[prev], {
-          ...originalPos[next],
-          zIndex: 1,
-          rotationY: 0,
+        .to(filterCards, {
+          x: 0,
           duration: 0.5,
           ease: "back.in(1.4)",
         });
-
-      setTimeout(() => setZIndex(next), 500);
-
-      const filterCards = cardRefs.current.filter((_, i) => i !== prev);
-      gsap.timeline()
-        .to(filterCards, { x: "-5%", duration: 0.5, ease: "back.in(1.4)" })
-        .to(filterCards, { x: 0, duration: 0.5, ease: "back.in(1.4)" });
 
       return next;
     });
@@ -163,15 +186,17 @@ function Timeline() {
   const flipBackward = () => {
     setCurrentCard((next) => {
       const prev = next === 0 ? totalCards - 1 : next - 1;
-      gsap.timeline()
-        .to(cardRefs.current[prev], {
+
+      const prevCard = cardRefs.current[prev];
+      if (prevCard) {
+        const tl = gsap.timeline();
+        tl.to(prevCard, {
           ...fannedBack,
           duration: 0.5,
           ease: "back.in(1.4)",
           rotationY: 60,
           delay: 0.05,
-        })
-        .to(cardRefs.current[prev], {
+        }).to(prevCard, {
           ...originalPos[next],
           zIndex: 60,
           rotationY: 0,
@@ -179,26 +204,40 @@ function Timeline() {
           ease: "back.in(1.4)",
           delay: 0.05,
         });
+      }
 
-      const filterCards = cardRefs.current.filter((_, i) => i !== prev);
-      gsap.timeline()
-        .to(filterCards, { ...shiftStart })
-        .to(filterCards, { x: 0, duration: 0.5, ease: "back.in(1.4)" }); // FIX: shiftEnd was empty
+      const filterCards = cardRefs.current.filter(
+        (card, i): card is HTMLDivElement => card != null && i !== prev
+      );
+      const tl2 = gsap.timeline();
+      tl2
+        .to(filterCards, {
+          x: "-5%",
+          duration: 0.5,
+          ease: "back.in(1.4)",
+        })
+        .to(filterCards, {
+          x: 0,
+          duration: 0.5,
+          ease: "back.in(1.4)",
+        });
 
-      setTimeout(() => setZIndex(prev), 800);
+      setTimeout(() => {
+        setZIndex(prev);
+      }, 800);
       return prev;
     });
   };
 
   const [rendered, setRendered] = useState(false);
 
-  // FIX: cardClicked should compare x against half the card's own width
-  const cardClicked = (event: React.MouseEvent) => {
-    const card = cardRefs.current[currentCard];
-    if (!card) return;
-    const bounds = card.getBoundingClientRect();
-    const x = event.clientX - bounds.left;
-    if (x > bounds.width / 2) {
+  const cardClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+    const currentEl = cardRefs.current[currentCard];
+    if (!currentEl) return;
+    const rect = currentEl.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const midpoint = rect.width / 2;
+    if (x > midpoint) {
       flipForward();
     } else {
       flipBackward();
@@ -208,55 +247,101 @@ function Timeline() {
   useEffect(() => {
     if (!rendered) {
       cardRefs.current.forEach((card, i) => {
-        if (card) gsap.set(card, originalPos[i]);
+        if (card) {
+          gsap.set(card, originalPos[i]);
+        }
       });
       setZIndex(currentCard);
       setRendered(true);
-
-      if (originalPos.length !== cards.length) {
-        console.error("CARDS COUNT IS INVALID: originalPos length mismatch");
-      }
     }
-  }, []); // FIX: empty dep array — only run once on mount
+
+    if (originalPos.length !== cards.length) {
+      console.error("CARDS COUNT IS INVALID");
+    }
+  });
 
   const Header = ["15th April", "16th April", "17th April"];
-  const times = ["15", "16", "17"];
+  const dayLabels = ["Day 1", "Day 2", "Day 3"];
 
   return (
-    <div className="timeline">
-      <div
-        className="timeline-indicator"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${times.length}, 1fr)`, // FIX: was maxRow (wrong)
-        }}
-      >
-        {times.map((time) => (
-          <div className="time" key={time}>{time}</div> // FIX: added key
+    <div
+      className="flex flex-col items-center justify-center w-full px-2 sm:px-4"
+      style={{ paddingBottom: "clamp(3rem, 6vh, 4.5rem)" }}
+    >
+      {/* Day indicator — each button is its own panel */}
+      <div className="flex gap-2 sm:gap-4 mb-2 sm:mb-3">
+        {dayLabels.map((label, i) => (
+          <div key={i} className="htf-panel">
+            <button
+              onClick={() =>
+                i > currentCard
+                  ? flipForward()
+                  : i < currentCard
+                  ? flipBackward()
+                  : null
+              }
+              className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm border-2 border-[#fece00] transition-all
+                ${
+                  i === currentCard
+                    ? "bg-[#ff2e30] text-white scale-110"
+                    : "bg-black/60 text-white/70"
+                }`}
+              style={{ fontFamily: "Super Squad" }}
+            >
+              {label}
+            </button>
+          </div>
         ))}
       </div>
-      <div className="cards text-left">
+
+      {/* Cards stack */}
+      <div
+        className="relative grid items-start"
+        style={{ width: "clamp(280px, 60vw, 620px)" }}
+      >
         {cards.map((card, i) => (
           <div
-            className="card-wrapper"
-            ref={(el) => { if (el) cardRefs.current[i] = el; }} // FIX: proper ref callback with null guard
+            className="htf-panel grid border-4 border-[#fece00] shadow-[6px_4px_0px_6px_rgba(20,20,20,0.5)] [grid-area:stack] [grid-template-rows:auto_1fr] cursor-pointer"
+            ref={(el) => {
+              cardRefs.current[i] = el;
+            }}
             key={i}
+            style={{ width: "clamp(280px, 60vw, 620px)" }}
           >
-            <div className="card-header">{Header[i]}</div>
+            {/* Card header */}
             <div
-              className="card-content top-1/9"
+              className="border-b-4 border-[#fece00] bg-[#ff2e30] px-3 py-1.5 text-base sm:text-xl md:text-2xl lg:text-3xl text-white"
+              style={{ fontFamily: "Super Squad" }}
+            >
+              {Header[i]}
+            </div>
+
+            {/* Card content */}
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 bg-[antiquewhite] p-3 sm:p-4 md:p-5 select-none"
               onClick={cardClicked}
-              style={{
-                gridTemplateRows: `repeat(${rowCount[i]}, 1fr)`, // FIX: use per-card rowCount
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              }}
             >
               {card.map((info, j) => (
-                <div className="card-block" key={j}> // FIX: added key
-                  <div className="card-event">{info.event}</div>
-                  <div className="card-time">{info.time}</div>
+                <div
+                  key={j}
+                  className="flex items-baseline gap-2 border-b border-black/10 pb-1"
+                >
+                  <span
+                    className="text-[#ff2e30] font-bold text-xs sm:text-sm md:text-base whitespace-nowrap"
+                    style={{ fontFamily: "Super Squad" }}
+                  >
+                    {info.time}
+                  </span>
+                  <span className="text-black text-xs sm:text-sm md:text-base leading-snug">
+                    {info.event}
+                  </span>
                 </div>
               ))}
+            </div>
+
+            {/* Tap hint */}
+            <div className="bg-black/80 text-white/50 text-[10px] text-center py-0.5 select-none">
+              tap left / right to switch day
             </div>
           </div>
         ))}
@@ -267,9 +352,36 @@ function Timeline() {
 
 export default function TimerTimeline() {
   return (
-    <div className="h-full w-full grid grid-rows-[auto_1fr] justify-items-center">
-      <Timer />
-      <Timeline />
+    <div className="flex flex-col items-center justify-center gap-4 lg:gap-6 w-full px-4">
+      {/* Heading – centered, own panel */}
+      <div className="htf-panel w-full flex justify-center">
+        <h2
+          className="text-white"
+          style={{
+            fontFamily: "Dela Gothic One",
+            fontSize: "clamp(2rem, 5vw, 4.5rem)",
+            letterSpacing: "0.05em",
+            WebkitTextStroke: "1.5px black",
+            textShadow:
+              "3px 3px 0 #000, -2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000",
+          }}
+        >
+          TIMELINE
+        </h2>
+      </div>
+
+      {/* Mobile: stacked | Laptop (lg+): side by side */}
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 w-full">
+        {/* Timer */}
+        <div className="htf-panel flex-shrink-0">
+          <Timer />
+        </div>
+
+        {/* Timeline cards (each card already has htf-panel) */}
+        <div className="flex-shrink-0">
+          <Timeline />
+        </div>
+      </div>
     </div>
   );
 }

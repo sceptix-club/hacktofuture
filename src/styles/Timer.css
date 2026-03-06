@@ -98,12 +98,6 @@
 	              1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000;
 }
 
-.time-unit {
-	color: #000;
-	font-size: clamp(0.6rem, 2vw, 1.4rem);
-	margin-top: clamp(0.5rem, 2vw, 1rem);
-}
-
 /*TODO: replace background-image with svg wave animation
 	 * use fit content */
 /* background-image: radial-gradient( circle at center, white 0.4px, transparent 0); */
@@ -133,5 +127,5 @@
 
 @font-face {
 	font-family: "Super Squad";
-	src: url("/fonts/Super Squad Italic.ttf");
+	src: url("../../public/fonts/Super Squad Italic.ttf");
 }

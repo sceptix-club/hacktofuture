@@ -124,13 +124,13 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       2.0
     );
 
-    // Scene 4: Still camera rotation (3.0 - 4.0)
+    // Scene 4: Still camera (3.0 - 5.0) – extended for TimerTimeline dwell
     const scene4State = { progress: 0 };
     tl.to(
       scene4State,
       {
         progress: 1,
-        duration: 1,
+        duration: 2,
         onUpdate: () => {
           camera.position.set(0, -60, 0);
           camera.lookAt(0, -60, 0);
@@ -139,8 +139,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       3.0
     );
 
-    // Scene 5: Cards with pauses (4.0 - 5.0)
-    const scene5State = { angle: Math.PI * 0.5 };
+    // Scene 5: Cards with pauses (5.0 - 6.0) – starts from Theme 3
+    const scene5State = { angle: Math.PI * 1.5 };
     const pivot = { x: 0, y: -124, z: 0 };
     const radius = 10;
 
@@ -156,53 +156,60 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
     tl.set(
       scene5State,
-      { angle: Math.PI * 0.5, onUpdate: updateCardCamera },
-      4.0
+      { angle: Math.PI * 1.5, onUpdate: updateCardCamera },
+      5.0
     );
 
+    // Theme 3 (bottom) – pause
     tl.to(
       scene5State,
       {
-        angle: Math.PI * 0.5,
+        angle: Math.PI * 1.5,
         duration: 0.5,
         onUpdate: updateCardCamera,
       },
-      4.0
+      5.0
     );
 
-    tl.to(scene5State, {
-      angle: Math.PI,
-      duration: 0.3,
-      onUpdate: updateCardCamera,
-    });
-
-    tl.to(scene5State, {
-      angle: Math.PI,
-      duration: 0.2,
-      onUpdate: updateCardCamera,
-    });
-
-    tl.to(scene5State, {
-      angle: Math.PI * 1.5,
-      duration: 0.3,
-      onUpdate: updateCardCamera,
-    });
-
-    tl.to(scene5State, {
-      angle: Math.PI * 1.5,
-      duration: 0.2,
-      onUpdate: updateCardCamera,
-    });
-
+    // Theme 3 → Theme 4 (left)
     tl.to(scene5State, {
       angle: Math.PI * 2,
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
+    // Theme 4 – pause
     tl.to(scene5State, {
       angle: Math.PI * 2,
-      duration: 0.2,
+      duration: 0.4,
+      onUpdate: updateCardCamera,
+    });
+
+    // Theme 4 → Theme 1 (top)
+    tl.to(scene5State, {
+      angle: Math.PI * 2.5,
+      duration: 0.3,
+      onUpdate: updateCardCamera,
+    });
+
+    // Theme 1 – pause
+    tl.to(scene5State, {
+      angle: Math.PI * 2.5,
+      duration: 0.4,
+      onUpdate: updateCardCamera,
+    });
+
+    // Theme 1 → Theme 2 (right)
+    tl.to(scene5State, {
+      angle: Math.PI * 3,
+      duration: 0.3,
+      onUpdate: updateCardCamera,
+    });
+
+    // Theme 2 – pause
+    tl.to(scene5State, {
+      angle: Math.PI * 3,
+      duration: 0.4,
       onUpdate: updateCardCamera,
     });
 
@@ -212,16 +219,16 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       scene6State,
       {
         progress: 1,
-        duration: 2, // extended from 1 → 2 to cover CTA (6.1) + FAQ (6.8) + Footer (7.0)
+        duration: 4.4,
         onUpdate: () => {
           camera.position.set(0, -150, 0);
           camera.lookAt(0, -150, 0);
         },
       },
-      6.0
+      7.8
     );
 
-    tl.set({}, {}, 10.0);
+    tl.set({}, {}, 12.2);
 
     return () => {
       tl.kill();
