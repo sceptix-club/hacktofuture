@@ -19,6 +19,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const tvRef = useRef<THREE.Group | null>(null);
   const pointerRef = useRef<THREE.PointLight | null>(null);
   const scene6Ref = useRef<THREE.Group | null>(null);
+  const cardsGroupRef = useRef<THREE.Group | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
   // Capture initial viewport width
@@ -213,7 +214,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       onUpdate: updateCardCamera,
     });
 
-    // Scene6: CTA + FAQ section (extended duration)
+    // Scene6: CTA + FAQ section (extended duration) – camera stays on last card
     const scene6State = { progress: 0 };
     tl.to(
       scene6State,
@@ -221,11 +222,38 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 4.4,
         onUpdate: () => {
-          camera.position.set(0, -150, 0);
-          camera.lookAt(0, -150, 0);
+          const a = Math.PI * 3;
+          camera.position.set(
+            pivot.x - Math.cos(a) * radius,
+            pivot.y - Math.sin(a) * radius,
+            pivot.z + 10
+          );
+          camera.rotation.set(0, 0, a + Math.PI / 2);
         },
       },
       7.8
+    );
+
+    // Fade 3D cards out once CTA is halfway visible
+    const cardFade = { opacity: 1 };
+    tl.to(
+      cardFade,
+      {
+        opacity: 0,
+        duration: 0.4,
+        onUpdate: () => {
+          if (cardsGroupRef.current) {
+            cardsGroupRef.current.traverse((child) => {
+              if ((child as THREE.Mesh).isMesh) {
+                const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
+                mat.transparent = true;
+                mat.opacity = cardFade.opacity;
+              }
+            });
+          }
+        },
+      },
+      8.2
     );
 
     tl.set({}, {}, 12.2);
@@ -328,6 +356,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       <group ref={scene6Ref} position={[0, -150, 0]} />
       <Cards
         pointerRef={pointerRef}
+        groupRef={cardsGroupRef}
       />
 
       <pointLight

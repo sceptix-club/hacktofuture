@@ -1,70 +1,8 @@
-import { useEffect, useRef, useState } from "react";
 import "../App.css";
 import Navbar from "../components/ui/Navbar";
-import Footer from "../scenes/Footer";
-import gsap from "gsap";
 import Background from "../components/Background";
 
 export default function About() {
-  const footerRef = useRef<HTMLDivElement>(null);
-  const [showFooter, setShowFooter] = useState(false);
-  const isFooterVisible = useRef(false);
-  const touchStartY = useRef(0);
-
-  useEffect(() => {
-    if (!footerRef.current) return;
-    if (showFooter) {
-      gsap.to(footerRef.current, { y: 0, duration: 0.6, ease: "power3.out" });
-    } else {
-      gsap.to(footerRef.current, {
-        y: "100%",
-        duration: 0.5,
-        ease: "power3.in",
-      });
-    }
-    isFooterVisible.current = showFooter;
-  }, [showFooter]);
-
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0 && !isFooterVisible.current) {
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - 10;
-        if (atBottom) setShowFooter(true);
-      } else if (e.deltaY < 0 && isFooterVisible.current) {
-        setShowFooter(false);
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-      const threshold = 40;
-      if (deltaY > threshold && !isFooterVisible.current) {
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - 10;
-        if (atBottom) setShowFooter(true);
-      } else if (deltaY < -threshold && isFooterVisible.current) {
-        setShowFooter(false);
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, []);
-
   return (
     <>
       <Navbar />
@@ -72,7 +10,13 @@ export default function About() {
       {/* Full-page wrapper — BackgroundNew fills this */}
       <div
         className="relative w-full min-h-screen"
-        style={{ background: "#0a0a0a" }}
+        style={{
+          background: "#0a0a0a",
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         {/* ── 3D Background — pinned to the full viewport ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
@@ -249,8 +193,6 @@ export default function About() {
           </div>
         </section>
       </div>
-
-      <Footer ref={footerRef} />
     </>
   );
 }

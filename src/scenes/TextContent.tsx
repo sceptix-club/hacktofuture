@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
@@ -6,7 +6,7 @@ import CTA from "./CTA";
 import FAQ from "./FAQ";
 
 const handleThemeNavigate = (slug: string) => {
-  window.location.href = `/theme/${slug}`;
+  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer")
 };
 import TimerTimeline from "../components/TimerTimeline";
 
@@ -32,7 +32,7 @@ const TextContent = ({
   const ctaRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const tl = gsap.timeline({ paused: true });
 
     // Scene 1
@@ -144,41 +144,41 @@ const TextContent = ({
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.1 },
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         5.05
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1 }, 5.35);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.35);
     }
     // Card 2 text (camera dwell: 5.8 – 6.2)
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.1 },
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         5.85
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1 }, 6.1);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.1);
     }
     // Card 3 text (camera dwell: 6.5 – 6.9)
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.1 },
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         6.55
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1 }, 6.8);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.8);
     }
     // Card 4 text (camera dwell: 7.2 – 7.6)
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.1 },
+        { opacity: 0, scale: 0.8, pointerEvents: "none" },
+        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         7.25
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 7.5);
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.2, pointerEvents: "none" }, 7.6);
     }
     // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
     if (ctaRef.current) {
@@ -195,13 +195,13 @@ const TextContent = ({
       );
     }
 
-    // ── FAQ: slides in at 9.2, slides OUT at 10.4 ──
+    // ── FAQ: slides in at 8.9, slides OUT at 10.4 ──
     if (faqRef.current) {
       gsap.set(faqRef.current, { y: "100%", opacity: 0 });
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        9.2
+        8.9
       );
       tl.to(
         faqRef.current,
@@ -258,9 +258,8 @@ const TextContent = ({
       {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
-          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-        }`}
+        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+          }`}
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
           opacity: 0,
@@ -316,7 +315,7 @@ const TextContent = ({
             key={n}
             ref={[card1TextRef, card2TextRef, card3TextRef, card4TextRef][i]}
             className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center"
-            style={{ opacity: 0, pointerEvents: "auto", cursor: "pointer" }}
+            style={{ opacity: 0, pointerEvents: "none", cursor: "pointer" }}
             onClick={() => handleThemeNavigate(slug)}
           >
             <div className="max-w-[95vw] overflow-hidden text-center">

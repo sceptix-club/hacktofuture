@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import Navbar from "../ui/Navbar";
-import Footer from "../../scenes/Footer";
 import type { Theme } from "../../content/data";
 import Background from "../Background";
 
@@ -15,11 +14,7 @@ export default function PSPageClient({ data }: Props) {
     data.problemStatements[0].id
   );
   const navigate = useNavigate();
-  const footerRef = useRef<HTMLDivElement>(null);
-  const [showFooter, setShowFooter] = useState(false);
-  const isFooterVisible = useRef(false);
   const contentRef = useRef<HTMLDivElement>(null);
-  const touchStartY = useRef(0);
 
   const activePS = data.problemStatements.find((ps) => ps.id === activePSId)!;
 
@@ -27,85 +22,6 @@ export default function PSPageClient({ data }: Props) {
   useEffect(() => {
     setActivePSId(data.problemStatements[0].id);
   }, [data]);
-
-  // Footer slide animation
-  useEffect(() => {
-    if (!footerRef.current) return;
-    if (showFooter) {
-      gsap.to(footerRef.current, { y: 0, duration: 1.0, ease: "power3.out" });
-    } else {
-      gsap.to(footerRef.current, {
-        y: "100%",
-        duration: 0.5,
-        ease: "power3.in",
-      });
-    }
-    isFooterVisible.current = showFooter;
-  }, [showFooter]);
-
-  // Footer show/hide on scroll
-  useEffect(() => {
-    let footerTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0 && !isFooterVisible.current) {
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - 10;
-        if (atBottom) {
-          if (!footerTimeout) {
-            footerTimeout = setTimeout(() => {
-              setShowFooter(true);
-              footerTimeout = null;
-            }, 1000);
-          }
-        }
-      } else if (e.deltaY < 0 && isFooterVisible.current) {
-        if (footerTimeout) {
-          clearTimeout(footerTimeout);
-          footerTimeout = null;
-        }
-        setShowFooter(false);
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-      const threshold = 40;
-      if (deltaY > threshold && !isFooterVisible.current) {
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - 10;
-        if (atBottom) {
-          footerTimeout = setTimeout(() => {
-            setShowFooter(true);
-            footerTimeout = null;
-          }, 600);
-        }
-      } else if (deltaY < -threshold && isFooterVisible.current) {
-        if (footerTimeout) {
-          clearTimeout(footerTimeout);
-          footerTimeout = null;
-        }
-        setShowFooter(false);
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-      if (footerTimeout) clearTimeout(footerTimeout);
-    };
-  }, []);
 
   // Animate content on PS change
   useEffect(() => {
@@ -123,7 +39,13 @@ export default function PSPageClient({ data }: Props) {
 
       <main
         className="relative min-h-screen text-white"
-        style={{ background: "#0a0a0a" }}
+        style={{
+          background: "#0a0a0a",
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         {/* ── 3D Background ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
@@ -290,8 +212,6 @@ export default function PSPageClient({ data }: Props) {
           </div>
         </div>
       </main>
-
-      <Footer ref={footerRef} />
     </>
   );
 }
