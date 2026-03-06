@@ -59,8 +59,8 @@ function PhotoContent({
             loading="eager"
             decoding="async"
             style={{
-              width: isMobile ? "100px" : undefined,
-              height: isMobile ? "120px" : undefined,
+              width: isMobile ? "100px" : "200px",
+              height: isMobile ? "120px" : "240px",
               objectFit: "cover",
               border: "2px solid #000",
               borderRadius: "2px",
