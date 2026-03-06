@@ -4,6 +4,7 @@ import Navbar from "../components/ui/Navbar";
 import "../App.css";
 import { TEAM_MEMBERS } from "../content/team";
 import type { TeamMember } from "../content/team";
+import { coreTeamPrefix } from "../lib/utils";
 
 const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
@@ -53,13 +54,13 @@ function PhotoContent({
           }}
         >
           <img
-            src={member.photo ?? undefined}
+            src={member.photo ? `${coreTeamPrefix}${member.photo}` : undefined}
             alt={member.name}
             loading="eager"
             decoding="async"
             style={{
               width: isMobile ? "100px" : undefined,
-              height: isMobile ? "100px" : undefined,
+              height: isMobile ? "120px" : undefined,
               objectFit: "cover",
               border: "2px solid #000",
               borderRadius: "2px",
