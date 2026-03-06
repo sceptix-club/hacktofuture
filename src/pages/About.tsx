@@ -1,13 +1,60 @@
+import { useRef, useEffect } from "react";
 import "../App.css";
 import Navbar from "../components/ui/Navbar";
 import Background from "../components/Background";
+import gsap from "gsap";
 
 export default function About() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const tickerRef = useRef<HTMLDivElement>(null);
+
+  // Entrance animation
+  useEffect(() => {
+    if (!headerRef.current || !contentRef.current || !statsRef.current || !tickerRef.current) return;
+
+    gsap.fromTo(
+      headerRef.current,
+      { opacity: 0, y: -30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
+    );
+
+    gsap.fromTo(
+      tickerRef.current,
+      { opacity: 0, scale: 0.95 },
+      { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out", delay: 0.2 }
+    );
+
+    const cards = [contentRef.current, ...Array.from(statsRef.current.children)];
+
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 40 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: "power3.out",
+        stagger: 0.1,
+        delay: 0.3,
+      }
+    );
+  }, []);
+
+  const stats = [
+    { label: "PRIZE POOL", value: "₹1,00,000", color: "#E8003D" },
+    { label: "HACKERS", value: "100", color: "#00C6FF" },
+    { label: "DATES", value: "16 17 18", color: "#FFE105" },
+    { label: "THEMES", value: "4", color: "#A855F7" },
+    { label: "VENUE", value: "Kalam Hall", color: "#FF8A00", colSpan: 2 },
+  ];
+
   return (
     <>
       <Navbar />
 
-      {/* Full-page wrapper — BackgroundNew fills this */}
       <div
         className="relative w-full min-h-screen"
         style={{
@@ -17,181 +64,257 @@ export default function About() {
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
+        ref={containerRef}
       >
-        {/* ── 3D Background — pinned to the full viewport ── */}
+        {/* ── 3D background ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
-          <Background
-          />
+          <Background />
         </div>
 
-        {/* ── Foreground content ── */}
-        <section
-          className="relative flex items-center justify-center px-4 py-24 min-h-screen"
+        {/* ── Foreground ── */}
+        <div
+          className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 min-h-screen flex flex-col items-center"
           style={{ zIndex: 1 }}
         >
-          <div
-            className="relative max-w-3xl w-full"
-            style={{
-              background: "#FFFEF2",
-              border: "4px solid #000",
-              boxShadow: "8px 8px 0px #000",
-              padding: "clamp(2rem, 5vw, 4rem)",
-            }}
-          >
-            {/* Halftone dot cluster — top right corner */}
-            <div
-              className="absolute pointer-events-none"
+          {/* Header */}
+          <div ref={headerRef} className="-mt-12 mb-8 flex flex-col items-center">
+            <p
+              className="comic-sans uppercase tracking-widest mb-3 text-center"
               style={{
-                top: 12,
-                right: 16,
-                width: 90,
-                height: 90,
-                backgroundImage:
-                  "radial-gradient(circle, rgba(0,0,0,0.12) 1.5px, transparent 1.5px)",
-                backgroundSize: "8px 8px",
-              }}
-            />
-
-            {/* Speech bubble */}
-            <div
-              className="relative inline-block mb-8"
-              style={{
-                background: "#fff",
-                border: "3px solid #000",
-                borderRadius: "18px 18px 18px 4px",
-                padding: "6px 16px",
-                boxShadow: "3px 3px 0px #000",
+                fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+                color: "rgba(255,255,255,0.6)",
               }}
             >
-              <span
-                className="comic-sans text-black"
-                style={{ fontSize: "clamp(0.65rem, 1.4vw, 0.85rem)" }}
-              >
-                Est. 2021 · St Joseph Engineering College
-              </span>
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: -14,
-                  left: 18,
-                  width: 0,
-                  height: 0,
-                  borderLeft: "6px solid transparent",
-                  borderRight: "10px solid transparent",
-                  borderTop: "14px solid #000",
-                }}
-              />
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: -10,
-                  left: 20,
-                  width: 0,
-                  height: 0,
-                  borderLeft: "5px solid transparent",
-                  borderRight: "8px solid transparent",
-                  borderTop: "11px solid #fff",
-                }}
-              />
-            </div>
+              HackToFuture 4.0
+            </p>
+            <h1
+              className="hero-title font-black uppercase text-center"
+              style={{
+                fontSize: "clamp(2.5rem, 8vw, 5rem)",
+                lineHeight: 0.9,
+                color: "#fff",
+              }}
+            >
+              About
+            </h1>
+            <div
+              className="mt-4"
+              style={{
+                height: 3,
+                width: "clamp(60px, 8vw, 100px)",
+                background: "#E8003D",
+              }}
+            />
+          </div>
 
-            {/* Heading */}
-            <div className="mt-4 mb-2">
+
+          {/* Main Layout Grid */}
+          <div className="w-full flex flex-col lg:flex-row gap-8 max-w-[1200px]">
+
+            {/* Left: Main Content Card */}
+            <div
+              className="w-full lg:w-3/5"
+              ref={contentRef}
+            >
               <div
-                className="inline-block"
+                className="relative flex flex-col justify-between h-full"
                 style={{
-                  background: "#000",
-                  transform: "skewX(-2deg)",
-                  boxShadow: "4px 4px 0px #DA100C",
-                  padding: "6px 20px",
-                  marginBottom: "1.5rem",
+                  background: "#FFFEF2",
+                  backgroundImage:
+                    "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px)",
+                  border: "3px solid #000",
+                  borderTop: `5px solid #E8003D`,
+                  borderRadius: "0.75rem",
+                  padding: "clamp(1.5rem, 3vw, 2.5rem)",
+                  boxShadow: "6px 6px 0px rgba(0,0,0,0.8)",
                 }}
               >
-                <h1
-                  className="hero-title text-white"
+                {/* Number/Icon badge */}
+                <div className="flex items-start justify-between mb-6">
+                  <span
+                    className="hero-title font-black"
+                    style={{
+                      fontSize: "clamp(2rem, 4vw, 3rem)",
+                      color: "#E8003D",
+                      opacity: 0.15,
+                      lineHeight: 1,
+                      userSelect: "none",
+                    }}
+                  >
+                    ORIGIN
+                  </span>
+
+                  <div
+                    className="flex items-center justify-center"
+                    style={{
+                      width: 40,
+                      height: 40,
+                      border: `3px solid #000`,
+                      background: "#E8003D",
+                      borderRadius: "50%",
+                      color: "#fff",
+                      flexShrink: 0,
+                      boxShadow: "2px 2px 0 #000"
+                    }}
+                  >
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    >
+                      <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <h3
+                  className="hero-title font-black uppercase mb-5"
                   style={{
-                    fontSize: "clamp(2rem, 7vw, 4rem)",
-                    transform: "skewX(2deg)",
-                    WebkitTextStroke: "1px rgba(255,255,255,0.2)",
+                    fontSize: "clamp(1.5rem, 3vw, 2.2rem)",
+                    color: "#111",
+                    lineHeight: 1.1,
                   }}
                 >
-                  ABOUT HTF
-                </h1>
+                  The Hackathon
+                </h3>
+
+                <div
+                  className="comic-sans font-medium space-y-5"
+                  style={{
+                    fontSize: "clamp(0.9rem, 1.25vw, 1.1rem)",
+                    color: "rgba(0,0,0,0.8)",
+                    lineHeight: 1.8,
+                  }}
+                >
+                  <p>
+                    <strong className="text-black font-bold">HackToFuture</strong> is a 36-hour intercollegiate hackathon hosted annually
+                    by the Sceptix Club at St Joseph Engineering College, Mangaluru.
+                    Now in its fourth edition, it brings together the brightest student
+                    minds to build, break, and ship real products under pressure —
+                    no tutorials, no safety nets, just ideas and execution.
+                  </p>
+                  <p>
+                    From machine learning pipelines to decentralised protocols, from
+                    health-tech tools to open innovation experiments — HTF has always
+                    been a stage for students who refuse to wait for permission to
+                    build the future. Every year the stakes get higher. Every year the
+                    builds get bolder.
+                  </p>
+                </div>
+
+                <div
+                  className="mt-8 pt-5 flex items-center justify-between"
+                  style={{ borderTop: "2px solid rgba(0,0,0,0.1)" }}
+                >
+                  <span
+                    className="comic-sans font-bold"
+                    style={{
+                      fontSize: "clamp(0.7rem, 1vw, 0.8rem)",
+                      color: "rgba(0,0,0,0.5)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                    }}
+                  >
+                    EST. 2021
+                  </span>
+                  <span
+                    className="comic-sans font-bold px-3 py-1"
+                    style={{
+                      fontSize: "clamp(0.7rem, 1vw, 0.8rem)",
+                      color: "#fff",
+                      background: "#000",
+                      borderRadius: "4px",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.1em",
+                    }}
+                  >
+                    SJEC MANGALURU
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Divider */}
+            {/* Right: Stats Grid */}
             <div
-              className="mb-6"
-              style={{
-                height: 3,
-                background: "linear-gradient(90deg, #000 60%, transparent)",
-                width: "100%",
-              }}
-            />
-
-            {/* Body text */}
-            <p
-              className="comic-sans text-black/85 leading-relaxed mb-6"
-              style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.1rem)" }}
+              className="w-full lg:w-2/5 grid grid-cols-2 gap-4 lg:gap-6"
+              ref={statsRef}
             >
-              HackToFuture is a 36-hour intercollegiate hackathon hosted
-              annually by the Sceptix Club at St Joseph Engineering College,
-              Mangaluru. Now in its fourth edition, it brings together the
-              brightest student minds to build, break, and ship real products
-              under pressure — no tutorials, no safety nets, just ideas and
-              execution.
-            </p>
+              {stats.map((stat, i) => (
+                <div
+                  key={i}
+                  className={`flex flex-col items-center justify-center text-center group cursor-pointer ${stat.colSpan === 2 ? 'col-span-2' : ''}`}
+                  style={{
+                    background: "#FFFEF2",
+                    border: "3px solid #000",
+                    borderBottom: `6px solid ${stat.color}`,
+                    borderRadius: "0.75rem",
+                    padding: "1.5rem 0.5rem", // Reduced horizontal padding
+                    boxShadow: "4px 4px 0px rgba(0,0,0,0.8)",
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    gsap.to(e.currentTarget, { y: -4, boxShadow: "6px 8px 0px rgba(0,0,0,0.8)", duration: 0.2 });
+                  }}
+                  onMouseLeave={(e) => {
+                    gsap.to(e.currentTarget, { y: 0, boxShadow: "4px 4px 0px rgba(0,0,0,0.8)", duration: 0.2 });
+                  }}
+                >
+                  <div
+                    className="hero-title font-black mb-1" // Reduced margin
+                    style={{
+                      fontSize: "clamp(1.1rem, 2.2vw, 1.8rem)", // Reduced font size range
+                      color: "#000",
+                      lineHeight: 1,
+                      wordBreak: "break-all", // Fallback for very long strings
+                    }}
+                  >
+                    {stat.value}
+                  </div>
+                  <div
+                    className="comic-sans font-bold uppercase tracking-widest"
+                    style={{
+                      fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
+                      color: stat.color,
+                    }}
+                  >
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
 
-            <p
-              className="comic-sans text-black/70 leading-relaxed"
-              style={{ fontSize: "clamp(0.85rem, 1.6vw, 1rem)" }}
-            >
-              From machine learning pipelines to decentralised protocols, from
-              health-tech tools to open innovation experiments — HTF has always
-              been a stage for students who refuse to wait for permission to
-              build the future. Every year the stakes get higher. Every year the
-              builds get bolder.
-            </p>
-
-            {/* Bottom rule */}
-            <div className="mt-8 flex items-center gap-4">
+              {/* Extra comic-style graphic card */}
               <div
+                className="col-span-2 relative overflow-hidden flex items-center justify-center"
                 style={{
-                  height: 3,
-                  flex: 1,
-                  background: "linear-gradient(90deg, #000, transparent)",
+                  background: "#000",
+                  border: "3px solid #000",
+                  borderRadius: "0.75rem",
+                  padding: "1.5rem",
+                  boxShadow: "4px 4px 0px #E8003D",
+                  minHeight: "140px"
                 }}
-              />
-              <svg width="22" height="22" viewBox="0 0 100 100">
-                <polygon
-                  points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
-                  fill="#DA100C"
+              >
+                {/* Halftone dot cluster inside the black card */}
+                <div
+                  className="absolute inset-0 pointer-events-none opacity-30"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle, #fff 1.5px, transparent 1.5px)",
+                    backgroundSize: "8px 8px",
+                  }}
                 />
-              </svg>
-              <div
-                style={{
-                  height: 3,
-                  flex: 1,
-                  background: "linear-gradient(270deg, #000, transparent)",
-                }}
-              />
+                <h3 className="hero-title text-white text-center z-10" style={{ fontSize: "clamp(1.2rem, 2vw, 1.8rem)", lineHeight: 1.2 }}>
+                  NO TUTORIALS.<br />
+                  <span style={{ color: "#FFE105" }}>JUST EXECUTION.</span>
+                </h3>
+              </div>
             </div>
 
-            {/* Page tag */}
-            <div
-              className="absolute bottom-0 right-0 hero-title text-white"
-              style={{
-                background: "#000",
-                fontSize: "0.55rem",
-                padding: "3px 10px",
-                letterSpacing: "0.15em",
-              }}
-            >
-              HTF 4.0 · COMIC EDITION
-            </div>
           </div>
-        </section>
+        </div>
       </div>
     </>
   );
