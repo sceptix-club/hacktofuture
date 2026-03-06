@@ -10,7 +10,7 @@ import Navbar from "./components/ui/Navbar";
 import Loader from "./components/Loader";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Team from "./pages/Team";
-import { Environment, Stats, useProgress } from "@react-three/drei";
+import { Environment, useProgress } from "@react-three/drei";
 import Sponsors from "./pages/Sponsors";
 import Themes from "./pages/Themes";
 import About from "./pages/About";
@@ -112,7 +112,6 @@ function HomePage() {
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
           shadows
         >
-          <Stats />
           <Suspense fallback={null}>
             <Experience scrollProgressRef={scrollProgressRef} scenes={SCENES} />
             <Environment
