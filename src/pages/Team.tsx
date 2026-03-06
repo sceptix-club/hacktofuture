@@ -674,6 +674,10 @@ export default function Team() {
         className="fixed inset-0 overflow-hidden"
         style={{
           background: "#0a0a0a",
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
           touchAction: "none",
           overscrollBehavior: "none",
         }}

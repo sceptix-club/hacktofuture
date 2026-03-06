@@ -4,9 +4,10 @@ import * as THREE from "three";
 
 type CardsProps = {
   pointerRef: React.RefObject<THREE.PointLight | null>
+  groupRef?: React.RefObject<THREE.Group | null>
 };
 
-export default function Cards({ pointerRef }: CardsProps) {
+export default function Cards({ pointerRef, groupRef }: CardsProps) {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);
 
   const cardsRef = useRef<THREE.Mesh[]>([])
@@ -47,7 +48,7 @@ export default function Cards({ pointerRef }: CardsProps) {
   const radius = 10;
 
   return (
-    <group position={[0, -124, 0]}>
+    <group ref={groupRef} position={[0, -124, 0]}>
       {/* Card 1 - Top (0 degrees) */}
       <mesh
         ref={(m) => { if (m) cardsRef.current[0] = m }}

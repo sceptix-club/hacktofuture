@@ -1,6 +1,5 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import Navbar from "../components/ui/Navbar";
-import Footer from "../scenes/Footer";
 import gsap from "gsap";
 import { useNavigate } from "react-router-dom";
 import { themes, type ThemeSlug } from "../content/data";
@@ -196,10 +195,6 @@ function ThemeCard({
 
 /* ─── Main Themes Page ─── */
 export default function Themes() {
-  const footerRef = useRef<HTMLDivElement>(null);
-  const [showFooter, setShowFooter] = useState(false);
-  const isFooterVisible = useRef(false);
-  const touchStartY = useRef(0);
   const cardsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -230,91 +225,19 @@ export default function Themes() {
     );
   }, []);
 
-  // Footer animation
-  useEffect(() => {
-    if (!footerRef.current) return;
-    if (showFooter) {
-      gsap.to(footerRef.current, { y: 0, duration: 1.0, ease: "power3.out" }); 
-    } else {
-      gsap.to(footerRef.current, {
-        y: "100%",
-        duration: 0.6,
-        ease: "power3.in",
-      });
-    }
-    isFooterVisible.current = showFooter;
-  }, [showFooter]);
-
-  // Footer scroll trigger
-  useEffect(() => {
-    let footerTimeout: ReturnType<typeof setTimeout> | null = null;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY > 0 && !isFooterVisible.current) {
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - 10;
-        if (atBottom) {
-          if (!footerTimeout) {
-            footerTimeout = setTimeout(() => {
-              setShowFooter(true);
-              footerTimeout = null;
-            }, 600); // delay before footer appears
-          }
-        }
-      } else if (e.deltaY < 0 && isFooterVisible.current) {
-        if (footerTimeout) {
-          clearTimeout(footerTimeout);
-          footerTimeout = null;
-        }
-        setShowFooter(false);
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY.current = e.touches[0].clientY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const deltaY = touchStartY.current - e.changedTouches[0].clientY;
-      if (deltaY > 40 && !isFooterVisible.current) {
-        const atBottom =
-          window.innerHeight + window.scrollY >=
-          document.body.scrollHeight - 10;
-        if (atBottom) {
-          footerTimeout = setTimeout(() => {
-            setShowFooter(true);
-            footerTimeout = null;
-          }, 600);
-        }
-      } else if (deltaY < -40 && isFooterVisible.current) {
-        if (footerTimeout) {
-          clearTimeout(footerTimeout);
-          footerTimeout = null;
-        }
-        setShowFooter(false);
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: true });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
-      if (footerTimeout) clearTimeout(footerTimeout);
-    };
-  }, []);
-
   return (
     <>
       <Navbar />
 
       <div
         className="relative w-full min-h-screen"
-        style={{ background: "#0a0a0a" }}
+        style={{
+          background: "#0a0a0a",
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         {/* ── Same 3D background as HomePage ── */}
         <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
@@ -374,8 +297,6 @@ export default function Themes() {
           </div>
         </div>
       </div>
-
-      <Footer ref={footerRef} />
     </>
   );
 }

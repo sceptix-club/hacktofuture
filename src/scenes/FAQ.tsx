@@ -52,19 +52,13 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
       {/* ── LAYER 2: Radial gradient vignette ── */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.65) 100%)",
-        }}
+       
       />
 
       {/* ── LAYER 3: Top-to-bottom colour gradient overlay ── */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(255,225,5,0.07) 0%, rgba(232,0,61,0.07) 100%)",
-        }}
+       
       />
 
       {/* ── Corner panel frames ── */}

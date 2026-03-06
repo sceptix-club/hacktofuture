@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
@@ -32,7 +32,7 @@ const TextContent = ({
   const ctaRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const tl = gsap.timeline({ paused: true });
 
     // Scene 1
@@ -178,7 +178,7 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1 },
         7.25
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.1 }, 7.5);
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.2 }, 7.6);
     }
     // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
     if (ctaRef.current) {
@@ -195,13 +195,13 @@ const TextContent = ({
       );
     }
 
-    // ── FAQ: slides in at 9.2, slides OUT at 10.4 ──
+    // ── FAQ: slides in at 8.9, slides OUT at 10.4 ──
     if (faqRef.current) {
       gsap.set(faqRef.current, { y: "100%", opacity: 0 });
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        9.2
+        8.9
       );
       tl.to(
         faqRef.current,

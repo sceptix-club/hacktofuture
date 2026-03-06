@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
 import Navbar from "../components/ui/Navbar";
-import Footer from "../scenes/Footer";
 import gsap from "gsap";
 import HorizontalSlider from "../components/HorizontalSlider";
 import type { SlideItem } from "../components/HorizontalSlider";
@@ -124,10 +123,6 @@ function SponsorSection({
 
 export default function Sponsors() {
   const outerRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
-  const footerWheelRef = useRef<HTMLDivElement>(null);
-  const [showFooter, setShowFooter] = useState(false);
-  const showFooterRef = useRef(false);
 
   const [activeSection, setActiveSection] = useState(0);
   const activeSectionRef = useRef(0);
@@ -135,32 +130,8 @@ export default function Sponsors() {
 
   // Keep refs in sync
   useEffect(() => {
-    showFooterRef.current = showFooter;
-  }, [showFooter]);
-
-  useEffect(() => {
     activeSectionRef.current = activeSection;
   }, [activeSection]);
-
-  // Footer slide animation
-  useEffect(() => {
-    if (!footerRef.current) return;
-    if (showFooter) {
-      gsap.to(footerRef.current, {
-        y: "0%",
-        duration: 0.45,
-        ease: "power2.out",
-        force3D: true,
-      });
-    } else {
-      gsap.to(footerRef.current, {
-        y: "100%",
-        duration: 0.35,
-        ease: "power2.in",
-        force3D: true,
-      });
-    }
-  }, [showFooter]);
 
   // Scroll outer container per section
   useEffect(() => {
@@ -171,58 +142,6 @@ export default function Sponsors() {
       ease: "power3.inOut",
     });
   }, [activeSection]);
-
-  // ── Footer wheel listener — scroll UP on footer to go back to last section ──
-  useEffect(() => {
-    const el = footerWheelRef.current;
-    if (!el) return;
-
-    let cooldown = false;
-
-    const handleFooterWheel = (e: WheelEvent) => {
-      if (!showFooterRef.current) return;
-      e.preventDefault();
-
-      if (cooldown) return;
-
-      // Scroll UP inside footer → hide footer, go back to platinum
-      if (e.deltaY < 0) {
-        cooldown = true;
-        setShowFooter(false);
-        setTimeout(() => {
-          cooldown = false;
-        }, 800);
-      }
-    };
-
-    const handleFooterTouch = (() => {
-      let startY = 0;
-      const onStart = (e: TouchEvent) => {
-        startY = e.touches[0].clientY;
-      };
-      const onEnd = (e: TouchEvent) => {
-        if (!showFooterRef.current) return;
-        const delta = startY - e.changedTouches[0].clientY;
-        // Swipe UP (negative delta) → go back
-        if (delta < -50) {
-          setShowFooter(false);
-        }
-      };
-      return { onStart, onEnd };
-    })();
-
-    el.addEventListener("wheel", handleFooterWheel, { passive: false });
-    el.addEventListener("touchstart", handleFooterTouch.onStart, {
-      passive: true,
-    });
-    el.addEventListener("touchend", handleFooterTouch.onEnd, { passive: true });
-
-    return () => {
-      el.removeEventListener("wheel", handleFooterWheel);
-      el.removeEventListener("touchstart", handleFooterTouch.onStart);
-      el.removeEventListener("touchend", handleFooterTouch.onEnd);
-    };
-  }, []);
 
   const goNext = () =>
     setActiveSection((prev) => Math.min(prev + 1, totalSections - 1));
@@ -258,7 +177,14 @@ export default function Sponsors() {
     <>
       <div
         className="fixed inset-0 overflow-hidden"
-        style={{ background: "#0a0a0a", overscrollBehavior: "none" }}
+        style={{
+          background: "#0a0a0a",
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          overscrollBehavior: "none",
+        }}
       >
         {/* Background */}
         <div className="absolute inset-0 z-0" style={{ contain: "strict" }}>
@@ -317,18 +243,7 @@ export default function Sponsors() {
               "#E0E0E0",
               "Our platinum partners — the backbone of HTF. Scroll to explore →"
             )}
-            onReachEnd={() => setShowFooter(true)}
-            onLeaveEnd={() => setShowFooter(false)}
           />
-        </div>
-
-        {/* Footer — wrapped in wheel listener div */}
-        <div
-          ref={footerWheelRef}
-          className="absolute inset-x-0 bottom-0 z-30"
-          style={{ touchAction: "none" }}
-        >
-          <Footer ref={footerRef} />
         </div>
       </div>
       <Navbar />

@@ -243,10 +243,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         {/* ── LAYER 2: Radial gradient vignette ── */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.6) 100%)",
-          }}
+    
         />
 
         {/* ── Animated layers only rendered when CTA is active ── */}
