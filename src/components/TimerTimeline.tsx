@@ -262,6 +262,9 @@ function Timeline() {
 
   const Header = ["15th April", "16th April", "17th April"];
   const dayLabels = ["Day 1", "Day 2", "Day 3"];
+  const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
+  const headerTextColors = ["#111", "#111", "#111"];
+  const buttonTextColors = ["#000", "#000", "#000"];
 
   return (
     <div
@@ -280,14 +283,19 @@ function Timeline() {
                   ? flipBackward()
                   : null
               }
-              className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm border-2 border-[#fece00] transition-all
+              className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm border-2 transition-all cursor-pointer comic-sans flex items-center gap-1
                 ${
                   i === currentCard
-                    ? "bg-[#ff2e30] text-white scale-110"
-                    : "bg-black/60 text-white/70"
+                    ? "scale-110"
+                    : "border-[#fece00] bg-black/60 text-white/70"
                 }`}
-              style={{ fontFamily: "Super Squad" }}
+              style={
+                i === currentCard
+                  ? { background: cardColors[i], color: buttonTextColors[i], borderColor: "#000", boxShadow: "3px 3px 0 #000" }
+                  : {}
+              }
             >
+              {i === currentCard && <span className="text-[0.6rem]">▶</span>}
               {label}
             </button>
           </div>
@@ -301,25 +309,37 @@ function Timeline() {
       >
         {cards.map((card, i) => (
           <div
-            className="htf-panel grid border-4 border-[#fece00] shadow-[6px_4px_0px_6px_rgba(20,20,20,0.5)] [grid-area:stack] [grid-template-rows:auto_1fr] cursor-pointer"
+            className="htf-panel grid [grid-area:stack] grid-rows-[auto_1fr_auto] cursor-pointer overflow-hidden"
             ref={(el) => {
               cardRefs.current[i] = el;
             }}
             key={i}
-            style={{ width: "clamp(280px, 60vw, 620px)" }}
+            style={{
+              width: "clamp(280px, 60vw, 620px)",
+              border: "0.35rem solid #000",
+              boxShadow: "6px 6px 0 #000",
+            }}
           >
             {/* Card header */}
             <div
-              className="border-b-4 border-[#fece00] bg-[#ff2e30] px-3 py-1.5 text-base sm:text-xl md:text-2xl lg:text-3xl text-white"
-              style={{ fontFamily: "Super Squad" }}
+              className="px-3 py-1.5 text-base sm:text-xl md:text-2xl lg:text-3xl hero-title" 
+              style={{
+                background: cardColors[i],
+                color: headerTextColors[i],
+                borderBottom: "0.25rem solid #000",
+              }}
             >
               {Header[i]}
             </div>
 
             {/* Card content */}
             <div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 bg-[antiquewhite] p-3 sm:p-4 md:p-5 select-none"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 p-3 sm:p-4 md:p-5 select-none comic-sans"
               onClick={cardClicked}
+              style={{
+                background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
+                backgroundSize: "16px 16px, 100% 100%",
+              }}
             >
               {card.map((info, j) => (
                 <div
@@ -327,8 +347,8 @@ function Timeline() {
                   className="flex items-baseline gap-2 border-b border-black/10 pb-1"
                 >
                   <span
-                    className="text-[#ff2e30] font-bold text-xs sm:text-sm md:text-base whitespace-nowrap"
-                    style={{ fontFamily: "Super Squad" }}
+                    className="font-extrabold text-xs sm:text-sm md:text-base whitespace-nowrap hero-title"
+                    style={{ color: cardColors[i] }}
                   >
                     {info.time}
                   </span>
@@ -340,7 +360,7 @@ function Timeline() {
             </div>
 
             {/* Tap hint */}
-            <div className="bg-black/80 text-white/50 text-[10px] text-center py-0.5 select-none">
+            <div className="bg-black text-white/50 text-[10px] text-center py-0.5 select-none comic-sans">
               tap left / right to switch day
             </div>
           </div>
