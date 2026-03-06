@@ -20,9 +20,9 @@ const TITLE_SPONSORS: Sponsor[] = [
     logo: "/sponsors/egdk.png",
     url: "#",
     description:
-      "EGDK India is a leading technology partner committed to fostering innovation and supporting emerging talent across India's startup ecosystem.",
-    founded: "2015",
-    headquarters: "Bangalore, India",
+      "EGDK India is an IT company based in Mangaluru and a wholly owned subsidiary of the Danish software company EG A/S, working on product development, R&D, AI, UX, and enterprise software solutions for global markets.",
+    founded: "2019",
+    headquarters: "Mangalore, India",
     industry: "Technology",
   },
 ];
@@ -696,30 +696,38 @@ export default function Sponsors() {
             />
           </div>
 
-          <TierRow
-            label="Title Sponsors"
-            accent={TIER_COLORS.title}
-            sponsors={TITLE_SPONSORS}
-            size="lg"
-          />
-          <TierRow
-            label="Gold Sponsors"
-            accent={TIER_COLORS.gold}
-            sponsors={GOLD_SPONSORS}
-            size="lg"
-          />
-          <TierRow
-            label="Silver Sponsors"
-            accent={TIER_COLORS.silver}
-            sponsors={SILVER_SPONSORS}
-            size="md"
-          />
-          <TierRow
-            label="Bronze Sponsors"
-            accent={TIER_COLORS.bronze}
-            sponsors={BRONZE_SPONSORS}
-            size="sm"
-          />
+          {TITLE_SPONSORS.length > 0 && (
+            <TierRow
+              label="Title Sponsors"
+              accent={TIER_COLORS.title}
+              sponsors={TITLE_SPONSORS}
+              size="lg"
+            />
+          )}
+          {GOLD_SPONSORS.length > 0 && (
+            <TierRow
+              label="Gold Sponsors"
+              accent={TIER_COLORS.gold}
+              sponsors={GOLD_SPONSORS}
+              size="lg"
+            />
+          )}
+          {SILVER_SPONSORS.length > 0 && (
+            <TierRow
+              label="Silver Sponsors"
+              accent={TIER_COLORS.silver}
+              sponsors={SILVER_SPONSORS}
+              size="md"
+            />
+          )}
+          {BRONZE_SPONSORS.length > 0 && (
+            <TierRow
+              label="Bronze Sponsors"
+              accent={TIER_COLORS.bronze}
+              sponsors={BRONZE_SPONSORS}
+              size="sm"
+            />
+          )}
         </div>
       </div>
     </>
