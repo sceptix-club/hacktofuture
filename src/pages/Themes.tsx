@@ -250,7 +250,10 @@ export default function Themes() {
           style={{ zIndex: 1 }}
         >
           {/* Header */}
-          <div ref={headerRef} className="-mt-12 mb-14">
+          <div
+            ref={headerRef}
+            className="-mt-12 mb-14 flex flex-col items-center"
+          >
             <p
               className="comic-sans uppercase tracking-widest mb-3"
               style={{

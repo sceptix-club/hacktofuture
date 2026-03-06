@@ -721,49 +721,57 @@ export default function Team() {
         </div>
 
         {/* Header */}
-        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center pt-3 sm:pt-6">
-          <div
-            className="px-3 sm:px-6 py-1 sm:py-2 relative"
+        <div className="absolute max-md:mt-4 mt-8 top-0 left-0 right-0 z-30 px-6 md:px-12 lg:px-20 pt-6 pb-4 flex flex-col items-center">
+          <p
+            className="comic-sans uppercase tracking-widest mb-3"
             style={{
-              background: "#DA100C",
-              border: "3px solid #000",
-              boxShadow: "4px 4px 0px #000",
-              transform: "skewX(-3deg)",
+              fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+              color: "rgba(255,255,255,0.6)",
             }}
           >
-            <h1
-              className="hero-title text-white"
-              style={{
-                fontSize: isMobile ? "0.85rem" : "clamp(0.9rem, 3vw, 2rem)",
-                transform: "skewX(3deg)",
-              }}
-            >
-              ★ OUR TEAM ★
-            </h1>
-          </div>
+            HackToFuture 4.0
+          </p>
+          <h1
+            className="hero-title font-black uppercase"
+            style={{
+              fontSize: "clamp(2.5rem, 8vw, 5rem)",
+              lineHeight: 0.9,
+              color: "#fff",
+            }}
+          >
+            Our Team
+          </h1>
+          <div
+            className="mt-4"
+            style={{
+              height: 3,
+              width: "clamp(60px, 8vw, 100px)",
+              background: "#E8003D",
+            }}
+          />
         </div>
 
         {/* ─── BOOK ─── */}
-        <div className="absolute inset-0 z-20 flex items-center justify-center">
+        <div className="absolute mt-20 max-md:mt-5 inset-0 z-20 flex items-center justify-center">
           <div
             ref={bookRef}
             style={
               isMobile
                 ? {
-                    width: "85vh",
-                    height: "88vw",
-                    maxWidth: "600px",
-                    maxHeight: "380px",
+                    width: "72vh",
+                    height: "75vw",
+                    maxWidth: "500px",
+                    maxHeight: "320px",
                     transform: "rotate(90deg)",
                     perspective: "2500px",
                     perspectiveOrigin: "50% 50%",
                     position: "relative",
                   }
                 : {
-                    width: "92vw",
-                    maxWidth: "1000px",
-                    height: "70vh",
-                    maxHeight: "580px",
+                    width: "82vw",
+                    height: "60vh",
+                    maxWidth: "950px",
+                    maxHeight: "490px",
                     perspective: "2500px",
                     perspectiveOrigin: "50% 50%",
                     position: "relative",
@@ -940,18 +948,6 @@ export default function Team() {
             title="Footer"
           />
         </div>
-
-        {/* Scroll hint mobile */}
-        {!showFooter && isMobile && (
-          <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
-            <span
-              className="comic-sans text-white/40"
-              style={{ fontSize: "0.55rem" }}
-            >
-              ↕ SWIPE TO TURN
-            </span>
-          </div>
-        )}
 
         {/* Page counter */}
         <div
