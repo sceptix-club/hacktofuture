@@ -56,8 +56,8 @@ function ThemeCard({
   const handleMouseEnter = () => {
     if (!cardRef.current) return;
     gsap.to(cardRef.current, {
-      y: -8,
-      scale: 1.02,
+      y: -6,
+      scale: 1.01,
       duration: 0.3,
       ease: "power2.out",
     });
@@ -81,26 +81,27 @@ function ThemeCard({
       onMouseLeave={handleMouseLeave}
       className="relative flex flex-col justify-between cursor-pointer select-none"
       style={{
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.1)",
-        borderTop: `3px solid ${theme.accent}`,
+        /* ── cream-white page look (matches book pages in Team.tsx) ── */
+        background: "#FFFEF2",
+        backgroundImage:
+          "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px)",
+        border: "3px solid #000",
+        borderTop: `4px solid ${theme.accent}`,
         borderRadius: "0.75rem",
-        padding: "clamp(1.5rem, 3vw, 2.5rem)",
-        minHeight: "clamp(280px, 35vh, 380px)",
-        backdropFilter: "blur(12px)",
+        padding: "clamp(1.25rem, 2.5vw, 2rem)",
         willChange: "transform",
         transition: "box-shadow 0.3s ease",
-        boxShadow: `0 0 0 rgba(0,0,0,0)`,
+        boxShadow: "4px 4px 0px rgba(0,0,0,0.5)",
       }}
     >
       {/* Number badge */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex items-start justify-between mb-4">
         <span
           className="hero-title font-black"
           style={{
-            fontSize: "clamp(3rem, 7vw, 5rem)",
+            fontSize: "clamp(2.5rem, 5vw, 4rem)",
             color: theme.accent,
-            opacity: 0.15,
+            opacity: 0.2,
             lineHeight: 1,
             userSelect: "none",
           }}
@@ -112,17 +113,17 @@ function ThemeCard({
         <div
           className="flex items-center justify-center"
           style={{
-            width: 36,
-            height: 36,
-            border: `1px solid ${theme.accent}`,
+            width: 34,
+            height: 34,
+            border: `2px solid ${theme.accent}`,
             borderRadius: "50%",
             color: theme.accent,
             flexShrink: 0,
           }}
         >
           <svg
-            width="14"
-            height="14"
+            width="13"
+            height="13"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -136,10 +137,10 @@ function ThemeCard({
 
       {/* Title */}
       <h3
-        className="hero-title font-black uppercase mb-4"
+        className="hero-title font-black uppercase mb-3"
         style={{
-          fontSize: "clamp(1.1rem, 2.5vw, 1.75rem)",
-          color: "#fff",
+          fontSize: "clamp(1rem, 2vw, 1.5rem)",
+          color: "#111",
           lineHeight: 1.1,
         }}
       >
@@ -150,8 +151,8 @@ function ThemeCard({
       <p
         className="comic-sans"
         style={{
-          fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
-          color: "rgba(255,255,255,0.55)",
+          fontSize: "clamp(0.75rem, 1.2vw, 0.9rem)",
+          color: "rgba(0,0,0,0.6)",
           lineHeight: 1.6,
           flexGrow: 1,
         }}
@@ -161,14 +162,14 @@ function ThemeCard({
 
       {/* Bottom — PS count + CTA */}
       <div
-        className="flex items-center justify-between mt-6 pt-4"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
+        className="flex items-center justify-between mt-5 pt-4"
+        style={{ borderTop: "1px solid rgba(0,0,0,0.12)" }}
       >
         <span
           className="comic-sans"
           style={{
-            fontSize: "clamp(0.7rem, 1.1vw, 0.8rem)",
-            color: "rgba(255,255,255,0.35)",
+            fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
+            color: "rgba(0,0,0,0.4)",
             textTransform: "uppercase",
             letterSpacing: "0.12em",
           }}
@@ -178,9 +179,9 @@ function ThemeCard({
         </span>
 
         <span
-          className="comic-sans"
+          className="comic-sans font-bold"
           style={{
-            fontSize: "clamp(0.7rem, 1.1vw, 0.8rem)",
+            fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
             color: theme.accent,
             textTransform: "uppercase",
             letterSpacing: "0.12em",
@@ -283,20 +284,40 @@ export default function Themes() {
             />
           </div>
 
-          {/* Cards grid */}
-          <div
-            ref={cardsRef}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
-          >
-            {THEME_CARDS.map((theme, index) => (
-              <div key={theme.slug} className="theme-card-wrapper">
-                <ThemeCard
-                  theme={theme}
-                  index={index}
-                  onClick={() => navigate(`/theme/${theme.slug}`)}
-                />
-              </div>
-            ))}
+          {/* ── Cards ── */}
+          <div ref={cardsRef}>
+            {/* Mobile: single column stack (unchanged) */}
+            <div className="flex flex-col gap-5 md:hidden">
+              {THEME_CARDS.map((theme, index) => (
+                <div key={theme.slug} className="theme-card-wrapper">
+                  <ThemeCard
+                    theme={theme}
+                    index={index}
+                    onClick={() => navigate(`/theme/${theme.slug}`)}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: centered column stack at 25% width */}
+            <div className="hidden md:flex flex-col items-center gap-6 mb-16">
+              {THEME_CARDS.map((theme, index) => (
+                <div
+                  key={theme.slug}
+                  className="theme-card-wrapper w-full"
+                  style={{
+                    maxWidth: "max(72vw, 360px)",
+                    minWidth: "280px",
+                  }}
+                >
+                  <ThemeCard
+                    theme={theme}
+                    index={index}
+                    onClick={() => navigate(`/theme/${theme.slug}`)}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
