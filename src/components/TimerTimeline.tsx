@@ -45,20 +45,21 @@ function Timer() {
       className="relative flex items-center justify-center w-full mx-auto"
       style={{
         maxWidth: 620,
-        aspectRatio: "612/408",            
+        aspectRatio: "612/408",
         containerType: "inline-size",
       }}
     >
-
       <img
         src="/comic-dialog.png"
         alt=""
         className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
         draggable={false}
         onLoad={(e) => {
-    const img = e.currentTarget;
-    console.log(`Width: ${img.naturalWidth}, Height: ${img.naturalHeight}`);
-  }}
+          const img = e.currentTarget;
+          console.log(
+            `Width: ${img.naturalWidth}, Height: ${img.naturalHeight}`,
+          );
+        }}
       />
 
       <div
@@ -104,6 +105,7 @@ function Timer() {
 function Timeline() {
   const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
+  const [currentButton, setCurrentButton] = useState(0);
 
   const originalPos = [
     { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -156,7 +158,27 @@ function Timeline() {
     });
   };
 
-  const flipForward = () => {
+  const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const nextCard = Number(event.currentTarget.id);
+    let difference = currentCard - nextCard;
+    let animateCards: Function;
+
+    setCurrentButton(nextCard);
+
+    if (difference > 0) {
+      animateCards = flipBackward;
+    } else {
+      animateCards = flipForward;
+    }
+
+    difference = Math.abs(difference);
+    console.log("diff: ", difference);
+    for (let i = 0; i < difference; i++) {
+      setTimeout(animateCards, 700 * i);
+    }
+  };
+
+  const flipForward = (updateButton: Boolean | undefined) => {
     setCurrentCard((prev) => {
       const next = prev === totalCards - 1 ? 0 : prev + 1;
 
@@ -184,8 +206,12 @@ function Timeline() {
         setZIndex(next);
       }, 500);
 
+      if (updateButton) {
+        setCurrentButton(next);
+      }
+
       cardRefs.current.forEach((card, i) => {
-        if (i === prev || !card) return;
+        if (i === prev) return;
         const finalPosIdx = (i - next + totalCards) % totalCards;
         gsap.to(card, {
           ...originalPos[finalPosIdx],
@@ -198,10 +224,9 @@ function Timeline() {
     });
   };
 
-  const flipBackward = () => {
+  const flipBackward = (updateButton: Boolean | undefined) => {
     setCurrentCard((next) => {
       const prev = next === 0 ? totalCards - 1 : next - 1;
-
       const prevCard = cardRefs.current[prev];
       if (prevCard) {
         const tl = gsap.timeline();
@@ -221,7 +246,7 @@ function Timeline() {
       }
 
       cardRefs.current.forEach((card, i) => {
-        if (i === prev || !card) return;
+        if (i === prev) return;
         const finalPosIdx = (i - prev + totalCards) % totalCards;
         gsap.to(card, {
           ...originalPos[finalPosIdx],
@@ -233,6 +258,9 @@ function Timeline() {
       setTimeout(() => {
         setZIndex(prev);
       }, 800);
+      if (updateButton) {
+        setCurrentButton(prev);
+      }
       return prev;
     });
   };
@@ -246,9 +274,9 @@ function Timeline() {
     const x = event.clientX - rect.left;
     const midpoint = rect.width / 2;
     if (x > midpoint) {
-      flipForward();
+      flipForward(true);
     } else {
-      flipBackward();
+      flipBackward(true);
     }
   };
 
@@ -283,21 +311,16 @@ function Timeline() {
         {dayLabels.map((label, i) => (
           <div key={i} className="htf-panel">
             <button
-              onClick={() =>
-                i > currentCard
-                  ? flipForward()
-                  : i < currentCard
-                  ? flipBackward()
-                  : null
-              }
+              id={String(i)}
+              onClick={buttonClicked}
               className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm border-2 transition-all cursor-pointer comic-sans flex items-center gap-1
                 ${
-                  i === currentCard
+                  i === currentButton
                     ? "scale-110"
                     : "border-[#fece00] bg-black/60 text-white/70"
                 }`}
               style={
-                i === currentCard
+                i === currentButton
                   ? {
                       background: cardColors[i],
                       color: buttonTextColors[i],
@@ -307,7 +330,7 @@ function Timeline() {
                   : {}
               }
             >
-              {i === currentCard && <span className="text-[0.6rem]">▶</span>}
+              {i === currentButton && <span className="text-[0.6rem]">▶</span>}
               {label}
             </button>
           </div>
