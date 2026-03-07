@@ -285,15 +285,21 @@ export default function Themes() {
 
       <div
         className="relative w-full min-h-screen"
-        style={{
-          background: "#0a0a0a",
-          backgroundImage: "url('/textures/background.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-        }}
+        style={{ background: "#0a0a0a" }}
       >
+        {/* Fixed background that won't shift on mobile scroll */}
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundImage: "url('/textures/background.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
         {/* ── Foreground ── */}
         <div
           className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
@@ -343,7 +349,7 @@ export default function Themes() {
               className="comic-sans text-center mt-5 max-w-lg"
               style={{
                 fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
-                color: "rgba(255,255,255,0.45)",
+                color: "rgba(255,255,255,0.85)",
                 lineHeight: 1.6,
               }}
             >

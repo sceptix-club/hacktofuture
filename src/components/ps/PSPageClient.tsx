@@ -46,15 +46,21 @@ export default function PSPageClient({ data }: Props) {
 
       <main
         className="relative min-h-screen text-white"
-        style={{
-          background: "#0a0a0a",
-          backgroundImage: "url('/textures/background.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundAttachment: "fixed",
-        }}
+        style={{ background: "#0a0a0a" }}
       >
+        {/* Fixed background that won't shift on mobile scroll */}
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundImage: "url('/textures/background.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            zIndex: 0,
+            pointerEvents: "none",
+          }}
+        />
         {/* ── Foreground ── */}
         <div className="relative" style={{ zIndex: 2 }}>
           <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 pb-24 -mt-12">
@@ -77,10 +83,15 @@ export default function PSPageClient({ data }: Props) {
             </button>
 
             {/* ── Theme Title ── */}
-            <div className="mb-10">
+            <div className="mb-10 min-w-0">
               <h1
-                className="hero-title font-black uppercase"
-                style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)" }}
+                className="hero-title font-black uppercase break-words"
+                style={{ 
+                  fontSize: "clamp(2rem, 6vw, 3.5rem)",
+                  overflowWrap: "break-word",
+                  wordBreak: "break-word",
+                  hyphens: "auto",
+                 }}
               >
                 {data.label}
               </h1>
