@@ -162,6 +162,7 @@ function Timeline() {
 
       const prevCard = cardRefs.current[prev];
       if (prevCard) {
+        const finalPosIdx = (prev - next + totalCards) % totalCards;
         const tl1 = gsap.timeline();
         tl1
           .to(prevCard, {
@@ -172,8 +173,7 @@ function Timeline() {
             delay: 0.05,
           })
           .to(prevCard, {
-            ...originalPos[next],
-            zIndex: 1,
+            ...originalPos[finalPosIdx],
             rotationY: 0,
             duration: 0.5,
             ease: "back.in(1.4)",
@@ -184,21 +184,15 @@ function Timeline() {
         setZIndex(next);
       }, 500);
 
-      const filterCards = cardRefs.current.filter(
-        (card, i): card is HTMLDivElement => card != null && i !== prev
-      );
-      const tl2 = gsap.timeline();
-      tl2
-        .to(filterCards, {
-          x: "-5%",
-          duration: 0.5,
-          ease: "back.in(1.4)",
-        })
-        .to(filterCards, {
-          x: 0,
-          duration: 0.5,
-          ease: "back.in(1.4)",
+      cardRefs.current.forEach((card, i) => {
+        if (i === prev || !card) return;
+        const finalPosIdx = (i - next + totalCards) % totalCards;
+        gsap.to(card, {
+          ...originalPos[finalPosIdx],
+          duration: 1.0,
+          ease: "back.out(1.2)",
         });
+      });
 
       return next;
     });
@@ -218,8 +212,7 @@ function Timeline() {
           rotationY: 60,
           delay: 0.05,
         }).to(prevCard, {
-          ...originalPos[next],
-          zIndex: 60,
+          ...originalPos[0],
           rotationY: 0,
           duration: 0.5,
           ease: "back.in(1.4)",
@@ -227,21 +220,15 @@ function Timeline() {
         });
       }
 
-      const filterCards = cardRefs.current.filter(
-        (card, i): card is HTMLDivElement => card != null && i !== prev
-      );
-      const tl2 = gsap.timeline();
-      tl2
-        .to(filterCards, {
-          x: "-5%",
-          duration: 0.5,
-          ease: "back.in(1.4)",
-        })
-        .to(filterCards, {
-          x: 0,
-          duration: 0.5,
-          ease: "back.in(1.4)",
+      cardRefs.current.forEach((card, i) => {
+        if (i === prev || !card) return;
+        const finalPosIdx = (i - prev + totalCards) % totalCards;
+        gsap.to(card, {
+          ...originalPos[finalPosIdx],
+          duration: 1.0,
+          ease: "back.out(1.2)",
         });
+      });
 
       setTimeout(() => {
         setZIndex(prev);
