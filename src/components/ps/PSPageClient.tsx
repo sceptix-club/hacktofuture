@@ -181,7 +181,7 @@ export default function PSPageClient({ data }: Props) {
               >
                 <div style={{ height: 6, background: colors.red }} />
 
-                {/* ✅ Large fading halftone from top-right */}
+                {/* Large fading halftone from top-right */}
                 <div
                   className="absolute pointer-events-none"
                   style={{
@@ -189,7 +189,7 @@ export default function PSPageClient({ data }: Props) {
                     right: 0,
                     width: "70%",
                     height: "70%",
-                    backgroundImage: `radial-gradient(circle, ${colors.red}35 1.5px, transparent 1.5px)`,
+                    backgroundImage: `radial-gradient(circle, rgba(0,0,255,0.15) 1.5px, transparent 1.5px)`,
                     backgroundSize: "8px 8px",
                     maskImage:
                       "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 30%, transparent 65%)",
@@ -243,7 +243,7 @@ export default function PSPageClient({ data }: Props) {
                 >
                   <div style={{ height: 6, background: colors.blue }} />
 
-                  {/* ✅ Large fading halftone from top-right */}
+                  {/*  Large fading halftone from top-right */}
                   <div
                     className="absolute pointer-events-none"
                     style={{
@@ -251,7 +251,7 @@ export default function PSPageClient({ data }: Props) {
                       right: 0,
                       width: "70%",
                       height: "70%",
-                      backgroundImage: `radial-gradient(circle, ${colors.blue}35 1.5px, transparent 1.5px)`,
+                      backgroundImage: `radial-gradient(circle, rgba(0,0,255,0.15) 1.5px, transparent 1.5px)`,
                       backgroundSize: "8px 8px",
                       maskImage:
                         "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 30%, transparent 65%)",
