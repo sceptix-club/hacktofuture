@@ -25,7 +25,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-50 flex flex-col bg-black w-full"
+      className="fixed inset-0 z-50 flex flex-col w-full"
       style={{
         transform: "translateY(100%)",
         willChange: "transform",
@@ -34,7 +34,17 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
-      <div className="absolute inset-0 grid-bg pointer-events-none" />
+      <div
+        className="absolute inset-[-8px] pointer-events-none z-[0]"
+        style={{
+          backgroundImage: "url(/textures/background.jpg)",
+          
+        
+          filter: "blur(4px)",
+        }}
+      />
+      <div className="absolute inset-0 bg-black/70 pointer-events-none z-[1]" />
+      <div className="absolute inset-0 grid-bg pointer-events-none z-[2]" />
 
       <div
         className="relative z-10 flex flex-col flex-1"
@@ -172,7 +182,6 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                       color: "white",
                       WebkitTextStroke: "1px white",
                       lineHeight: 1,
-                      opacity: 0,
                       willChange: "transform, opacity",
                       transform: "translate3d(0, 0, 0)",
                       letterSpacing: "-0.02em",
