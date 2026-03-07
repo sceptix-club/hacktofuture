@@ -140,45 +140,45 @@ const TextContent = ({
       );
     }
 
-    // Card 1 text (camera dwell: 5.0 – 5.5)
+    // Card 1 text (camera dwell: 4.55 – 5.05)
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
-        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        5.05
+        { opacity: 1, scale: 1, duration: 0.15, pointerEvents: "auto" },
+        4.55
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.35);
+      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 4.95);
     }
-    // Card 2 text (camera dwell: 5.8 – 6.2)
+    // Card 2 text (camera dwell: 5.35 – 5.75)
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        5.85
+        5.35
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.1);
+      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.65);
     }
-    // Card 3 text (camera dwell: 6.5 – 6.9)
+    // Card 3 text (camera dwell: 6.05 – 6.45)
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        6.55
+        6.05
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.8);
+      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.35);
     }
-    // Card 4 text (camera dwell: 7.2 – 7.6)
+    // Card 4 text (camera dwell: 6.75 – 7.15)
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        7.25
+        6.75
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.2, pointerEvents: "none" }, 7.6);
+      tl.to(card4TextRef.current, { opacity: 0, duration: 0.15, pointerEvents: "none" }, 7.05);
     }
     // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
     if (ctaRef.current) {
