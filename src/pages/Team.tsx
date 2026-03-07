@@ -219,7 +219,7 @@ function DetailsContent({
         >
           {member.role}
         </div>
-
+{/* 
         <p
           className="comic-sans text-black/80 leading-relaxed text-center"
           style={{
@@ -229,7 +229,7 @@ function DetailsContent({
           }}
         >
           {member.bio}
-        </p>
+        </p> */}
 
         <div
           style={{
@@ -282,22 +282,78 @@ function DetailsContent({
 function MobileMemberCard({
   member,
   index,
+  dragX,
 }: {
   member: TeamMember;
   index: number;
+  dragX: number;
 }) {
   const photoSrc = getPhotoSrc(member);
+  const rotation = dragX * 0.04;
+  const likeOpacity = Math.max(0, Math.min(1, dragX / 80));
+  const nopeOpacity = Math.max(0, Math.min(1, -dragX / 80));
 
   return (
     <div
-      className="relative w-full max-w-[300px] overflow-hidden"
+      className="relative overflow-hidden select-none"
       style={{
         ...paperStyle,
         border: "3px solid #000",
         borderRadius: 14,
         boxShadow: "0 10px 30px rgba(0,0,0,0.35), 5px 5px 0 rgba(0,0,0,0.25)",
+        width: 250,
+        height: 350,
+        transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
+        transition:
+          dragX === 0
+            ? "transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)"
+            : "none",
+        cursor: "grab",
+        willChange: "transform",
       }}
     >
+      {/* Like indicator */}
+      <div
+        style={{
+          position: "absolute",
+          top: 14,
+          left: 12,
+          zIndex: 20,
+          border: "3px solid #22c55e",
+          borderRadius: 6,
+          padding: "2px 8px",
+          color: "#22c55e",
+          fontFamily: "'Dela Gothic One', sans-serif",
+          fontSize: "0.75rem",
+          transform: "rotate(-20deg)",
+          opacity: likeOpacity,
+          pointerEvents: "none",
+        }}
+      >
+        NEXT
+      </div>
+
+      {/* Nope indicator */}
+      <div
+        style={{
+          position: "absolute",
+          top: 14,
+          right: 12,
+          zIndex: 20,
+          border: "3px solid #DA100C",
+          borderRadius: 6,
+          padding: "2px 8px",
+          color: "#DA100C",
+          fontFamily: "'Dela Gothic One', sans-serif",
+          fontSize: "0.75rem",
+          transform: "rotate(20deg)",
+          opacity: nopeOpacity,
+          pointerEvents: "none",
+        }}
+      >
+        BACK
+      </div>
+
       <div
         className="absolute inset-x-0 top-0 h-2"
         style={{ background: "linear-gradient(90deg, #DA100C, #000, #DA100C)" }}
@@ -316,18 +372,18 @@ function MobileMemberCard({
         #{String(index + 1).padStart(2, "0")}
       </div>
 
-      <div className="p-3 pt-7">
+      <div className="p-3 pt-7 mt-4">
         <div className="flex flex-col items-center text-center">
           <div className="relative mb-3">
             <div
               style={{
                 position: "absolute",
-                width: 34,
-                height: 10,
+                width: 28,
+                height: 8,
                 background: "rgba(255, 224, 130, 0.85)",
                 border: "2px solid rgba(0,0,0,0.15)",
-                top: -6,
-                left: 12,
+                top: -5,
+                left: 10,
                 transform: "rotate(-14deg)",
               }}
             />
@@ -336,7 +392,7 @@ function MobileMemberCard({
                 border: "3px solid #000",
                 borderRadius: 6,
                 background: "#fff",
-                padding: 6,
+                padding: 5,
                 boxShadow: "3px 3px 0 rgba(0,0,0,0.24)",
                 transform: "rotate(-2deg)",
               }}
@@ -347,8 +403,8 @@ function MobileMemberCard({
                 loading="eager"
                 decoding="async"
                 style={{
-                  width: "min(48vw, 160px)",
-                  height: "min(56vw, 180px)",
+                  width: 130,
+                  height: 155,
                   objectFit: "cover",
                   borderRadius: 4,
                   border: "2px solid #000",
@@ -362,17 +418,17 @@ function MobileMemberCard({
               background: "#000",
               color: "#fff",
               display: "inline-block",
-              padding: "6px 12px",
+              padding: "5px 10px",
               transform: "skewX(-4deg)",
               boxShadow: "3px 3px 0 rgba(218,16,12,0.8)",
-              marginBottom: 8,
+              marginBottom: 6,
             }}
           >
             <h2
               className="hero-title"
               style={{
                 transform: "skewX(4deg)",
-                fontSize: "clamp(1rem, 4.5vw, 1.5rem)",
+                fontSize: "clamp(0.85rem, 4vw, 1.2rem)",
                 lineHeight: 1,
               }}
             >
@@ -385,8 +441,8 @@ function MobileMemberCard({
               border: "2px solid #DA100C",
               color: "#DA100C",
               borderRadius: 6,
-              padding: "3px 8px",
-              fontSize: "0.65rem",
+              padding: "2px 7px",
+              fontSize: "0.6rem",
               fontFamily: "'Dela Gothic One', sans-serif",
               background: "rgba(255,255,255,0.92)",
               marginBottom: 8,
@@ -395,23 +451,12 @@ function MobileMemberCard({
             {member.role}
           </div>
 
-          <p
-            className="comic-sans text-black/80"
-            style={{
-              fontSize: "0.78rem",
-              lineHeight: 1.45,
-              marginBottom: 10,
-            }}
-          >
-            {member.bio}
-          </p>
-
           <div
             style={{
               height: 3,
-              width: 44,
+              width: 36,
               background: "linear-gradient(90deg, #DA100C, #000)",
-              marginBottom: 10,
+              marginBottom: 8,
             }}
           />
 
@@ -427,8 +472,8 @@ function MobileMemberCard({
                   background: "#000",
                   border: "2px solid #000",
                   borderRadius: 6,
-                  padding: "4px 10px",
-                  fontSize: "0.65rem",
+                  padding: "3px 8px",
+                  fontSize: "0.6rem",
                   boxShadow: "2px 2px 0 rgba(218,16,12,0.65)",
                   textDecoration: "none",
                 }}
@@ -446,6 +491,7 @@ function MobileMemberCard({
 export default function Team() {
   const isMobile = useIsMobile();
   const [displayPage, setDisplayPage] = useState(0);
+  const [dragX, setDragX] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
@@ -454,6 +500,12 @@ export default function Team() {
   const currentMemberRef = useRef(0);
   const isAnimating = useRef(false);
   const flippedState = useRef<boolean[]>(new Array(TOTAL_SHEETS).fill(false));
+
+  // Tinder swipe state
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const isDragging = useRef(false);
+  const dragStartX = useRef(0);
 
   useEffect(() => {
     currentMemberRef.current = displayPage;
@@ -503,39 +555,21 @@ export default function Team() {
     gsap.fromTo(
       target,
       { opacity: 0, y: 24, scale: 0.97 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.7,
-        ease: "power2.out",
-      }
+      { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power2.out" }
     );
   }, [isMobile]);
-
-  useEffect(() => {
-    if (!isMobile || !mobileCardRef.current) return;
-
-    gsap.fromTo(
-      mobileCardRef.current,
-      { opacity: 0.7, y: 12, scale: 0.985 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.35,
-        ease: "power2.out",
-      }
-    );
-  }, [displayPage, isMobile]);
 
   const flipForward = () => {
     if (isAnimating.current) return;
 
     if (isMobile) {
-      if (currentMemberRef.current >= TOTAL_MEMBERS - 1) return;
+      if (currentMemberRef.current >= TOTAL_MEMBERS - 1) {
+        setDragX(0);
+        return;
+      }
       const next = currentMemberRef.current + 1;
       currentMemberRef.current = next;
+      setDragX(0);
       setDisplayPage(next);
       return;
     }
@@ -568,9 +602,13 @@ export default function Team() {
     if (isAnimating.current) return;
 
     if (isMobile) {
-      if (currentMemberRef.current <= 0) return;
+      if (currentMemberRef.current <= 0) {
+        setDragX(0);
+        return;
+      }
       const next = currentMemberRef.current - 1;
       currentMemberRef.current = next;
+      setDragX(0);
       setDisplayPage(next);
       return;
     }
@@ -606,6 +644,7 @@ export default function Team() {
 
     if (isMobile) {
       currentMemberRef.current = target;
+      setDragX(0);
       setDisplayPage(target);
       return;
     }
@@ -628,6 +667,72 @@ export default function Team() {
     }, 100);
   };
 
+  // Tinder swipe handlers for mobile
+  useEffect(() => {
+    if (!isMobile) return;
+
+    const SWIPE_THRESHOLD = 60;
+
+    const handleTouchStart = (e: TouchEvent) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+      dragStartX.current = e.touches[0].clientX;
+      isDragging.current = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const dx = e.touches[0].clientX - touchStartX.current;
+      const dy = e.touches[0].clientY - touchStartY.current;
+
+      if (!isDragging.current) {
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+          isDragging.current = true;
+        } else if (Math.abs(dy) > 8) {
+          return;
+        }
+      }
+
+      if (isDragging.current) {
+        e.preventDefault();
+        const cur = currentMemberRef.current;
+        const clampedDx =
+          (dx > 0 && cur === 0) || (dx < 0 && cur === TOTAL_MEMBERS - 1)
+            ? dx * 0.2
+            : dx;
+        setDragX(clampedDx);
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (!isDragging.current) return;
+      isDragging.current = false;
+
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+
+      if (dx < -SWIPE_THRESHOLD) {
+        flipForward();
+      } else if (dx > SWIPE_THRESHOLD) {
+        flipBackward();
+      } else {
+        setDragX(0);
+      }
+    };
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    el.addEventListener("touchstart", handleTouchStart, { passive: true });
+    el.addEventListener("touchmove", handleTouchMove, { passive: false });
+    el.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener("touchstart", handleTouchStart);
+      el.removeEventListener("touchmove", handleTouchMove);
+      el.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [isMobile]);
+
+  // Desktop wheel + touch
   useEffect(() => {
     if (isMobile) return;
 
@@ -647,6 +752,8 @@ export default function Team() {
   }, [isMobile]);
 
   useEffect(() => {
+    if (isMobile) return;
+
     let startX = 0;
     let startY = 0;
     let tracking = false;
@@ -658,7 +765,7 @@ export default function Team() {
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isMobile && tracking) e.preventDefault();
+      if (tracking) e.preventDefault();
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
@@ -668,20 +775,12 @@ export default function Team() {
 
       const endX = e.changedTouches[0].clientX;
       const endY = e.changedTouches[0].clientY;
-
       const deltaX = startX - endX;
       const deltaY = startY - endY;
       const absDX = Math.abs(deltaX);
       const absDY = Math.abs(deltaY);
 
       if (absDX < 36 && absDY < 36) return;
-
-      if (isMobile) {
-        if (absDX < absDY) return;
-        if (deltaX > 0) flipForward();
-        else flipBackward();
-        return;
-      }
 
       if (absDY >= absDX) {
         if (deltaY > 0) flipForward();
@@ -803,7 +902,7 @@ export default function Team() {
           />
         </div>
 
-        <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center">
+        <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center max-md:mt-6">
           <p
             className="comic-sans uppercase tracking-widest mb-3 text-center"
             style={{
@@ -837,13 +936,14 @@ export default function Team() {
 
         {isMobile ? (
           <div
-            className="absolute inset-x-0 z-20 flex items-center justify-center px-4"
-            style={{ top: 130, bottom: 130 }}
+            className="absolute inset-x-0 z-20 flex items-center justify-center"
+            style={{ top: 140, bottom: 110 }}
           >
-            <div ref={mobileCardRef} className="w-full flex justify-center">
+            <div ref={mobileCardRef} className="flex justify-center">
               <MobileMemberCard
                 member={TEAM_MEMBERS[displayPage]}
                 index={displayPage}
+                dragX={dragX}
               />
             </div>
           </div>
@@ -924,7 +1024,7 @@ export default function Team() {
             isMobile
               ? {
                   left: "50%",
-                  bottom: 92,
+                  bottom: 72,
                   transform: "translateX(-50%)",
                 }
               : {
@@ -962,7 +1062,7 @@ export default function Team() {
           className="absolute z-30"
           style={
             isMobile
-              ? { bottom: 120, left: "50%", transform: "translateX(-50%)" }
+              ? { bottom: 100, left: "50%", transform: "translateX(-50%)" }
               : { right: 24, bottom: 80 }
           }
         >
@@ -981,43 +1081,43 @@ export default function Team() {
         {isMobile && (
           <div
             className="absolute left-1/2 z-30 flex items-center gap-3"
-            style={{ bottom: 26, transform: "translateX(-50%)" }}
+            style={{ bottom: 20, transform: "translateX(-50%)" }}
           >
             <button
               onClick={flipBackward}
               disabled={displayPage === 0}
               style={{
-                padding: "10px 16px",
+                padding: "8px 14px",
                 borderRadius: 12,
                 border: "2px solid #000",
                 background: displayPage === 0 ? "#bdbdbd" : "#fff",
                 color: "#000",
                 fontFamily: "'Dela Gothic One', sans-serif",
-                fontSize: "0.76rem",
+                fontSize: "0.72rem",
                 boxShadow: "3px 3px 0 rgba(0,0,0,0.25)",
                 opacity: displayPage === 0 ? 0.6 : 1,
               }}
             >
-              Prev
+              ← Prev
             </button>
 
             <button
               onClick={flipForward}
               disabled={displayPage === TOTAL_MEMBERS - 1}
               style={{
-                padding: "10px 16px",
+                padding: "8px 14px",
                 borderRadius: 12,
                 border: "2px solid #000",
                 background:
                   displayPage === TOTAL_MEMBERS - 1 ? "#bdbdbd" : "#DA100C",
                 color: "#fff",
                 fontFamily: "'Dela Gothic One', sans-serif",
-                fontSize: "0.76rem",
+                fontSize: "0.72rem",
                 boxShadow: "3px 3px 0 rgba(0,0,0,0.25)",
                 opacity: displayPage === TOTAL_MEMBERS - 1 ? 0.6 : 1,
               }}
             >
-              Next
+              Next →
             </button>
           </div>
         )}
