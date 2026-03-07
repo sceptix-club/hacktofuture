@@ -6,7 +6,7 @@ import CTA from "./CTA";
 import FAQ from "./FAQ";
 
 const handleThemeNavigate = (slug: string) => {
-  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer")
+  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer");
 };
 import TimerTimeline from "../components/TimerTimeline";
 
@@ -105,7 +105,6 @@ const TextContent = ({
     // Scene 4
     if (scene4TextRef.current) {
       const panels = scene4TextRef.current.querySelectorAll(".htf-panel");
-      // 8 panels: heading, timer, day1, day2, day3, card0, card1, card2
       const enterX = [0, -1800, -800, 0, 800, 1800, 1800, -1800];
       const enterY = [-800, -300, -1000, -1200, -1000, 600, -600, 600];
 
@@ -140,7 +139,7 @@ const TextContent = ({
       );
     }
 
-    // Card 1 text (camera dwell: 4.55 – 5.05)
+    // Card 1
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
@@ -148,9 +147,13 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.15, pointerEvents: "auto" },
         4.55
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 4.95);
+      tl.to(
+        card1TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        4.95
+      );
     }
-    // Card 2 text (camera dwell: 5.35 – 5.75)
+    // Card 2
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
@@ -158,9 +161,13 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         5.35
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.65);
+      tl.to(
+        card2TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        5.65
+      );
     }
-    // Card 3 text (camera dwell: 6.05 – 6.45)
+    // Card 3
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
@@ -168,9 +175,13 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         6.05
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.35);
+      tl.to(
+        card3TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        6.35
+      );
     }
-    // Card 4 text (camera dwell: 6.75 – 7.15)
+    // Card 4
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
@@ -178,9 +189,14 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         6.75
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.15, pointerEvents: "none" }, 7.05);
+      tl.to(
+        card4TextRef.current,
+        { opacity: 0, duration: 0.15, pointerEvents: "none" },
+        7.05
+      );
     }
-    // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
+
+    // CTA
     if (ctaRef.current) {
       gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
       tl.to(
@@ -195,7 +211,7 @@ const TextContent = ({
       );
     }
 
-    // ── FAQ: slides in at 8.9, slides OUT at 10.4 ──
+    // FAQ
     if (faqRef.current) {
       gsap.set(faqRef.current, { y: "100%", opacity: 0 });
       tl.to(
@@ -210,7 +226,7 @@ const TextContent = ({
       );
     }
 
-    // ── Footer: slides in at 10.2 ──
+    // Footer: ONLY slide in — NO letter animation here
     if (footerRef.current) {
       gsap.set(footerRef.current, { y: "100%" });
       tl.to(
@@ -219,24 +235,8 @@ const TextContent = ({
         10.2
       );
 
-      // HackToFuture letters animate at 10.5
-      const htfLetters = footerRef.current.querySelectorAll(
-        ".hero-title.inline-block"
-      );
-      if (htfLetters.length) {
-        tl.fromTo(
-          htfLetters,
-          { y: 200, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.3,
-            stagger: 0.04,
-            ease: "back.out(1.4)",
-          },
-          10.5
-        );
-      }
+      // ❌ REMOVED: the htfLetters scroll animation was here
+      // Letters now animate themselves inside Footer.tsx on visibility
     }
 
     tl.set({}, {}, 12.2);
@@ -249,17 +249,16 @@ const TextContent = ({
 
   return (
     <>
-      {/* Scene 1 */}
       <div
         ref={scene1TextRef}
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
       ></div>
 
-      {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-          }`}
+        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
+          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+        }`}
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
           opacity: 0,
@@ -269,7 +268,6 @@ const TextContent = ({
         CLICK TO DOWNLOAD RULEBOOK
       </div>
 
-      {/* Scene 3 */}
       <div
         ref={scene3TextRef}
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
@@ -286,7 +284,6 @@ const TextContent = ({
         />
       </div>
 
-      {/* Scene 4 */}
       <div
         ref={scene4TextRef}
         className="fixed left-0 right-0 top-[50%] -translate-y-1/2 z-20 flex items-center justify-center px-4"
@@ -294,7 +291,6 @@ const TextContent = ({
         <TimerTimeline />
       </div>
 
-      {/* Cards 1-4 – Themes */}
       {[1, 2, 3, 4].map((n, i) => {
         const themeData = [
           {
