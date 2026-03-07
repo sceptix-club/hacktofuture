@@ -93,6 +93,7 @@ const Navbar = ({ className }: NavbarProps) => {
               if (item.route) {
                 navigate(item.route);
               } else if (item.href) {
+                window.open(item.href, "_blank");
                 if (isTeamPage) {
                   navigate("/");
                 }
