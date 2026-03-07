@@ -93,15 +93,19 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     // const scene2State = { progress: 0 };
     const cam2 = { x: 0, y: -28, z: 10 };
 
-    tl.to(cam2, {
-      z: 1,
-      duration: 0.8,
-      ease: "power2.inOut",
-      onUpdate: () => {
-        camera.position.set(cam2.x, cam2.y, cam2.z);
-        camera.lookAt(0, -30, 0);
+    tl.to(
+      cam2,
+      {
+        z: 1,
+        duration: 0.8,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          camera.position.set(cam2.x, cam2.y, cam2.z);
+          camera.lookAt(0, -30, 0);
+        },
       },
-    }, ">");
+      ">"
+    );
 
     tl.to(cam2, {
       duration: 0.1,
@@ -308,10 +312,12 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 1 */}
       <MarqueeGrid viewportWidth={stableViewportWidth} />
-      <group ref={tvRef}>
+      <group ref={tvRef} renderOrder={0}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
-      <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
+      <group position={[0, 0, 0.5]} renderOrder={1}>
+        <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
+      </group>
 
       {/* Scene 2 */}
       <group position={[0, -30, 0]}>
