@@ -7,6 +7,19 @@ export default defineConfig({
 
   server: {
     host: true,
-    allowedHosts: true
-  }
+    allowedHosts: true,
+  },
+
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1500,
+  },
 });
