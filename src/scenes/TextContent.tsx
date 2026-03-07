@@ -6,7 +6,7 @@ import CTA from "./CTA";
 import FAQ from "./FAQ";
 
 const handleThemeNavigate = (slug: string) => {
-  window.location.href = `/theme/${slug}`;
+  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer")
 };
 import TimerTimeline from "../components/TimerTimeline";
 
