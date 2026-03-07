@@ -13,7 +13,13 @@ export default function About() {
 
   // Entrance animation
   useEffect(() => {
-    if (!headerRef.current || !contentRef.current || !statsRef.current || !tickerRef.current) return;
+    if (
+      !headerRef.current ||
+      !contentRef.current ||
+      !statsRef.current ||
+      !tickerRef.current
+    )
+      return;
 
     gsap.fromTo(
       headerRef.current,
@@ -27,7 +33,10 @@ export default function About() {
       { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out", delay: 0.2 }
     );
 
-    const cards = [contentRef.current, ...Array.from(statsRef.current.children)];
+    const cards = [
+      contentRef.current,
+      ...Array.from(statsRef.current.children),
+    ];
 
     gsap.fromTo(
       cards,
@@ -44,10 +53,10 @@ export default function About() {
   }, []);
 
   const stats = [
-    { label: "PRIZE POOL", value: "₹1,00,000", color: "#E8003D" },
-    { label: "HACKERS", value: "100", color: "#00C6FF" },
-    { label: "DATES", value: "16 17 18", color: "#FFE105" },
-    { label: "THEMES", value: "4", color: "#A855F7" },
+    { label: "PRIZE POOL", value: "₹3,80,000", color: "#E8003D" },
+    { label: "TEAMS", value: "40", color: "#00C6FF" },
+    { label: "DATES", value: "15-17 APR", color: "#FFE105"},
+    { label: "THEMES", value: "3", color: "#A855F7" },
     { label: "VENUE", value: "Kalam Hall", color: "#FF8A00", colSpan: 2 },
   ];
 
@@ -77,7 +86,10 @@ export default function About() {
           style={{ zIndex: 1 }}
         >
           {/* Header */}
-          <div ref={headerRef} className="-mt-12 mb-8 flex flex-col items-center">
+          <div
+            ref={headerRef}
+            className="-mt-12 mb-8 flex flex-col items-center"
+          >
             <p
               className="comic-sans uppercase tracking-widest mb-3 text-center"
               style={{
@@ -107,15 +119,10 @@ export default function About() {
             />
           </div>
 
-
           {/* Main Layout Grid */}
           <div className="w-full flex flex-col lg:flex-row gap-8 max-w-[1200px]">
-
             {/* Left: Main Content Card */}
-            <div
-              className="w-full lg:w-3/5"
-              ref={contentRef}
-            >
+            <div className="w-full lg:w-3/5" ref={contentRef}>
               <div
                 className="relative flex flex-col justify-between h-full"
                 style={{
@@ -154,7 +161,7 @@ export default function About() {
                       borderRadius: "50%",
                       color: "#fff",
                       flexShrink: 0,
-                      boxShadow: "2px 2px 0 #000"
+                      boxShadow: "2px 2px 0 #000",
                     }}
                   >
                     <svg
@@ -190,18 +197,22 @@ export default function About() {
                   }}
                 >
                   <p>
-                    <strong className="text-black font-bold">HackToFuture</strong> is a 36-hour intercollegiate hackathon hosted annually
-                    by the Sceptix Club at St Joseph Engineering College, Mangaluru.
-                    Now in its fourth edition, it brings together the brightest student
-                    minds to build, break, and ship real products under pressure —
-                    no tutorials, no safety nets, just ideas and execution.
+                    <strong className="text-black font-bold">
+                      HackToFuture
+                    </strong>{" "}
+                    is a 36-hour intercollegiate hackathon hosted annually by
+                    the Sceptix Club at St Joseph Engineering College,
+                    Mangaluru. Now in its fourth edition, it brings together the
+                    brightest student minds to build, break, and ship real
+                    products under pressure — no tutorials, no safety nets, just
+                    ideas and execution.
                   </p>
                   <p>
-                    From machine learning pipelines to decentralised protocols, from
-                    health-tech tools to open innovation experiments — HTF has always
-                    been a stage for students who refuse to wait for permission to
-                    build the future. Every year the stakes get higher. Every year the
-                    builds get bolder.
+                    From machine learning pipelines to decentralised protocols,
+                    from health-tech tools to open innovation experiments — HTF
+                    has always been a stage for students who refuse to wait for
+                    permission to build the future. Every year the stakes get
+                    higher. Every year the builds get bolder.
                   </p>
                 </div>
 
@@ -239,13 +250,15 @@ export default function About() {
 
             {/* Right: Stats Grid */}
             <div
-              className="w-full lg:w-2/5 grid grid-cols-2 gap-4 lg:gap-6"
+              className="w-full lg:w-3/5 grid grid-cols-2 gap-4 lg:gap-6"
               ref={statsRef}
             >
               {stats.map((stat, i) => (
                 <div
                   key={i}
-                  className={`flex flex-col items-center justify-center text-center group cursor-pointer ${stat.colSpan === 2 ? 'col-span-2' : ''}`}
+                  className={`flex flex-col items-center justify-center text-center group cursor-pointer ${
+                    stat.colSpan === 2 ? "col-span-2" : ""
+                  }`}
                   style={{
                     background: "#FFFEF2",
                     border: "3px solid #000",
@@ -256,10 +269,18 @@ export default function About() {
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                   }}
                   onMouseEnter={(e) => {
-                    gsap.to(e.currentTarget, { y: -4, boxShadow: "6px 8px 0px rgba(0,0,0,0.8)", duration: 0.2 });
+                    gsap.to(e.currentTarget, {
+                      y: -4,
+                      boxShadow: "6px 8px 0px rgba(0,0,0,0.8)",
+                      duration: 0.2,
+                    });
                   }}
                   onMouseLeave={(e) => {
-                    gsap.to(e.currentTarget, { y: 0, boxShadow: "4px 4px 0px rgba(0,0,0,0.8)", duration: 0.2 });
+                    gsap.to(e.currentTarget, {
+                      y: 0,
+                      boxShadow: "4px 4px 0px rgba(0,0,0,0.8)",
+                      duration: 0.2,
+                    });
                   }}
                 >
                   <div
@@ -294,7 +315,7 @@ export default function About() {
                   borderRadius: "0.75rem",
                   padding: "1.5rem",
                   boxShadow: "4px 4px 0px #E8003D",
-                  minHeight: "140px"
+                  minHeight: "140px",
                 }}
               >
                 {/* Halftone dot cluster inside the black card */}
@@ -306,13 +327,19 @@ export default function About() {
                     backgroundSize: "8px 8px",
                   }}
                 />
-                <h3 className="hero-title text-white text-center z-10" style={{ fontSize: "clamp(1.2rem, 2vw, 1.8rem)", lineHeight: 1.2 }}>
-                  NO TUTORIALS.<br />
+                <h3
+                  className="hero-title text-white text-center z-10"
+                  style={{
+                    fontSize: "clamp(1.2rem, 2vw, 1.8rem)",
+                    lineHeight: 1.2,
+                  }}
+                >
+                  NO TUTORIALS.
+                  <br />
                   <span style={{ color: "#FFE105" }}>JUST EXECUTION.</span>
                 </h3>
               </div>
             </div>
-
           </div>
         </div>
       </div>

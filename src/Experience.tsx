@@ -89,18 +89,19 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       0
     );
 
-    // Scene 2: Circular camera around Rulebook (1.0 - 2.0)
+    // Scene 2: Circular camera around Rulebook
     const scene2State = { progress: 0 };
     const cam2 = { x: 0, y: -28, z: 10 };
+
     tl.to(cam2, {
       z: 1,
-      duration: 0.5,
+      duration: 0.8,
       ease: "power2.inOut",
       onUpdate: () => {
         camera.position.set(cam2.x, cam2.y, cam2.z);
         camera.lookAt(0, -30, 0);
       },
-    }, 1.0);
+    }, ">");
 
     tl.to(cam2, {
       duration: 0.1,

@@ -5,6 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { themes, type ThemeSlug } from "../content/data";
 import Background from "../components/Background";
 
+const colors = {
+  red: "#DA100C",
+  yellow: "#FFE105",
+  blue: "#50BAEA",
+};
+
 /* ─── Theme card data ─── */
 const THEME_CARDS = [
   {
@@ -12,7 +18,7 @@ const THEME_CARDS = [
     title: "Healthcare & Citizen Welfare",
     description:
       "Build solutions that improve public health outcomes, enhance citizen welfare, and make healthcare accessible for all. From diagnostics to mental health, drive meaningful change.",
-    accent: "#E8003D",
+    accent: colors.red,
     number: "01",
   },
   {
@@ -20,7 +26,7 @@ const THEME_CARDS = [
     title: "Industry & Trade",
     description:
       "Optimize supply chains, streamline manufacturing, and empower businesses with intelligent tools for procurement, forecasting, and trade compliance.",
-    accent: "#FFE105",
+    accent: colors.yellow,
     number: "02",
   },
   {
@@ -28,7 +34,7 @@ const THEME_CARDS = [
     title: "Infrastructure & Smart Cities",
     description:
       "Design the cities of tomorrow — smarter waste management, connected transit, road safety systems, and data-driven urban planning for a better quality of life.",
-    accent: "#00C6FF",
+    accent: colors.blue,
     number: "03",
   },
   {
@@ -61,6 +67,11 @@ function ThemeCard({
       duration: 0.3,
       ease: "power2.out",
     });
+    gsap.to(cardRef.current, {
+      boxShadow: "8px 8px 0 #000",
+      duration: 0.3,
+      ease: "power2.out",
+    });
   };
 
   const handleMouseLeave = () => {
@@ -68,6 +79,7 @@ function ThemeCard({
     gsap.to(cardRef.current, {
       y: 0,
       scale: 1,
+      boxShadow: "5px 5px 0 #000",
       duration: 0.3,
       ease: "power2.out",
     });
@@ -79,116 +91,158 @@ function ThemeCard({
       onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative flex flex-col justify-between cursor-pointer select-none"
+      className="relative flex flex-col justify-between cursor-pointer select-none overflow-hidden"
       style={{
-        /* ── cream-white page look (matches book pages in Team.tsx) ── */
         background: "#FFFEF2",
-        backgroundImage:
-          "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px)",
+        // backgroundImage:
+        //   "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.025) 28px, rgba(0,0,0,0.025) 29px)",
         border: "3px solid #000",
-        borderTop: `4px solid ${theme.accent}`,
-        borderRadius: "0.75rem",
-        padding: "clamp(1.25rem, 2.5vw, 2rem)",
+        padding: 0,
         willChange: "transform",
-        transition: "box-shadow 0.3s ease",
-        boxShadow: "4px 4px 0px rgba(0,0,0,0.5)",
+        boxShadow: "5px 5px 0 #000",
       }}
     >
-      {/* Number badge */}
-      <div className="flex items-start justify-between mb-4">
-        <span
-          className="hero-title font-black"
-          style={{
-            fontSize: "clamp(2.5rem, 5vw, 4rem)",
-            color: theme.accent,
-            opacity: 0.2,
-            lineHeight: 1,
-            userSelect: "none",
-          }}
-        >
-          {theme.number}
-        </span>
+      {/* Accent strip top */}
+      <div style={{ height: 6, background: theme.accent }} />
 
-        {/* Arrow icon */}
-        <div
-          className="flex items-center justify-center"
-          style={{
-            width: 34,
-            height: 34,
-            border: `2px solid ${theme.accent}`,
-            borderRadius: "50%",
-            color: theme.accent,
-            flexShrink: 0,
-          }}
-        >
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-          >
-            <line x1="7" y1="17" x2="17" y2="7" />
-            <polyline points="7 7 17 7 17 17" />
-          </svg>
-        </div>
-      </div>
-
-      {/* Title */}
-      <h3
-        className="hero-title font-black uppercase mb-3"
-        style={{
-          fontSize: "clamp(1rem, 2vw, 1.5rem)",
-          color: "#111",
-          lineHeight: 1.1,
-        }}
-      >
-        {theme.title}
-      </h3>
-
-      {/* Description */}
-      <p
-        className="comic-sans"
-        style={{
-          fontSize: "clamp(0.75rem, 1.2vw, 0.9rem)",
-          color: "rgba(0,0,0,0.6)",
-          lineHeight: 1.6,
-          flexGrow: 1,
-        }}
-      >
-        {theme.description}
-      </p>
-
-      {/* Bottom — PS count + CTA */}
+      {/* ── Halftone: top-right corner── */}
       <div
-        className="flex items-center justify-between mt-5 pt-4"
-        style={{ borderTop: "1px solid rgba(0,0,0,0.12)" }}
+        className="absolute pointer-events-none"
+        style={{
+          top: 6,
+          right: 0,
+          width: "70%",
+          height: "70%",
+          backgroundImage: `radial-gradient(circle, rgba(6,0,0,0.1) 1.5px, transparent 1.5px)`,
+          backgroundSize: "8px 8px",
+          maskImage:
+            "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
+        }}
+      />
+
+      <div
+        className="relative flex flex-col justify-between h-full"
+        style={{ padding: "clamp(1.25rem, 2.5vw, 2rem)" }}
       >
-        <span
+        {/* Number + Arrow row */}
+        <div className="flex items-start justify-between mb-4">
+          <span
+            className="hero-title font-black"
+            style={{
+              fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
+              color: theme.accent,
+              lineHeight: 1,
+              userSelect: "none",
+            }}
+          >
+            {theme.number}
+          </span>
+
+          {/* Arrow — comic panel style */}
+          <div
+            className="flex items-center justify-center transition-all duration-200"
+            style={{
+              width: 32,
+              height: 32,
+              background: theme.accent,
+              border: "2px solid #000",
+              boxShadow: "2px 2px 0 #000",
+              color: theme.accent === colors.yellow ? "#000" : "#fff",
+              flexShrink: 0,
+            }}
+          >
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+            >
+              <line x1="7" y1="17" x2="17" y2="7" />
+              <polyline points="7 7 17 7 17 17" />
+            </svg>
+          </div>
+        </div>
+
+        {/* Title */}
+        <h3
+          className="hero-title font-black uppercase mb-3"
+          style={{
+            fontSize: "clamp(1rem, 2vw, 1.4rem)",
+            color: "#111",
+            lineHeight: 1.15,
+          }}
+        >
+          {theme.title}
+        </h3>
+
+        {/* Accent dash under title */}
+        <div
+          style={{
+            width: "clamp(30px, 6vw, 50px)",
+            height: 3,
+            background: theme.accent,
+            marginBottom: "0.75rem",
+          }}
+        />
+
+        {/* Description */}
+        <p
           className="comic-sans"
           style={{
-            fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
-            color: "rgba(0,0,0,0.4)",
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
+            fontSize: "clamp(0.75rem, 1.2vw, 0.88rem)",
+            color: "rgba(0,0,0,0.6)",
+            lineHeight: 1.65,
+            flexGrow: 1,
           }}
         >
-          {themes[theme.slug].problemStatements.length} Problem Statement
-          {themes[theme.slug].problemStatements.length > 1 ? "s" : ""}
-        </span>
+          {theme.description}
+        </p>
 
-        <span
-          className="comic-sans font-bold"
-          style={{
-            fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
-            color: theme.accent,
-            textTransform: "uppercase",
-            letterSpacing: "0.12em",
-          }}
+        {/* Bottom — PS count + CTA */}
+        <div
+          className="flex items-center justify-between mt-5 pt-4"
+          style={{ borderTop: "2px solid rgba(0,0,0,0.08)" }}
         >
-          Explore →
-        </span>
+          {/* PS count badge */}
+          <div
+            className="flex items-center gap-2"
+            style={{
+              background: "rgba(0,0,0,0.06)",
+              padding: "0.3rem 0.7rem",
+              border: "1.5px solid rgba(0,0,0,0.1)",
+            }}
+          >
+            <span
+              className="comic-sans font-bold"
+              style={{
+                fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
+                color: "rgba(0,0,0,0.5)",
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+              }}
+            >
+              {themes[theme.slug].problemStatements.length} PS
+            </span>
+          </div>
+
+          {/* CTA */}
+          <span
+            className="comic-sans font-bold flex items-center gap-1"
+            style={{
+              fontSize: "clamp(0.65rem, 1vw, 0.78rem)",
+              color: theme.accent === colors.yellow ? "#b8a000" : theme.accent,
+              textTransform: "uppercase",
+              letterSpacing: "0.1em",
+            }}
+          >
+            Explore
+            <span style={{ fontSize: "1.1em" }}>→</span>
+          </span>
+        </div>
       </div>
     </div>
   );
@@ -200,7 +254,6 @@ export default function Themes() {
   const headerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Entrance animation
   useEffect(() => {
     if (!cardsRef.current || !headerRef.current) return;
 
@@ -238,32 +291,31 @@ export default function Themes() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
         }}
       >
-        {/* ── Same 3D background as HomePage ── */}
-        <div className="fixed inset-0 w-full h-full" style={{ zIndex: 0 }}>
-          <Background />
-        </div>
-
         {/* ── Foreground ── */}
         <div
           className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
-          style={{ zIndex: 1 }}
+          style={{ zIndex: 2 }}
         >
-          {/* Header */}
+          {/* ── Header ── */}
           <div
             ref={headerRef}
             className="-mt-12 mb-14 flex flex-col items-center"
           >
-            <p
-              className="comic-sans uppercase tracking-widest mb-3"
-              style={{
-                fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
-                color: "rgba(255,255,255,0.6)",
-              }}
-            >
-              HackToFuture 4.0
-            </p>
+            {/* Subtitle caption box */}
+             <p
+            className="comic-sans uppercase tracking-widest mb-3"
+            style={{
+              fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+              color: "rgba(255,255,255,0.6)",
+            }}
+          >
+            HackToFuture 4.0
+          </p>
+
+            {/* Title */}
             <h1
               className="hero-title font-black uppercase"
               style={{
@@ -274,20 +326,36 @@ export default function Themes() {
             >
               Themes
             </h1>
+
+            {/* Red accent bar */}
             <div
               className="mt-4"
               style={{
-                height: 3,
-                width: "clamp(60px, 8vw, 100px)",
-                background: "#E8003D",
+                height: 5,
+                width: "clamp(60px, 10vw, 120px)",
+                background: colors.red,
+                boxShadow: "2px 2px 0 #000",
               }}
             />
+
+            {/* Subtitle text */}
+            <p
+              className="comic-sans text-center mt-5 max-w-lg"
+              style={{
+                fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+                color: "rgba(255,255,255,0.45)",
+                lineHeight: 1.6,
+              }}
+            >
+              Choose a theme and explore the problem statements. Each one is a
+              chance to build something that matters.
+            </p>
           </div>
 
           {/* ── Cards ── */}
-          <div ref={cardsRef}>
-            {/* Mobile: single column stack (unchanged) */}
-            <div className="flex flex-col gap-5 md:hidden">
+          <div ref={cardsRef} className="max-w-5xl mx-auto">
+            {/* Mobile: single column */}
+            <div className="flex flex-col gap-6 md:hidden">
               {THEME_CARDS.map((theme, index) => (
                 <div key={theme.slug} className="theme-card-wrapper">
                   <ThemeCard
@@ -299,17 +367,10 @@ export default function Themes() {
               ))}
             </div>
 
-            {/* Desktop: centered column stack at 25% width */}
-            <div className="hidden md:flex flex-col items-center gap-6 mb-16">
+            {/* Desktop: 2×2 grid */}
+            <div className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8">
               {THEME_CARDS.map((theme, index) => (
-                <div
-                  key={theme.slug}
-                  className="theme-card-wrapper w-full"
-                  style={{
-                    maxWidth: "max(72vw, 360px)",
-                    minWidth: "280px",
-                  }}
-                >
+                <div key={theme.slug} className="theme-card-wrapper">
                   <ThemeCard
                     theme={theme}
                     index={index}
@@ -318,6 +379,21 @@ export default function Themes() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* ── Speed-line footer accent ── */}
+          <div className="flex items-center justify-center mt-14 gap-1.5">
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: i === 2 ? 32 : i === 1 || i === 3 ? 16 : 8,
+                  height: 3,
+                  background: "rgba(255,255,255,0.1)",
+                  borderRadius: 2,
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>
