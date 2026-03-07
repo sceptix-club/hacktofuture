@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import Button from "../components/ui/Button";
+import Button from "./ui/Button";
 
 type CTAProps = {
   title?: string;

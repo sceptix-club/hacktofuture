@@ -2,11 +2,11 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import Footer from "./Footer";
-import CTA from "./CTA";
+import CTA from "../components/CTA";
 import FAQ from "./FAQ";
 
 const handleThemeNavigate = (slug: string) => {
-  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer")
+  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer");
 };
 import TimerTimeline from "../components/TimerTimeline";
 
@@ -148,7 +148,11 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         5.05
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.35);
+      tl.to(
+        card1TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        5.35
+      );
     }
     // Card 2 text (camera dwell: 5.8 – 6.2)
     if (card2TextRef.current) {
@@ -158,7 +162,11 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         5.85
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.1);
+      tl.to(
+        card2TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        6.1
+      );
     }
     // Card 3 text (camera dwell: 6.5 – 6.9)
     if (card3TextRef.current) {
@@ -168,7 +176,11 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         6.55
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.8);
+      tl.to(
+        card3TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        6.8
+      );
     }
     // Card 4 text (camera dwell: 7.2 – 7.6)
     if (card4TextRef.current) {
@@ -178,7 +190,11 @@ const TextContent = ({
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
         7.25
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.2, pointerEvents: "none" }, 7.6);
+      tl.to(
+        card4TextRef.current,
+        { opacity: 0, duration: 0.2, pointerEvents: "none" },
+        7.6
+      );
     }
     // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
     if (ctaRef.current) {
@@ -258,8 +274,9 @@ const TextContent = ({
       {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-          }`}
+        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
+          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
+        }`}
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
           opacity: 0,
