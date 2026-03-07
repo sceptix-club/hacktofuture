@@ -1,9 +1,13 @@
 import { useRef, useEffect } from "react";
 import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useNavigate } from "react-router-dom";
 import { themes, type ThemeSlug } from "../content/data";
 import Background from "../components/Background";
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 const colors = {
   red: "#DA100C",
@@ -253,6 +257,7 @@ export default function Themes() {
   const cardsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const smootherRef = useRef<ScrollSmoother | null>(null);
 
   useEffect(() => {
     if (!cardsRef.current || !headerRef.current) return;
@@ -279,32 +284,48 @@ export default function Themes() {
     );
   }, []);
 
+  useEffect(() => {
+    smootherRef.current = ScrollSmoother.create({
+      wrapper: "#smooth-page-wrapper",
+      content: "#smooth-page-content",
+      smooth: 0.75,
+      effects: false,
+      smoothTouch: 0.25,
+    });
+    return () => {
+      smootherRef.current?.kill();
+      smootherRef.current = null;
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
   return (
     <>
+     
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+
+     
       <Navbar />
 
-      <div
-        className="relative w-full min-h-screen"
-        style={{ background: "#0a0a0a" }}
-      >
-        {/* Fixed background that won't shift on mobile scroll */}
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundImage: "url('/textures/background.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            zIndex: 0,
-            pointerEvents: "none",
-          }}
-        />
-        {/* ── Foreground ── */}
-        <div
-          className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
-          style={{ zIndex: 2 }}
-        >
+      <div id="smooth-page-wrapper">
+        <div id="smooth-page-content">
+          <div className="relative w-full min-h-screen">
+            {/* ── Foreground ── */}
+            <div
+              className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
+              style={{ zIndex: 2 }}
+            >
           {/* ── Header ── */}
           <div
             ref={headerRef}
@@ -400,6 +421,8 @@ export default function Themes() {
                 }}
               />
             ))}
+          </div>
+        </div>
           </div>
         </div>
       </div>

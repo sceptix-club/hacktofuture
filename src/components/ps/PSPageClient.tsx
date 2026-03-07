@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
 import Navbar from "../ui/Navbar";
 import type { Theme } from "../../content/data";
 import Background from "../Background";
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 type Props = {
   data: Theme;
@@ -15,6 +19,7 @@ export default function PSPageClient({ data }: Props) {
   );
   const navigate = useNavigate();
   const contentRef = useRef<HTMLDivElement>(null);
+  const smootherRef = useRef<ScrollSmoother | null>(null);
 
   const activePS = data.problemStatements.find((ps) => ps.id === activePSId)!;
   const activeIndex = data.problemStatements.findIndex(
@@ -34,6 +39,21 @@ export default function PSPageClient({ data }: Props) {
     );
   }, [activePSId]);
 
+  useEffect(() => {
+    smootherRef.current = ScrollSmoother.create({
+      wrapper: "#smooth-page-wrapper",
+      content: "#smooth-page-content",
+      smooth: 0.75,
+      effects: false,
+      smoothTouch: 0.25,
+    });
+    return () => {
+      smootherRef.current?.kill();
+      smootherRef.current = null;
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
   const colors = {
     red: "#DA100C",
     yellow: "#FFE105",
@@ -42,27 +62,28 @@ export default function PSPageClient({ data }: Props) {
 
   return (
     <>
+   
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundImage: "url('/textures/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+
+      
       <Navbar />
 
-      <main
-        className="relative min-h-screen text-white"
-        style={{ background: "#0a0a0a" }}
-      >
-        {/* Fixed background that won't shift on mobile scroll */}
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            backgroundImage: "url('/textures/background.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            zIndex: 0,
-            pointerEvents: "none",
-          }}
-        />
-        {/* ── Foreground ── */}
-        <div className="relative" style={{ zIndex: 2 }}>
+      <div id="smooth-page-wrapper">
+        <div id="smooth-page-content">
+          <main className="relative min-h-screen text-white">
+            {/* ── Foreground ── */}
+            <div className="relative" style={{ zIndex: 2 }}>
           <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 pb-24 -mt-12">
             {/* ── Back button ── */}
             <button
@@ -323,7 +344,9 @@ export default function PSPageClient({ data }: Props) {
             </section>
           </div>
         </div>
-      </main>
+          </main>
+        </div>
+      </div>
     </>
   );
 }
