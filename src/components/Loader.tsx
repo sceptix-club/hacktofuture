@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import logoWhite from "../assets/logo_white.png"
+import logoWhite from "/logo_white.png"
 
 type LoaderProps = {
   progress: number
