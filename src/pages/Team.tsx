@@ -219,7 +219,7 @@ function DetailsContent({
         >
           {member.role}
         </div>
-{/* 
+        {/* 
         <p
           className="comic-sans text-black/80 leading-relaxed text-center"
           style={{
@@ -902,7 +902,7 @@ export default function Team() {
           />
         </div>
 
-        <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center max-md:mt-6">
+        <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center mt-4 max-md:mt-6">
           <p
             className="comic-sans uppercase tracking-widest mb-3 text-center"
             style={{
@@ -914,10 +914,10 @@ export default function Team() {
           </p>
 
           <h1
-            className="hero-title font-black uppercase text-center"
+            className="hero-title font-black uppercase"
             style={{
-              fontSize: "clamp(2.2rem, 9vw, 5rem)",
-              lineHeight: 0.92,
+              fontSize: "clamp(2.5rem, 8vw, 5rem)",
+              lineHeight: 0.9,
               color: "#fff",
             }}
           >
@@ -948,7 +948,7 @@ export default function Team() {
             </div>
           </div>
         ) : (
-          <div className="absolute inset-0 z-20 flex items-center justify-center px-4">
+          <div className="absolute mt-12 inset-0 z-20 flex items-center justify-center px-4">
             <div
               ref={bookRef}
               style={{
