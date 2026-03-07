@@ -182,10 +182,10 @@ const Sticker = forwardRef<
   { scale?: number; position?: [number, number, number] }
 >(({ ...props }, ref) => {
   // Textures are still loaded but kept available for future mesh content
-  const [smiley, invert] = useTexture([
-    "/textures/Sticker_1024x1024@2x.png",
-    "/textures/Sticker_1024x1024@2x_invert.png",
-  ]);
+  // const [smiley, invert] = useTexture([
+  //   "/textures/Sticker_1024x1024@2x.png",
+  //   "/textures/Sticker_1024x1024@2x_invert.png",
+  // ]);
 
   return <mesh ref={ref} {...props} />;
 });

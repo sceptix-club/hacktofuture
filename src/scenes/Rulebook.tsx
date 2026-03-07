@@ -1,57 +1,60 @@
-import { useEffect, useRef, useState } from 'react'
-import React from 'react'
-import * as THREE from "three"
-import { useGLTF, useAnimations } from '@react-three/drei'
-import { useGraph } from '@react-three/fiber'
-import { SkeletonUtils } from 'three/examples/jsm/Addons.js'
+import { useEffect, useRef } from "react";
+import React from "react";
+import * as THREE from "three";
+import { useGLTF, useAnimations } from "@react-three/drei";
+import { useGraph } from "@react-three/fiber";
+import { SkeletonUtils } from "three/examples/jsm/Addons.js";
 
 const handleDownload = (e: any) => {
-  e.stopPropagation()
-  const link = document.createElement("a")
-  link.href = "/rulebook.pdf"
-  link.download = "HackToFuture-Rulebook.pdf"
-  link.click()
-}
+  e.stopPropagation();
+  const link = document.createElement("a");
+  link.href = "/rulebook.pdf";
+  link.download = "HackToFuture-Rulebook.pdf";
+  link.click();
+};
 
 type ComicProps = {
-  tlRef: React.RefObject<gsap.core.Timeline | null>
-}
+  tlRef: React.RefObject<gsap.core.Timeline | null>;
+};
 
 function Comic({ tlRef }: ComicProps) {
-  const group = useRef<THREE.Group>(null)
-  const { scene, animations } = useGLTF('/book.glb')
-  const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
-  const { nodes, materials } = useGraph(clone)
-  const { actions } = useAnimations(animations, group)
+  const group = useRef<THREE.Group>(null);
+  const { scene, animations } = useGLTF("/book.glb");
+  const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
+  const { nodes, materials } = useGraph(clone);
+  const { actions } = useAnimations(animations, group);
 
   useEffect(() => {
     Object.values(actions).forEach((action) => {
-      if (!action) return
-      action.reset().play()
-      action.paused = true
-    })
-  }, [actions])
+      if (!action) return;
+      action.reset().play();
+      action.paused = true;
+    });
+  }, [actions]);
 
   useEffect(() => {
-    if (!actions) return
-    if (!tlRef?.current) return
+    if (!actions) return;
+    if (!tlRef?.current) return;
 
-    const tl = tlRef.current
-    const state = { progress: 0 }
+    const tl = tlRef.current;
+    const state = { progress: 0 };
 
-    tl.to(state, {
-      progress: 1,
-      duration: 0.7,
-      ease: "none",
-      onUpdate: () => {
-        Object.values(actions).forEach((action) => {
-          if (!action) return
-          action.time =
-            action.getClip().duration * state.progress
-        })
-      }
-    }, 1.3)
-  }, [actions, tlRef?.current])
+    tl.to(
+      state,
+      {
+        progress: 1,
+        duration: 0.7,
+        ease: "none",
+        onUpdate: () => {
+          Object.values(actions).forEach((action) => {
+            if (!action) return;
+            action.time = action.getClip().duration * state.progress;
+          });
+        },
+      },
+      1.3
+    );
+  }, [actions, tlRef?.current]);
 
   return (
     <group
@@ -81,8 +84,8 @@ function Comic({ tlRef }: ComicProps) {
         />
       </group>
     </group>
-  )
+  );
 }
 
-useGLTF.preload('/book.glb')
-export { Comic }
+useGLTF.preload("/book.glb");
+export { Comic };

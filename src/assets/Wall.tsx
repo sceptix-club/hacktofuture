@@ -2,7 +2,7 @@ import { Image } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import halftoneUrl from "./halftone.png";
+// import halftoneUrl from "./halftone.png";
 
 interface MarqueeGridProps {
   viewportWidth: number;
@@ -55,8 +55,9 @@ const MarqueeGrid = ({
 
     return Array.from({ length: columns }, (_, colIndex) =>
       Array.from({ length: imagesPerColumn }, (_, imgIndex) => ({
-        url: `https://picsum.photos/seed/${colIndex * imagesPerColumn + imgIndex
-          }/400/500`,
+        url: `https://picsum.photos/seed/${
+          colIndex * imagesPerColumn + imgIndex
+        }/400/500`,
       }))
     );
   }, [imageUrls, columns, imagesPerColumn]);

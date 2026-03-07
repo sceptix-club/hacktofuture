@@ -94,129 +94,129 @@ const ComicDots = ({
   />
 );
 
-const SpeedLines = () => {
-  const lines = useMemo(
-    () =>
-      Array.from({ length: 8 }, (_, i) => ({
-        // reduced 10 → 8
-        top: `${5 + (i / 8) * 90}%`,
-        width: `${30 + ((i * 37) % 50)}%`,
-        left: `${(i * 13) % 20}%`,
-        height: i % 2 === 0 ? 2 : 1,
-        delay: (i * 0.3) % 3,
-        duration: 2.5 + (i % 3) * 0.7,
-      })),
-    []
-  );
+// const SpeedLines = () => {
+//   const lines = useMemo(
+//     () =>
+//       Array.from({ length: 8 }, (_, i) => ({
+//         // reduced 10 → 8
+//         top: `${5 + (i / 8) * 90}%`,
+//         width: `${30 + ((i * 37) % 50)}%`,
+//         left: `${(i * 13) % 20}%`,
+//         height: i % 2 === 0 ? 2 : 1,
+//         delay: (i * 0.3) % 3,
+//         duration: 2.5 + (i % 3) * 0.7,
+//       })),
+//     []
+//   );
 
-  return (
-    <>
-      {lines.map((l, i) => (
-        <div
-          key={i}
-          className="absolute pointer-events-none"
-          style={{
-            top: l.top,
-            left: l.left,
-            width: l.width,
-            height: l.height,
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
-            animation: `speed-lines-pulse ${l.duration}s ease-in-out ${l.delay}s infinite`,
-            // Promote to own layer so opacity animation is GPU-only
-            willChange: "opacity",
-            transform: "translateZ(0)",
-          }}
-        />
-      ))}
-    </>
-  );
-};
+//   return (
+//     <>
+//       {lines.map((l, i) => (
+//         <div
+//           key={i}
+//           className="absolute pointer-events-none"
+//           style={{
+//             top: l.top,
+//             left: l.left,
+//             width: l.width,
+//             height: l.height,
+//             background:
+//               "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)",
+//             animation: `speed-lines-pulse ${l.duration}s ease-in-out ${l.delay}s infinite`,
+//             // Promote to own layer so opacity animation is GPU-only
+//             willChange: "opacity",
+//             transform: "translateZ(0)",
+//           }}
+//         />
+//       ))}
+//     </>
+//   );
+// };
 
-const FloatingShapes = () => {
-  // Reduced to 4 shapes (was 6)
-  const shapes = useMemo(
-    () => [
-      {
-        type: "star",
-        x: "8%",
-        y: "15%",
-        size: 90,
-        color: "rgba(255,255,0,0.07)",
-        dur: 18,
-        delay: 0,
-      },
-      {
-        type: "bolt",
-        x: "92%",
-        y: "50%",
-        size: 50,
-        color: "rgba(255,255,0,0.09)",
-        dur: 16,
-        delay: 1,
-      },
-      {
-        type: "orb",
-        x: "20%",
-        y: "30%",
-        size: 140,
-        color: "rgba(180,100,255,0.05)",
-        dur: 28,
-        delay: 1,
-      },
-      {
-        type: "orb",
-        x: "70%",
-        y: "45%",
-        size: 100,
-        color: "rgba(0,200,200,0.04)",
-        dur: 30,
-        delay: 3,
-      },
-    ],
-    []
-  );
+// const FloatingShapes = () => {
+//   // Reduced to 4 shapes (was 6)
+//   const shapes = useMemo(
+//     () => [
+//       {
+//         type: "star",
+//         x: "8%",
+//         y: "15%",
+//         size: 90,
+//         color: "rgba(255,255,0,0.07)",
+//         dur: 18,
+//         delay: 0,
+//       },
+//       {
+//         type: "bolt",
+//         x: "92%",
+//         y: "50%",
+//         size: 50,
+//         color: "rgba(255,255,0,0.09)",
+//         dur: 16,
+//         delay: 1,
+//       },
+//       {
+//         type: "orb",
+//         x: "20%",
+//         y: "30%",
+//         size: 140,
+//         color: "rgba(180,100,255,0.05)",
+//         dur: 28,
+//         delay: 1,
+//       },
+//       {
+//         type: "orb",
+//         x: "70%",
+//         y: "45%",
+//         size: 100,
+//         color: "rgba(0,200,200,0.04)",
+//         dur: 30,
+//         delay: 3,
+//       },
+//     ],
+//     []
+//   );
 
-  return (
-    <>
-      {shapes.map((s, i) => {
-        const common: React.CSSProperties = {
-          position: "absolute",
-          left: s.x,
-          top: s.y,
-          color: s.color,
-          // Use transform-based animation only (GPU composited)
-          animation: `comic-drift ${s.dur}s ease-in-out ${s.delay}s infinite`,
-          pointerEvents: "none",
-          willChange: "transform",
-          transform: "translateZ(0)",
-        };
+//   return (
+//     <>
+//       {shapes.map((s, i) => {
+//         const common: React.CSSProperties = {
+//           position: "absolute",
+//           left: s.x,
+//           top: s.y,
+//           color: s.color,
+//           // Use transform-based animation only (GPU composited)
+//           animation: `comic-drift ${s.dur}s ease-in-out ${s.delay}s infinite`,
+//           pointerEvents: "none",
+//           willChange: "transform",
+//           transform: "translateZ(0)",
+//         };
 
-        if (s.type === "star")
-          return <Starburst key={i} size={s.size} style={common} />;
-        if (s.type === "bolt")
-          return <Lightning key={i} size={s.size} style={common} />;
-        return (
-          <div
-            key={i}
-            className="absolute rounded-full"
-            style={
-              {
-                ...common,
-                width: s.size,
-                height: s.size,
-                background: `radial-gradient(circle, ${s.color}, transparent 70%)`,
-                animation: `comic-pulse ${s.dur * 0.6}s ease-in-out ${s.delay
-                  }s infinite`,
-                willChange: "transform, opacity",
-              } as React.CSSProperties
-            }
-          />
-        );
-      })}
-    </>
-  );
-};
+//         if (s.type === "star")
+//           return <Starburst key={i} size={s.size} style={common} />;
+//         if (s.type === "bolt")
+//           return <Lightning key={i} size={s.size} style={common} />;
+//         return (
+//           <div
+//             key={i}
+//             className="absolute rounded-full"
+//             style={
+//               {
+//                 ...common,
+//                 width: s.size,
+//                 height: s.size,
+//                 background: `radial-gradient(circle, ${s.color}, transparent 70%)`,
+//                 animation: `comic-pulse ${s.dur * 0.6}s ease-in-out ${s.delay
+//                   }s infinite`,
+//                 willChange: "transform, opacity",
+//               } as React.CSSProperties
+//             }
+//           />
+//         );
+//       })}
+//     </>
+//   );
+// };
 
 const CTA = forwardRef<HTMLDivElement, CTAProps>(
   (
@@ -241,10 +241,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         }}
       >
         {/* ── LAYER 2: Radial gradient vignette ── */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-    
-        />
+        <div className="absolute inset-0 pointer-events-none" />
 
         {/* ── Animated layers only rendered when CTA is active ── */}
         {/* {isActive && (
