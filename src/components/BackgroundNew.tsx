@@ -4,7 +4,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import {
   MotionPathControls,
   useMotion,
-  useTexture,
   Float,
   Environment,
 } from "@react-three/drei";

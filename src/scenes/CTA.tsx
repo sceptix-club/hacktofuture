@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { forwardRef } from "react";
 import Button from "../components/ui/Button";
 
 type CTAProps = {
@@ -7,51 +7,51 @@ type CTAProps = {
   buttonText?: string;
 };
 
-const Starburst = ({
-  size,
-  className,
-  style,
-}: {
-  size: number;
-  className?: string;
-  style?: React.CSSProperties;
-}) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 100 100"
-    className={className}
-    style={style}
-  >
-    <polygon
-      points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
-      fill="currentColor"
-    />
-  </svg>
-);
+// const Starburst = ({
+//   size,
+//   className,
+//   style,
+// }: {
+//   size: number;
+//   className?: string;
+//   style?: React.CSSProperties;
+// }) => (
+//   <svg
+//     width={size}
+//     height={size}
+//     viewBox="0 0 100 100"
+//     className={className}
+//     style={style}
+//   >
+//     <polygon
+//       points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
+//       fill="currentColor"
+//     />
+//   </svg>
+// );
 
-const Lightning = ({
-  size,
-  className,
-  style,
-}: {
-  size: number;
-  className?: string;
-  style?: React.CSSProperties;
-}) => (
-  <svg
-    width={size}
-    height={size * 1.6}
-    viewBox="0 0 60 96"
-    className={className}
-    style={style}
-  >
-    <polygon
-      points="38,0 12,42 28,42 8,96 52,38 34,38 56,0"
-      fill="currentColor"
-    />
-  </svg>
-);
+// const Lightning = ({
+//   size,
+//   className,
+//   style,
+// }: {
+//   size: number;
+//   className?: string;
+//   style?: React.CSSProperties;
+// }) => (
+//   <svg
+//     width={size}
+//     height={size * 1.6}
+//     viewBox="0 0 60 96"
+//     className={className}
+//     style={style}
+//   >
+//     <polygon
+//       points="38,0 12,42 28,42 8,96 52,38 34,38 56,0"
+//       fill="currentColor"
+//     />
+//   </svg>
+// );
 
 // const Explosion = ({
 //   size,
