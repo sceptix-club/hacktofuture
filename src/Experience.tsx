@@ -126,13 +126,13 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       2.0
     );
 
-    // Scene 4: Still camera (3.0 - 5.0) – extended for TimerTimeline dwell
+    // Scene 4: Still camera (3.0 - 4.55) – TimerTimeline dwell
     const scene4State = { progress: 0 };
     tl.to(
       scene4State,
       {
         progress: 1,
-        duration: 2,
+        duration: 1.55,
         onUpdate: () => {
           camera.position.set(0, -60, 0);
           camera.lookAt(0, -60, 0);
@@ -141,7 +141,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       3.0
     );
 
-    // Scene 5: Cards with pauses (5.0 - 6.0) – starts from Theme 3
+    // Scene 5: Cards with pauses – starts at 4.55 (aligned with theme 1 text)
     const scene5State = { angle: Math.PI * 1.5 };
     const pivot = { x: 0, y: -124, z: 0 };
     const radius = 10;
@@ -159,7 +159,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     tl.set(
       scene5State,
       { angle: Math.PI * 1.5, onUpdate: updateCardCamera },
-      5.0
+      4.55
     );
 
     // Theme 3 (bottom) – pause
@@ -170,7 +170,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         duration: 0.5,
         onUpdate: updateCardCamera,
       },
-      5.0
+      4.55
     );
 
     // Theme 3 → Theme 4 (left)

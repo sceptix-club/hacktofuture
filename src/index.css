@@ -24,3 +24,23 @@ body {
 body::-webkit-scrollbar {
   display: none;
 }
+
+@font-face {
+  font-family: "digital-7-mono";
+  src: url("/fonts/digital-7 (mono).ttf");
+}
+
+@font-face {
+  font-family: "komigo";
+  src: url("/fonts/Komigo3D-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Badabom";
+  src: url("/fonts/BADABB__.TTF");
+}
+
+@font-face {
+  font-family: "Super Squad";
+  src: url("/fonts/Super Squad Italic.ttf");
+}
