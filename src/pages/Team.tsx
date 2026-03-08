@@ -5,6 +5,7 @@ import "../App.css";
 import { TEAM_MEMBERS } from "../content/team";
 import type { TeamMember } from "../content/team";
 import { coreTeamPrefix } from "../lib/utils";
+import ComicDecorations from "../components/ComicDecorations";
 
 const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
@@ -901,6 +902,8 @@ export default function Team() {
             }}
           />
         </div>
+
+        {!isMobile && <ComicDecorations bookRef={bookRef as React.RefObject<HTMLDivElement>} />}
 
         <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center mt-4 max-md:mt-6">
           <p
