@@ -55,7 +55,7 @@ export default function About() {
   const stats = [
     { label: "PRIZE POOL", value: "₹3,80,000", color: "#E8003D" },
     { label: "TEAMS", value: "40", color: "#00C6FF" },
-    { label: "DATES", value: "15-17 APR", color: "#FFE105"},
+    { label: "DATES", value: "15-17 APR", color: "#FFE105" },
     { label: "THEMES", value: "3", color: "#A855F7" },
     { label: "VENUE", value: "Kalam Hall", color: "#FF8A00", colSpan: 2 },
   ];
@@ -229,7 +229,7 @@ export default function About() {
                       letterSpacing: "0.1em",
                     }}
                   >
-                    EST. 2021
+                    EST. 2023
                   </span>
                   <span
                     className="comic-sans font-bold px-3 py-1"
