@@ -145,7 +145,7 @@ function ThemeCard({
           </span>
 
           {/* Arrow — comic panel style */}
-          <div
+          {/* <div
             className="flex items-center justify-center transition-all duration-200"
             style={{
               width: 32,
@@ -168,7 +168,7 @@ function ThemeCard({
               <line x1="7" y1="17" x2="17" y2="7" />
               <polyline points="7 7 17 7 17 17" />
             </svg>
-          </div>
+          </div> */}
         </div>
 
         {/* Title */}
@@ -212,7 +212,7 @@ function ThemeCard({
           style={{ borderTop: "2px solid rgba(0,0,0,0.08)" }}
         >
           {/* PS count badge */}
-          <div
+          {/* <div
             className="flex items-center gap-2"
             style={{
               background: "rgba(0,0,0,0.06)",
@@ -231,7 +231,7 @@ function ThemeCard({
             >
               {themes[theme.slug].problemStatements.length} PS
             </span>
-          </div>
+          </div> */}
 
           {/* CTA */}
           <span
@@ -243,8 +243,7 @@ function ThemeCard({
               letterSpacing: "0.1em",
             }}
           >
-            Explore
-            <span style={{ fontSize: "1.1em" }}>→</span>
+            Coming Soon ...
           </span>
         </div>
       </div>
@@ -369,13 +368,12 @@ export default function Themes() {
             <p
               className="comic-sans text-center mt-5 max-w-lg"
               style={{
-                fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
-                color: "rgba(255,255,255,0.85)",
-                lineHeight: 1.6,
+              fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+              color: "rgba(255,255,255,0.85)",
+              lineHeight: 1.6,
               }}
             >
-              Choose a theme and explore the problem statements. Each one is a
-              chance to build something that matters.
+              Choose a theme. The problem statements will be revealed later.
             </p>
           </div>
 

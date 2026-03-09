@@ -581,7 +581,7 @@ function TierRow({
 
       <div className="flex flex-col items-center gap-5 w-full">
         {/* Tier label */}
-        <div className="flex items-center gap-3 w-full max-w-4xl">
+        <div className="flex items-center gap-3 w-full max-w-4xl -mt-18">
           <div
             style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
           />
@@ -607,7 +607,7 @@ function TierRow({
         {/* Cards */}
         <div
           ref={rowRef}
-          className="flex flex-wrap items-center justify-center gap-4 md:gap-6"
+          className="flex flex-wrap items-center mt-4 justify-center gap-4 md:gap-6"
         >
           {sponsors.map((s) => (
             <div key={s.name} className="sponsor-card-wrap">
@@ -633,8 +633,8 @@ export default function Sponsors() {
     if (!headerRef.current) return;
     gsap.fromTo(
       headerRef.current,
-      { opacity: 0, y: -24 },
-      { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }
+      { opacity: 0, y: -30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
     );
   }, []);
 
@@ -666,7 +666,10 @@ export default function Sponsors() {
           style={{ zIndex: 1 }}
         >
           {/* Header */}
-          <div ref={headerRef} className="flex flex-col -mt-12 items-center">
+          <div
+            ref={headerRef}
+            className="-mt-12 mb-14 flex flex-col items-center"
+          >
             <p
               className="comic-sans uppercase tracking-widest mb-3"
               style={{
@@ -676,6 +679,7 @@ export default function Sponsors() {
             >
               HackToFuture 4.0
             </p>
+
             <h1
               className="hero-title text-center font-black uppercase"
               style={{
@@ -686,14 +690,28 @@ export default function Sponsors() {
             >
               Sponsors
             </h1>
+
             <div
               className="mt-4"
               style={{
-                height: 3,
-                width: "clamp(60px, 8vw, 100px)",
+                height: 5,
+                width: "clamp(60px, 10vw, 120px)",
                 background: "#E8003D",
+                boxShadow: "2px 2px 0 #000",
               }}
             />
+
+            <p
+              className="comic-sans text-center mt-5 max-w-lg"
+              style={{
+                fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+                color: "rgba(255,255,255,0.85)",
+                lineHeight: 1.6,
+              }}
+            >
+              Meet the organizations powering HackToFuture 4.0 — and compete for
+              an incredible prize pool up for grabs.
+            </p>
           </div>
 
           {TITLE_SPONSORS.length > 0 && (
