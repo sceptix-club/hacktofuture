@@ -4,8 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useNavigate } from "react-router-dom";
-import { themes, type ThemeSlug } from "../content/data";
-import Background from "../components/Background";
+import { type ThemeSlug } from "../content/data";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -54,7 +53,6 @@ const THEME_CARDS = [
 /* ─── Individual Theme Card ─── */
 function ThemeCard({
   theme,
-  index,
   onClick,
 }: {
   theme: (typeof THEME_CARDS)[number];
