@@ -432,6 +432,7 @@ function SponsorCard({
     gsap.to(ref.current, {
       y: -6,
       scale: 1.04,
+      boxShadow: "8px 8px 0 rgba(0,0,0,0.55)",
       duration: 0.25,
       ease: "power2.out",
     });
@@ -439,6 +440,7 @@ function SponsorCard({
     gsap.to(ref.current, {
       y: 0,
       scale: 1,
+      boxShadow: "4px 4px 0 rgba(0,0,0,0.55)",
       duration: 0.25,
       ease: "power2.out",
     });
@@ -449,90 +451,129 @@ function SponsorCard({
       onClick={onOpen}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      className="flex flex-col items-center justify-center gap-3 cursor-pointer"
+      className="relative flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden"
       style={{
         width: cardW,
         height: cardH,
-        paddingTop: size === "lg" ? 20 : 14,
-        paddingBottom: size === "lg" ? 20 : 14,
-        paddingLeft: 12,
-        paddingRight: 12,
         background: "#FFFEF2",
+        // lined paper texture — same as ThemeCard
         backgroundImage:
           "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
-        border: "2.5px solid #000",
-        borderTop: `4px solid ${accent}`,
-        borderRadius: "0.6rem",
+        border: "3px solid #000",
+        borderTop: "none", // accent strip takes the top
+        borderRadius: 0, // flat comic style
         boxShadow: "4px 4px 0 rgba(0,0,0,0.55)",
         willChange: "transform",
         flexShrink: 0,
+        padding: 0,
         textAlign: "center",
       }}
     >
-      {/* Logo */}
+      {/* ── Accent strip top — identical to ThemeCard ── */}
       <div
-        className="flex items-center justify-center"
         style={{
-          width: imgSize + 16,
-          height: imgSize,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 6,
+          background: accent,
         }}
-      >
-        <img
-          src={sponsor.logo}
-          alt={sponsor.name}
-          style={{
-            maxWidth: imgSize,
-            maxHeight: imgSize * 0.7,
-            objectFit: "contain",
-            userSelect: "none",
-            pointerEvents: "none",
-          }}
-          draggable={false}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = "none";
-            const p = (e.currentTarget as HTMLImageElement).parentElement;
-            if (p && !p.querySelector(".fb")) {
-              const s = document.createElement("span");
-              s.className = "fb";
-              s.textContent = sponsor.name[0];
-              s.style.cssText = `font-weight:900;font-size:1.4rem;color:${accent};`;
-              p.appendChild(s);
-            }
-          }}
-        />
-      </div>
-
-      {/* Divider */}
-      <div
-        style={{ width: "60%", height: 1.5, background: "#000", opacity: 0.1 }}
       />
 
-      {/* Name */}
-      <span
-        className="hero-title uppercase"
+      {/* ── Halftone: top-right corner — identical to ThemeCard ── */}
+      <div
+        className="absolute pointer-events-none"
         style={{
-          fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
-          color: "#111",
-          letterSpacing: "0.05em",
-          lineHeight: 1.2,
+          top: 6,
+          right: 0,
+          width: "70%",
+          height: "70%",
+          backgroundImage: `radial-gradient(circle, rgba(6,0,0,0.1) 1.5px, transparent 1.5px)`,
+          backgroundSize: "8px 8px",
+          maskImage:
+            "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
         }}
-      >
-        {sponsor.name}
-      </span>
+      />
 
-      {/* Learn more hint */}
-      <span
-        className="comic-sans"
+      {/* ── Content — sits above halftone ── */}
+      <div
+        className="relative flex flex-col items-center justify-center gap-3 w-full h-full"
         style={{
-          fontSize: "0.6rem",
-          color: accent,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          opacity: 0.8,
+          paddingTop: size === "lg" ? 28 : 20,
+          paddingBottom: size === "lg" ? 20 : 14,
+          paddingLeft: 12,
+          paddingRight: 12,
         }}
       >
-        tap to learn more
-      </span>
+        {/* Logo */}
+        <div
+          className="flex items-center justify-center"
+          style={{ width: imgSize + 16, height: imgSize }}
+        >
+          <img
+            src={sponsor.logo}
+            alt={sponsor.name}
+            style={{
+              maxWidth: imgSize,
+              maxHeight: imgSize * 0.7,
+              objectFit: "contain",
+              userSelect: "none",
+              pointerEvents: "none",
+            }}
+            draggable={false}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+              const p = (e.currentTarget as HTMLImageElement).parentElement;
+              if (p && !p.querySelector(".fb")) {
+                const s = document.createElement("span");
+                s.className = "fb";
+                s.textContent = sponsor.name[0];
+                s.style.cssText = `font-weight:900;font-size:1.4rem;color:${accent};`;
+                p.appendChild(s);
+              }
+            }}
+          />
+        </div>
+
+        {/* Accent dash — same as ThemeCard title underline */}
+        <div
+          style={{
+            width: "clamp(24px, 5vw, 40px)",
+            height: 3,
+            background: accent,
+          }}
+        />
+
+        {/* Name */}
+        <span
+          className="hero-title uppercase"
+          style={{
+            fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
+            color: "#111",
+            letterSpacing: "0.05em",
+            lineHeight: 1.2,
+          }}
+        >
+          {sponsor.name}
+        </span>
+
+        {/* Tap hint */}
+        <span
+          className="comic-sans"
+          style={{
+            fontSize: "0.6rem",
+            color: accent,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            opacity: 0.8,
+          }}
+        >
+          tap to learn more
+        </span>
+      </div>
     </button>
   );
 }
