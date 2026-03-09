@@ -1,6 +1,10 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 /* ─── Types ─── */
 interface Sponsor {
@@ -669,6 +673,7 @@ function TierRow({
 /* ─── Main Page ─── */
 export default function Sponsors() {
   const headerRef = useRef<HTMLDivElement>(null);
+  const smootherRef = useRef<ScrollSmoother | null>(null);
 
   useEffect(() => {
     if (!headerRef.current) return;
@@ -679,114 +684,141 @@ export default function Sponsors() {
     );
   }, []);
 
+  useEffect(() => {
+    smootherRef.current = ScrollSmoother.create({
+      wrapper: "#sponsors-smooth-wrapper",
+      content: "#sponsors-smooth-content",
+      smooth: 0.75,
+      effects: false,
+      smoothTouch: 0.25,
+      normalizeScroll: true,
+    });
+    return () => {
+      smootherRef.current?.kill();
+      smootherRef.current = null;
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
   return (
     <>
-      <Navbar />
+      {/* ── Fixed background — identical to Themes.tsx ── */}
       <div
-        className="relative w-full min-h-screen"
         style={{
-          background: "#0a0a0a",
+          position: "fixed",
+          inset: 0,
           backgroundImage: "url('/textures/background.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
+          backgroundAttachment: "scroll",
+          zIndex: 0,
+          pointerEvents: "none",
+          willChange: "unset",
+          transform: "none",
         }}
-      >
-        <div
-          className="fixed inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            zIndex: 0,
-          }}
-        />
+      />
 
-        <div
-          className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-14 md:gap-20"
-          style={{ zIndex: 1 }}
-        >
-          {/* Header */}
-          <div
-            ref={headerRef}
-            className="-mt-12 mb-14 flex flex-col items-center"
-          >
-            <p
-              className="comic-sans uppercase tracking-widest mb-3"
-              style={{
-                fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
-                color: "rgba(255,255,255,0.6)",
-              }}
-            >
-              HackToFuture 4.0
-            </p>
+      {/* ── Dot grid overlay — identical to Themes.tsx ── */}
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          zIndex: 1,
+        }}
+      />
 
-            <h1
-              className="hero-title text-center font-black uppercase"
-              style={{
-                fontSize: "clamp(2.5rem, 8vw, 5rem)",
-                lineHeight: 0.9,
-                color: "#fff",
-              }}
-            >
-              Sponsors
-            </h1>
+      <Navbar />
 
-            <div
-              className="mt-4"
-              style={{
-                height: 5,
-                width: "clamp(60px, 10vw, 120px)",
-                background: "#E8003D",
-                boxShadow: "2px 2px 0 #000",
-              }}
-            />
+      <div id="sponsors-smooth-wrapper" style={{ zIndex: 2 }}>
+        <div id="sponsors-smooth-content">
+          <div className="relative w-full min-h-screen">
+            <div className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-14 md:gap-20">
+              {/* Header */}
+              <div
+                ref={headerRef}
+                className="-mt-12 mb-14 flex flex-col items-center"
+              >
+                <p
+                  className="comic-sans uppercase tracking-widest mb-3"
+                  style={{
+                    fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
+                >
+                  HackToFuture 4.0
+                </p>
 
-            <p
-              className="comic-sans text-center mt-5 -mb-12 max-w-lg"
-              style={{
-                fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
-                color: "rgba(255,255,255,0.85)",
-                lineHeight: 1.6,
-              }}
-            >
-              Meet the organizations powering HackToFuture 4.0 — and compete for
-              an incredible prize pool up for grabs.
-            </p>
+                <h1
+                  className="hero-title text-center font-black uppercase"
+                  style={{
+                    fontSize: "clamp(2.5rem, 8vw, 5rem)",
+                    lineHeight: 0.9,
+                    color: "#fff",
+                  }}
+                >
+                  Sponsors
+                </h1>
+
+                <div
+                  className="mt-4"
+                  style={{
+                    height: 5,
+                    width: "clamp(60px, 10vw, 120px)",
+                    background: "#E8003D",
+                    boxShadow: "2px 2px 0 #000",
+                  }}
+                />
+
+                <p
+                  className="comic-sans text-center mt-5 -mb-12 max-w-lg"
+                  style={{
+                    fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+                    color: "rgba(255,255,255,0.85)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Meet the organizations powering HackToFuture 4.0 — and compete
+                  for an incredible prize pool up for grabs.
+                </p>
+              </div>
+
+              {TITLE_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Title Sponsors"
+                  accent={TIER_COLORS.title}
+                  sponsors={TITLE_SPONSORS}
+                  size="lg"
+                />
+              )}
+              {GOLD_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Gold Sponsors"
+                  accent={TIER_COLORS.gold}
+                  sponsors={GOLD_SPONSORS}
+                  size="lg"
+                />
+              )}
+              {SILVER_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Silver Sponsors"
+                  accent={TIER_COLORS.silver}
+                  sponsors={SILVER_SPONSORS}
+                  size="md"
+                />
+              )}
+              {BRONZE_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Bronze Sponsors"
+                  accent={TIER_COLORS.bronze}
+                  sponsors={BRONZE_SPONSORS}
+                  size="sm"
+                />
+              )}
+            </div>
           </div>
-
-          {TITLE_SPONSORS.length > 0 && (
-            <TierRow
-              label="Title Sponsors"
-              accent={TIER_COLORS.title}
-              sponsors={TITLE_SPONSORS}
-              size="lg"
-            />
-          )}
-          {GOLD_SPONSORS.length > 0 && (
-            <TierRow
-              label="Gold Sponsors"
-              accent={TIER_COLORS.gold}
-              sponsors={GOLD_SPONSORS}
-              size="lg"
-            />
-          )}
-          {SILVER_SPONSORS.length > 0 && (
-            <TierRow
-              label="Silver Sponsors"
-              accent={TIER_COLORS.silver}
-              sponsors={SILVER_SPONSORS}
-              size="md"
-            />
-          )}
-          {BRONZE_SPONSORS.length > 0 && (
-            <TierRow
-              label="Bronze Sponsors"
-              accent={TIER_COLORS.bronze}
-              sponsors={BRONZE_SPONSORS}
-              size="sm"
-            />
-          )}
         </div>
       </div>
     </>
