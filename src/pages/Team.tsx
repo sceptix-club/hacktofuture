@@ -11,8 +11,9 @@ const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
 
 const paperStyle: CSSProperties = {
-  background: "#fffdf3",
+  background: "#fffdf3", // ← base fallback color, change this to any tone
   backgroundImage: `
+    url('/textures/torn-paper.svg'),  
     radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px),
     repeating-linear-gradient(
       0deg,
@@ -22,7 +23,8 @@ const paperStyle: CSSProperties = {
       rgba(0,0,0,0.03) 29px
     )
   `,
-  backgroundSize: "8px 8px, auto",
+  backgroundSize: "cover, 8px 8px, auto",
+  backgroundRepeat: "no-repeat, repeat, repeat",
 };
 
 const pageBlockerStyle: CSSProperties = {
@@ -1204,7 +1206,7 @@ export default function Team() {
         {isMobile ? (
           <div
             className="absolute inset-x-0 z-20 flex items-center justify-center"
-            style={{ top: 140 , bottom: 80 }}
+            style={{ top: 140, bottom: 80 }}
           >
             <div
               ref={mobileStackRef}

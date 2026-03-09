@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+width="490"
+height="520"
+viewBox="0 0 490 520">
+
+<!-- Background -->
+<rect width="490" height="520" fill="#ffffff"/>
+
+<!-- Top Left Panel -->
+<polygon points="10,10 270,10 235,150 10,150"
+fill="#e6e6e6" stroke="#333" stroke-width="3"/>
+
+<!-- Top Right Panel -->
+<polygon points="280,10 480,10 480,150 250,150"
+fill="#e6e6e6" stroke="#333" stroke-width="3"/>
+
+<!-- Middle Left Panel -->
+<rect x="10" y="170" width="310" height="150"
+fill="#e6e6e6" stroke="#333" stroke-width="3"/>
+
+<!-- Middle Right Panel -->
+<rect x="335" y="170" width="145" height="150"
+fill="#e6e6e6" stroke="#333" stroke-width="3"/>
+
+<!-- Bottom Left Panel -->
+<polygon points="10,340 250,340 210,510 10,510"
+fill="#e6e6e6" stroke="#333" stroke-width="3"/>
+
+<!-- Bottom Right Panel -->
+<polygon points="260,340 480,340 480,510 220,510"
+fill="#e6e6e6" stroke="#333" stroke-width="3"/>
+
+</svg>
