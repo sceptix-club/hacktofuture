@@ -166,7 +166,11 @@ function HomePage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       ScrollTrigger.config({ ignoreMobileResize: true });
-      ScrollTrigger.normalizeScroll(true);
+
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      if (!isIOS) {
+        ScrollTrigger.normalizeScroll(true);
+      }
 
       smootherRef.current = ScrollSmoother.create({
         wrapper: "#smooth-wrapper",
