@@ -7,12 +7,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&family=Dela+Gothic+One&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&family=Dela+Gothic+One&display=block" rel="stylesheet">
+  <!-- Preload critical 3D assets so they start downloading immediately -->
+  <link rel="preload" href="/fonts/DelaGothicOne-Regular.ttf" as="fetch" crossorigin>
+  <link rel="preload" href="/tv2-compressed-transformed.glb" as="fetch" crossorigin>
+  <link rel="preload" href="/textures/background.jpg" as="image">
   <link rel="prefetch" href="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4263.66930063788!2d74.89606981102712!3d12.91077313734648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba359dfac132663%3A0xa7bf228838232d32!2sSt%20Joseph%20Engineering%20College!5e1!3m2!1sen!2sin!4v1770539822992!5m2!1sen!2sin">
   <title>HackToFuture 4.0</title>
 </head>
 
 <body>
+  <!-- Instant black screen before React mounts — prevents any content flash -->
+  <div id="pre-loader" style="position:fixed;inset:0;z-index:999999;background:#000;transition:opacity 0.3s ease;">
+    <!-- Force font render during loading so it's ready when loader fades -->
+    <span style="position:absolute;opacity:0;font-family:'Dela Gothic One';font-size:1px;pointer-events:none;">.</span>
+    <span style="position:absolute;opacity:0;font-family:'Comic Relief';font-size:1px;pointer-events:none;">.</span>
+  </div>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
 </body>
