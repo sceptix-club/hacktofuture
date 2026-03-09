@@ -22,4 +22,10 @@ export default defineConfig({
       },
     },
   },
+
+  preview: {
+    // Ensure SPA fallback works in preview mode
+  },
+
+  appType: "spa",
 });
