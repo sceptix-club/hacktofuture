@@ -903,14 +903,19 @@ export default function Team() {
           />
         </div>
 
-        {!isMobile && <ComicDecorations bookRef={bookRef as React.RefObject<HTMLDivElement>} />}
+        {!isMobile && (
+          <ComicDecorations
+            bookRef={bookRef as React.RefObject<HTMLDivElement>}
+          />
+        )}
 
+        {/* ── Header — copied from Themes.tsx ── */}
         <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center mt-4 max-md:mt-6">
           <p
             className="comic-sans uppercase tracking-widest mb-3 text-center"
             style={{
-              fontSize: "clamp(0.68rem, 1.3vw, 0.85rem)",
-              color: "rgba(255,255,255,0.64)",
+              fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+              color: "rgba(255,255,255,0.6)",
             }}
           >
             HackToFuture 4.0
@@ -930,17 +935,32 @@ export default function Team() {
           <div
             className="mt-4"
             style={{
-              height: 3,
-              width: "clamp(60px, 10vw, 100px)",
+              height: 5,
+              width: "clamp(60px, 10vw, 120px)",
               background: "#E8003D",
+              boxShadow: "2px 2px 0 #000",
             }}
           />
+
+          {/* Subtitle — mobile only shows swipe hint */}
+          <p
+            className="comic-sans text-center mt-5 mb-5 max-w-lg"
+            style={{
+              fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+              color: "rgba(255,255,255,0.85)",
+              lineHeight: 1.6,
+            }}
+          >
+            {isMobile
+              ? "Swipe left or right to meet the team."
+              : "Flip through the pages to meet the people building HackToFuture 4.0."}
+          </p>
         </div>
 
         {isMobile ? (
           <div
             className="absolute inset-x-0 z-20 flex items-center justify-center"
-            style={{ top: 140, bottom: 110 }}
+            style={{ top: 160, bottom: 110 }}
           >
             <div ref={mobileCardRef} className="flex justify-center">
               <MobileMemberCard
@@ -960,7 +980,7 @@ export default function Team() {
                 perspective: "2500px",
                 perspectiveOrigin: "50% 50%",
                 position: "relative",
-                marginTop: 48,
+                marginTop: 75,
               }}
             >
               <div
@@ -974,7 +994,7 @@ export default function Team() {
                     border: "4px solid #000",
                     borderRight: "2px solid #000",
                     borderRadius: "8px 0 0 8px",
-                    boxShadow: "-6px 6px 0 rgba(0,0,0,0.35)",
+                    boxShadow: "6px 6px 0 rgba(0,0,0,0.35)",
                     zIndex: 0,
                   }}
                 >
@@ -1021,6 +1041,7 @@ export default function Team() {
           </div>
         )}
 
+        {/* ── Mobile pagination — truncated dots ── */}
         <div
           className="absolute z-30 flex gap-2 items-center"
           style={
@@ -1029,6 +1050,8 @@ export default function Team() {
                   left: "50%",
                   bottom: 72,
                   transform: "translateX(-50%)",
+                  maxWidth: "80vw",
+                  overflow: "hidden",
                 }
               : {
                   right: 24,
@@ -1038,27 +1061,43 @@ export default function Team() {
                 }
           }
         >
-          {TEAM_MEMBERS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => jumpToPage(i)}
-              style={{
-                width: displayPage === i ? 14 : 8,
-                height: displayPage === i ? 14 : 8,
-                borderRadius: 2,
-                background:
-                  displayPage === i ? "#DA100C" : "rgba(255,255,255,0.28)",
-                border: `2px solid ${
-                  displayPage === i ? "#000" : "rgba(255,255,255,0.18)"
-                }`,
-                boxShadow: displayPage === i ? "2px 2px 0 #000" : "none",
-                transform: `rotate(${displayPage === i ? 45 : 0}deg)`,
-                cursor: "pointer",
-              }}
-              title={`Member ${i + 1}`}
-              aria-label={`Go to member ${i + 1}`}
-            />
-          ))}
+          {TEAM_MEMBERS.map((_, i) => {
+            if (isMobile) {
+              // show window of 5 dots centred around current page
+              const window = 5;
+              const half = Math.floor(window / 2);
+              const start = Math.max(
+                0,
+                Math.min(displayPage - half, TOTAL_MEMBERS - window)
+              );
+              const end = Math.min(TOTAL_MEMBERS - 1, start + window - 1);
+              if (i < start || i > end) return null;
+            }
+
+            return (
+              <button
+                key={i}
+                onClick={() => jumpToPage(i)}
+                style={{
+                  width: displayPage === i ? 14 : 8,
+                  height: displayPage === i ? 14 : 8,
+                  borderRadius: 2,
+                  background:
+                    displayPage === i ? "#DA100C" : "rgba(255,255,255,0.28)",
+                  border: `2px solid ${
+                    displayPage === i ? "#000" : "rgba(255,255,255,0.18)"
+                  }`,
+                  boxShadow: displayPage === i ? "2px 2px 0 #000" : "none",
+                  transform: `rotate(${displayPage === i ? 45 : 0}deg)`,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  transition: "all 0.2s ease",
+                }}
+                title={`Member ${i + 1}`}
+                aria-label={`Go to member ${i + 1}`}
+              />
+            );
+          })}
         </div>
 
         <div
