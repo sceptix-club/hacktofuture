@@ -103,7 +103,7 @@ export default function PSPageClient({ data }: Props) {
                 {/* ── Theme Title ── */}
                 <div className="mb-10 min-w-0">
                   <h1
-                    className="hero-title font-black uppercase break-words"
+                    className="hero-title font-black uppercase wrap-break-word"
                     style={{
                       fontSize: "clamp(2rem, 6vw, 3.5rem)",
                       overflowWrap: "break-word",
