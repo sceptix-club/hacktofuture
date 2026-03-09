@@ -50,6 +50,20 @@ function getPhotoSrc(member: TeamMember) {
   return member.photo ? `${coreTeamPrefix}${member.photo}` : undefined;
 }
 
+const preloadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = img.onabort = () => reject(src);
+    img.src = src;
+  });
+};
+
+const cacheImages = async (srcArray: string[]): Promise<void> => {
+  const promises = srcArray.map((src) => preloadImage(src));
+  await Promise.all(promises);
+};
+
 function PhotoContent({
   member,
   index,
@@ -493,6 +507,7 @@ export default function Team() {
   const isMobile = useIsMobile();
   const [displayPage, setDisplayPage] = useState(0);
   const [dragX, setDragX] = useState(0);
+  const [imagesReady, setImagesReady] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
@@ -513,14 +528,17 @@ export default function Team() {
   }, [displayPage]);
 
   useEffect(() => {
-    TEAM_MEMBERS.forEach((member) => {
-      const src = getPhotoSrc(member);
-      if (!src) return;
-      const img = new Image();
-      img.src = src;
-      img.decoding = "async";
-      img.decode?.().catch(() => {});
-    });
+    const srcs = TEAM_MEMBERS.map((member) => getPhotoSrc(member)).filter(
+      Boolean
+    ) as string[];
+
+    cacheImages(srcs)
+      .catch(() => {
+        // continue even if some images fail
+      })
+      .finally(() => {
+        setImagesReady(true);
+      });
   }, []);
 
   const setSheetRef = (index: number) => (el: HTMLDivElement | null) => {
@@ -902,6 +920,30 @@ export default function Team() {
             }}
           />
         </div>
+
+        {!imagesReady && (
+          <div
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center"
+            style={{ background: "#0a0a0a" }}
+          >
+            <span
+              className="hero-title text-white"
+              style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)" }}
+            >
+              Loading Team...
+            </span>
+            <div
+              className="mt-4"
+              style={{
+                height: 5,
+                width: 80,
+                background: "#DA100C",
+                boxShadow: "2px 2px 0 #000",
+                animation: "pulse 1s ease-in-out infinite",
+              }}
+            />
+          </div>
+        )}
 
         {!isMobile && (
           <ComicDecorations
