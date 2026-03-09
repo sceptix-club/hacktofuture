@@ -7,6 +7,10 @@ type CTAProps = {
   buttonText?: string;
 };
 
+const handleRedirect = () => {
+  window.open("https://www.unstop.com", "_blank");
+};
+
 const Starburst = ({
   size,
   className,
@@ -206,8 +210,9 @@ const FloatingShapes = () => {
                 width: s.size,
                 height: s.size,
                 background: `radial-gradient(circle, ${s.color}, transparent 70%)`,
-                animation: `comic-pulse ${s.dur * 0.6}s ease-in-out ${s.delay
-                  }s infinite`,
+                animation: `comic-pulse ${s.dur * 0.6}s ease-in-out ${
+                  s.delay
+                }s infinite`,
                 willChange: "transform, opacity",
               } as React.CSSProperties
             }
@@ -241,10 +246,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         }}
       >
         {/* ── LAYER 2: Radial gradient vignette ── */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-    
-        />
+        <div className="absolute inset-0 pointer-events-none" />
 
         {/* ── Animated layers only rendered when CTA is active ── */}
         {/* {isActive && (
@@ -369,6 +371,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   (e.currentTarget as HTMLElement).style.boxShadow =
                     "4px 4px 0 #000";
                 }}
+                onClick={handleRedirect}
               >
                 {buttonText}
               </Button>
