@@ -90,18 +90,22 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     );
 
     // Scene 2: Circular camera around Rulebook
-    const scene2State = { progress: 0 };
+    // const scene2State = { progress: 0 };
     const cam2 = { x: 0, y: -28, z: 10 };
 
-    tl.to(cam2, {
-      z: 1,
-      duration: 0.8,
-      ease: "power2.inOut",
-      onUpdate: () => {
-        camera.position.set(cam2.x, cam2.y, cam2.z);
-        camera.lookAt(0, -30, 0);
+    tl.to(
+      cam2,
+      {
+        z: 1,
+        duration: 0.8,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          camera.position.set(cam2.x, cam2.y, cam2.z);
+          camera.lookAt(0, -30, 0);
+        },
       },
-    }, ">");
+      ">"
+    );
 
     tl.to(cam2, {
       duration: 0.1,
@@ -246,7 +250,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           if (cardsGroupRef.current) {
             cardsGroupRef.current.traverse((child) => {
               if ((child as THREE.Mesh).isMesh) {
-                const mat = (child as THREE.Mesh).material as THREE.MeshStandardMaterial;
+                const mat = (child as THREE.Mesh)
+                  .material as THREE.MeshStandardMaterial;
                 mat.transparent = true;
                 mat.opacity = cardFade.opacity;
               }
@@ -273,8 +278,9 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     // pointer light
     if (pointerRef.current) {
       const p = state.pointer;
-      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5)
-        .unproject(state.camera);
+      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
+        state.camera
+      );
 
       const dir = worldPoint.sub(state.camera.position).normalize();
       const ray = new THREE.Ray(state.camera.position, dir);
@@ -355,10 +361,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 5: Cards */}
       <group ref={scene6Ref} position={[0, -150, 0]} />
-      <Cards
-        pointerRef={pointerRef}
-        groupRef={cardsGroupRef}
-      />
+      <Cards pointerRef={pointerRef} groupRef={cardsGroupRef} />
 
       <pointLight
         ref={pointerRef}

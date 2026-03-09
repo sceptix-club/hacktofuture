@@ -561,40 +561,6 @@ export default function ComicDecorations({
           ))}
           <circle cx="60" cy="60" r="9" fill="#DA100C" />
         </svg>
-
-        {/* ── EDGE LABELS ── */}
-        <div
-          style={{
-            position: "absolute",
-            left: 14,
-            top: "50%",
-            transform: "translateY(-50%) rotate(-90deg)",
-            fontFamily: "'Dela Gothic One', sans-serif",
-            fontSize: "0.6rem",
-            color: "rgba(255,255,255,0.7)",
-            letterSpacing: "0.3em",
-            whiteSpace: "nowrap",
-            userSelect: "none",
-          }}
-        >
-          HACKTOFUTURE · SINCE 2023
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            right: 14,
-            top: "50%",
-            transform: "translateY(-50%) rotate(90deg)",
-            fontFamily: "'Dela Gothic One', sans-serif",
-            fontSize: "0.6rem",
-            color: "rgba(218,16,12,0.7)",
-            letterSpacing: "0.3em",
-            whiteSpace: "nowrap",
-            userSelect: "none",
-          }}
-        >
-          HACKTOFUTURE · SINCE 2023
-        </div>
       </div>
     </div>
   );

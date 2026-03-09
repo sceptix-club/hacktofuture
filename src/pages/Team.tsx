@@ -11,8 +11,9 @@ const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
 
 const paperStyle: CSSProperties = {
-  background: "#fffdf3",
+  background: "#fffdf3", // ← base fallback color, change this to any tone
   backgroundImage: `
+    url('/textures/torn-paper.svg'),  
     radial-gradient(circle, rgba(0,0,0,0.045) 1px, transparent 1px),
     repeating-linear-gradient(
       0deg,
@@ -22,7 +23,8 @@ const paperStyle: CSSProperties = {
       rgba(0,0,0,0.03) 29px
     )
   `,
-  backgroundSize: "8px 8px, auto",
+  backgroundSize: "cover, 8px 8px, auto",
+  backgroundRepeat: "no-repeat, repeat, repeat",
 };
 
 const pageBlockerStyle: CSSProperties = {
@@ -49,6 +51,20 @@ function useIsMobile(breakpoint = 900) {
 function getPhotoSrc(member: TeamMember) {
   return member.photo ? `${coreTeamPrefix}${member.photo}` : undefined;
 }
+
+const preloadImage = (src: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = img.onabort = () => reject(src);
+    img.src = src;
+  });
+};
+
+const cacheImages = async (srcArray: string[]): Promise<void> => {
+  const promises = srcArray.map((src) => preloadImage(src));
+  await Promise.all(promises);
+};
 
 function PhotoContent({
   member,
@@ -220,17 +236,6 @@ function DetailsContent({
         >
           {member.role}
         </div>
-        {/* 
-        <p
-          className="comic-sans text-black/80 leading-relaxed text-center"
-          style={{
-            fontSize: "clamp(0.78rem, 1.4vw, 1.02rem)",
-            marginBottom: 18,
-            maxWidth: 400,
-          }}
-        >
-          {member.bio}
-        </p> */}
 
         <div
           style={{
@@ -280,81 +285,23 @@ function DetailsContent({
   );
 }
 
-function MobileMemberCard({
+/* ────────────────────────────────────────────────────────────────────────────
+ *  Mobile Card Stack – horizontal swipe with Z-axis clockwise rotation
+ *  Swipe right-to-left = next, left-to-right = prev
+ *  Cards rotate clockwise on Z-axis as they fly off / fly in
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+function MobileCardContent({
   member,
   index,
-  dragX,
 }: {
   member: TeamMember;
   index: number;
-  dragX: number;
 }) {
   const photoSrc = getPhotoSrc(member);
-  const rotation = dragX * 0.04;
-  const likeOpacity = Math.max(0, Math.min(1, dragX / 80));
-  const nopeOpacity = Math.max(0, Math.min(1, -dragX / 80));
 
   return (
-    <div
-      className="relative overflow-hidden select-none"
-      style={{
-        ...paperStyle,
-        border: "3px solid #000",
-        borderRadius: 14,
-        boxShadow: "0 10px 30px rgba(0,0,0,0.35), 5px 5px 0 rgba(0,0,0,0.25)",
-        width: 250,
-        height: 350,
-        transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
-        transition:
-          dragX === 0
-            ? "transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)"
-            : "none",
-        cursor: "grab",
-        willChange: "transform",
-      }}
-    >
-      {/* Like indicator */}
-      <div
-        style={{
-          position: "absolute",
-          top: 14,
-          left: 12,
-          zIndex: 20,
-          border: "3px solid #22c55e",
-          borderRadius: 6,
-          padding: "2px 8px",
-          color: "#22c55e",
-          fontFamily: "'Dela Gothic One', sans-serif",
-          fontSize: "0.75rem",
-          transform: "rotate(-20deg)",
-          opacity: likeOpacity,
-          pointerEvents: "none",
-        }}
-      >
-        NEXT
-      </div>
-
-      {/* Nope indicator */}
-      <div
-        style={{
-          position: "absolute",
-          top: 14,
-          right: 12,
-          zIndex: 20,
-          border: "3px solid #DA100C",
-          borderRadius: 6,
-          padding: "2px 8px",
-          color: "#DA100C",
-          fontFamily: "'Dela Gothic One', sans-serif",
-          fontSize: "0.75rem",
-          transform: "rotate(20deg)",
-          opacity: nopeOpacity,
-          pointerEvents: "none",
-        }}
-      >
-        BACK
-      </div>
-
+    <>
       <div
         className="absolute inset-x-0 top-0 h-2"
         style={{ background: "linear-gradient(90deg, #DA100C, #000, #DA100C)" }}
@@ -485,7 +432,161 @@ function MobileMemberCard({
           </div>
         </div>
       </div>
-    </div>
+    </>
+  );
+}
+
+function MobileCardStack({
+  displayPage,
+  dragX,
+}: {
+  displayPage: number;
+  dragX: number;
+}) {
+  const VISIBLE_BEHIND = 2;
+  const indices: number[] = [];
+
+  for (let offset = VISIBLE_BEHIND; offset >= 1; offset--) {
+    const idx = displayPage + offset;
+    if (idx < TOTAL_MEMBERS) indices.push(idx);
+  }
+  indices.push(displayPage);
+
+  // Compute indicator opacities based on drag
+  const nextOpacity = Math.max(0, Math.min(1, -dragX / 60));
+  const backOpacity = Math.max(0, Math.min(1, dragX / 60));
+
+  return (
+    <>
+      {/* Back indicator – left side of the card */}
+      <div
+        className="absolute pointer-events-none flex items-center"
+        style={{
+          right: "calc(100% + 12px)",
+          top: "50%",
+          transform: "translateY(-50%)",
+          opacity: backOpacity,
+          transition: "none",
+          whiteSpace: "nowrap",
+        }}
+      >
+        <div
+          style={{
+            border: "2px solid #DA100C",
+            borderRadius: 8,
+            padding: "10px 4px",
+            color: "#DA100C",
+            fontFamily: "'Dela Gothic One', sans-serif",
+            fontSize: "0.65rem",
+            background: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <span>←</span>
+          <span>B</span>
+          <span>A</span>
+          <span>C</span>
+          <span>K</span>
+        </div>
+      </div>
+
+      {/* Next indicator – right side of the card */}
+      <div
+        className="absolute pointer-events-none flex items-center"
+        style={{
+          left: "calc(100% + 12px)",
+          top: "50%",
+          transform: "translateY(-50%)",
+          opacity: nextOpacity,
+          transition: "none",
+          whiteSpace: "nowrap",
+        }}
+      >
+        <div
+          style={{
+            border: "2px solid #22c55e",
+            borderRadius: 8,
+            padding: "10px 4px",
+            color: "#22c55e",
+            fontFamily: "'Dela Gothic One', sans-serif",
+            fontSize: "0.65rem",
+            background: "rgba(0,0,0,0.6)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+          }}
+        >
+          <span>→</span>
+          <span>N</span>
+          <span>E</span>
+          <span>X</span>
+          <span>T</span>
+        </div>
+      </div>
+
+      {indices.map((idx) => {
+        const isCurrent = idx === displayPage;
+        const depth = idx - displayPage;
+
+        const stackScale = isCurrent ? 1 : 1 - depth * 0.045;
+        const stackY = isCurrent ? 0 : depth * 10;
+        const stackOpacity = isCurrent ? 1 : Math.max(0.3, 1 - depth * 0.3);
+
+        // Horizontal drag on current card + clockwise Z rotation
+        const translateX = isCurrent ? dragX : 0;
+        // Clockwise rotation: negative dragX (swipe left) → positive rotation
+        const rotationZ = isCurrent ? dragX * -0.08 : 0;
+        const scale = isCurrent ? 1 : stackScale;
+
+        // Cards behind animate closer as current is dragged
+        const dragProgress = Math.min(1, Math.abs(dragX) / 120);
+        const pullY = isCurrent ? 0 : dragProgress * stackY;
+        const behindY = isCurrent ? 0 : stackY - pullY;
+        const behindScale = isCurrent
+          ? 1
+          : stackScale + dragProgress * (depth * 0.045);
+
+        const finalY = isCurrent ? 0 : behindY;
+        const finalX = isCurrent ? translateX : 0;
+        const finalScale = isCurrent ? scale : behindScale;
+        const finalRotation = rotationZ;
+        const finalOpacity = isCurrent
+          ? 1
+          : stackOpacity + dragProgress * (depth * 0.3);
+
+        return (
+          <div
+            key={idx}
+            className="absolute select-none overflow-hidden"
+            data-card-index={idx}
+            data-card-current={isCurrent ? "true" : "false"}
+            style={{
+              ...paperStyle,
+              border: "3px solid #000",
+              borderRadius: 14,
+              boxShadow: isCurrent
+                ? "0 10px 30px rgba(0,0,0,0.35), 5px 5px 0 rgba(0,0,0,0.25)"
+                : `0 ${4 + depth * 2}px ${10 + depth * 4}px rgba(0,0,0,0.2)`,
+              width: 250,
+              height: 340, // ← reduce this (was 380)
+              transform: `translateX(${finalX}px) translateY(${finalY}px) rotate(${finalRotation}deg) scale(${finalScale})`,
+              opacity: Math.min(1, finalOpacity),
+              willChange: "transform, opacity",
+              zIndex: 10 - depth,
+              pointerEvents: isCurrent ? "auto" : "none",
+            }}
+          >
+            <MobileCardContent member={TEAM_MEMBERS[idx]} index={idx} />
+          </div>
+        );
+      })}
+    </>
   );
 }
 
@@ -493,34 +594,35 @@ export default function Team() {
   const isMobile = useIsMobile();
   const [displayPage, setDisplayPage] = useState(0);
   const [dragX, setDragX] = useState(0);
+  const [imagesReady, setImagesReady] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
-  const mobileCardRef = useRef<HTMLDivElement>(null);
+  const mobileStackRef = useRef<HTMLDivElement>(null);
   const sheetRefs = useRef<(HTMLDivElement | null)[]>([]);
   const currentMemberRef = useRef(0);
   const isAnimating = useRef(false);
   const flippedState = useRef<boolean[]>(new Array(TOTAL_SHEETS).fill(false));
 
-  // Tinder swipe state
+  // Mobile horizontal swipe state
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isDragging = useRef(false);
-  const dragStartX = useRef(0);
 
   useEffect(() => {
     currentMemberRef.current = displayPage;
   }, [displayPage]);
 
   useEffect(() => {
-    TEAM_MEMBERS.forEach((member) => {
-      const src = getPhotoSrc(member);
-      if (!src) return;
-      const img = new Image();
-      img.src = src;
-      img.decoding = "async";
-      img.decode?.().catch(() => {});
-    });
+    const srcs = TEAM_MEMBERS.map((member) => getPhotoSrc(member)).filter(
+      Boolean
+    ) as string[];
+
+    cacheImages(srcs)
+      .catch(() => {})
+      .finally(() => {
+        setImagesReady(true);
+      });
   }, []);
 
   const setSheetRef = (index: number) => (el: HTMLDivElement | null) => {
@@ -549,8 +651,9 @@ export default function Team() {
     rebuildZIndices();
   }, [isMobile, displayPage]);
 
+  // Entrance animation
   useEffect(() => {
-    const target = isMobile ? mobileCardRef.current : bookRef.current;
+    const target = isMobile ? mobileStackRef.current : bookRef.current;
     if (!target) return;
 
     gsap.fromTo(
@@ -560,18 +663,138 @@ export default function Team() {
     );
   }, [isMobile]);
 
+  // ── Mobile swipe forward (right-to-left → next) with clockwise Z rotation ──
+  const mobileFlipForward = () => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    if (cur >= TOTAL_MEMBERS - 1) {
+      const cardEl = mobileStackRef.current?.querySelector(
+        '[data-card-current="true"]'
+      ) as HTMLElement | null;
+      if (cardEl) {
+        gsap.to(cardEl, {
+          x: 0,
+          rotation: 0,
+          scale: 1,
+          duration: 0.4,
+          ease: "back.out(1.7)",
+        });
+      }
+      setDragX(0);
+      return;
+    }
+
+    isAnimating.current = true;
+    const cardEl = mobileStackRef.current?.querySelector(
+      '[data-card-current="true"]'
+    ) as HTMLElement | null;
+
+    if (cardEl) {
+      // Fly off to the right with clockwise rotation
+      gsap.to(cardEl, {
+        x: window.innerWidth,
+        rotation: 25, // clockwise
+        scale: 0.85,
+        opacity: 0,
+        duration: 0.45,
+        ease: "power3.in",
+        onComplete: () => {
+          const next = cur + 1;
+          currentMemberRef.current = next;
+          setDragX(0);
+          setDisplayPage(next);
+          isAnimating.current = false;
+        },
+      });
+    } else {
+      const next = cur + 1;
+      currentMemberRef.current = next;
+      setDragX(0);
+      setDisplayPage(next);
+      isAnimating.current = false;
+    }
+  };
+
+  // ── Mobile swipe backward (left-to-right → prev) with clockwise Z rotation ──
+  const mobileFlipBackward = () => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    if (cur <= 0) {
+      const cardEl = mobileStackRef.current?.querySelector(
+        '[data-card-current="true"]'
+      ) as HTMLElement | null;
+      if (cardEl) {
+        gsap.to(cardEl, {
+          x: 0,
+          rotation: 0,
+          scale: 1,
+          duration: 0.4,
+          ease: "back.out(1.7)",
+        });
+      }
+      setDragX(0);
+      return;
+    }
+
+    isAnimating.current = true;
+    const next = cur - 1;
+    currentMemberRef.current = next;
+    setDragX(0);
+    setDisplayPage(next);
+
+    // Animate new card in from the left with clockwise rotation
+    requestAnimationFrame(() => {
+      const cardEl = mobileStackRef.current?.querySelector(
+        '[data-card-current="true"]'
+      ) as HTMLElement | null;
+      if (cardEl) {
+        gsap.fromTo(
+          cardEl,
+          {
+            x: -window.innerWidth * 0.7,
+            rotation: -20, // starts counter-clockwise, rotates to 0 (clockwise motion)
+            scale: 0.9,
+            opacity: 0,
+          },
+          {
+            x: 0,
+            rotation: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.5,
+            ease: "back.out(1.3)",
+            onComplete: () => {
+              isAnimating.current = false;
+            },
+          }
+        );
+      } else {
+        isAnimating.current = false;
+      }
+    });
+  };
+
+  const mobileSnapBack = () => {
+    const cardEl = mobileStackRef.current?.querySelector(
+      '[data-card-current="true"]'
+    ) as HTMLElement | null;
+    if (cardEl) {
+      gsap.to(cardEl, {
+        x: 0,
+        rotation: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: "back.out(2)",
+      });
+    }
+    setDragX(0);
+  };
+
   const flipForward = () => {
     if (isAnimating.current) return;
 
     if (isMobile) {
-      if (currentMemberRef.current >= TOTAL_MEMBERS - 1) {
-        setDragX(0);
-        return;
-      }
-      const next = currentMemberRef.current + 1;
-      currentMemberRef.current = next;
-      setDragX(0);
-      setDisplayPage(next);
+      mobileFlipForward();
       return;
     }
 
@@ -603,14 +826,7 @@ export default function Team() {
     if (isAnimating.current) return;
 
     if (isMobile) {
-      if (currentMemberRef.current <= 0) {
-        setDragX(0);
-        return;
-      }
-      const next = currentMemberRef.current - 1;
-      currentMemberRef.current = next;
-      setDragX(0);
-      setDisplayPage(next);
+      mobileFlipBackward();
       return;
     }
 
@@ -668,27 +884,30 @@ export default function Team() {
     }, 100);
   };
 
-  // Tinder swipe handlers for mobile
+  // Mobile horizontal swipe handlers
   useEffect(() => {
     if (!isMobile) return;
 
-    const SWIPE_THRESHOLD = 60;
+    const SWIPE_THRESHOLD = 50;
 
     const handleTouchStart = (e: TouchEvent) => {
+      if (isAnimating.current) return;
       touchStartX.current = e.touches[0].clientX;
       touchStartY.current = e.touches[0].clientY;
-      dragStartX.current = e.touches[0].clientX;
       isDragging.current = false;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      if (isAnimating.current) return;
       const dx = e.touches[0].clientX - touchStartX.current;
       const dy = e.touches[0].clientY - touchStartY.current;
 
       if (!isDragging.current) {
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+        // Horizontal gets priority
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) {
           isDragging.current = true;
-        } else if (Math.abs(dy) > 8) {
+        } else if (Math.abs(dy) > 10) {
+          // Vertical – ignore
           return;
         }
       }
@@ -696,26 +915,30 @@ export default function Team() {
       if (isDragging.current) {
         e.preventDefault();
         const cur = currentMemberRef.current;
+        // Rubber-band at edges
         const clampedDx =
           (dx > 0 && cur === 0) || (dx < 0 && cur === TOTAL_MEMBERS - 1)
-            ? dx * 0.2
+            ? dx * 0.18
             : dx;
         setDragX(clampedDx);
       }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
+      if (isAnimating.current) return;
       if (!isDragging.current) return;
       isDragging.current = false;
 
       const dx = e.changedTouches[0].clientX - touchStartX.current;
 
       if (dx < -SWIPE_THRESHOLD) {
-        flipForward();
+        // Swiped left → next
+        mobileFlipForward();
       } else if (dx > SWIPE_THRESHOLD) {
-        flipBackward();
+        // Swiped right → prev
+        mobileFlipBackward();
       } else {
-        setDragX(0);
+        mobileSnapBack();
       }
     };
 
@@ -903,14 +1126,43 @@ export default function Team() {
           />
         </div>
 
-        {!isMobile && <ComicDecorations bookRef={bookRef as React.RefObject<HTMLDivElement>} />}
+        {!imagesReady && (
+          <div
+            className="absolute inset-0 z-50 flex flex-col items-center justify-center"
+            style={{ background: "#0a0a0a" }}
+          >
+            <span
+              className="hero-title text-white"
+              style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)" }}
+            >
+              Loading Team...
+            </span>
+            <div
+              className="mt-4"
+              style={{
+                height: 5,
+                width: 80,
+                background: "#DA100C",
+                boxShadow: "2px 2px 0 #000",
+                animation: "pulse 1s ease-in-out infinite",
+              }}
+            />
+          </div>
+        )}
 
+        {!isMobile && (
+          <ComicDecorations
+            bookRef={bookRef as React.RefObject<HTMLDivElement>}
+          />
+        )}
+
+        {/* ── Header ── */}
         <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center mt-4 max-md:mt-6">
           <p
             className="comic-sans uppercase tracking-widest mb-3 text-center"
             style={{
-              fontSize: "clamp(0.68rem, 1.3vw, 0.85rem)",
-              color: "rgba(255,255,255,0.64)",
+              fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+              color: "rgba(255,255,255,0.6)",
             }}
           >
             HackToFuture 4.0
@@ -930,24 +1182,38 @@ export default function Team() {
           <div
             className="mt-4"
             style={{
-              height: 3,
-              width: "clamp(60px, 10vw, 100px)",
+              height: 5,
+              width: "clamp(60px, 10vw, 120px)",
               background: "#E8003D",
+              boxShadow: "2px 2px 0 #000",
             }}
           />
+
+          <p
+            className="comic-sans text-center mt-5 mb-5 max-w-lg"
+            style={{
+              fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+              color: "rgba(255,255,255,0.85)",
+              lineHeight: 1.6,
+            }}
+          >
+            {isMobile
+              ? "Swipe left or right to meet the team."
+              : "Flip through the pages to meet the people building HackToFuture 4.0."}
+          </p>
         </div>
 
         {isMobile ? (
           <div
             className="absolute inset-x-0 z-20 flex items-center justify-center"
-            style={{ top: 140, bottom: 110 }}
+            style={{ top: 140, bottom: 80 }}
           >
-            <div ref={mobileCardRef} className="flex justify-center">
-              <MobileMemberCard
-                member={TEAM_MEMBERS[displayPage]}
-                index={displayPage}
-                dragX={dragX}
-              />
+            <div
+              ref={mobileStackRef}
+              className="relative flex items-center justify-center"
+              style={{ width: 250, height: 380 }}
+            >
+              <MobileCardStack displayPage={displayPage} dragX={dragX} />
             </div>
           </div>
         ) : (
@@ -960,7 +1226,7 @@ export default function Team() {
                 perspective: "2500px",
                 perspectiveOrigin: "50% 50%",
                 position: "relative",
-                marginTop: 48,
+                marginTop: 75,
               }}
             >
               <div
@@ -974,7 +1240,7 @@ export default function Team() {
                     border: "4px solid #000",
                     borderRight: "2px solid #000",
                     borderRadius: "8px 0 0 8px",
-                    boxShadow: "-6px 6px 0 rgba(0,0,0,0.35)",
+                    boxShadow: "6px 6px 0 rgba(0,0,0,0.35)",
                     zIndex: 0,
                   }}
                 >
@@ -1021,14 +1287,17 @@ export default function Team() {
           </div>
         )}
 
+        {/* ── Pagination dots ── */}
         <div
           className="absolute z-30 flex gap-2 items-center"
           style={
             isMobile
               ? {
                   left: "50%",
-                  bottom: 72,
+                  bottom: 100,
                   transform: "translateX(-50%)",
+                  maxWidth: "80vw",
+                  overflow: "hidden",
                 }
               : {
                   right: 24,
@@ -1038,34 +1307,49 @@ export default function Team() {
                 }
           }
         >
-          {TEAM_MEMBERS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => jumpToPage(i)}
-              style={{
-                width: displayPage === i ? 14 : 8,
-                height: displayPage === i ? 14 : 8,
-                borderRadius: 2,
-                background:
-                  displayPage === i ? "#DA100C" : "rgba(255,255,255,0.28)",
-                border: `2px solid ${
-                  displayPage === i ? "#000" : "rgba(255,255,255,0.18)"
-                }`,
-                boxShadow: displayPage === i ? "2px 2px 0 #000" : "none",
-                transform: `rotate(${displayPage === i ? 45 : 0}deg)`,
-                cursor: "pointer",
-              }}
-              title={`Member ${i + 1}`}
-              aria-label={`Go to member ${i + 1}`}
-            />
-          ))}
+          {TEAM_MEMBERS.map((_, i) => {
+            if (isMobile) {
+              const windowSize = 7;
+              const half = Math.floor(windowSize / 2);
+              const start = Math.max(
+                0,
+                Math.min(displayPage - half, TOTAL_MEMBERS - windowSize)
+              );
+              const end = Math.min(TOTAL_MEMBERS - 1, start + windowSize - 1);
+              if (i < start || i > end) return null;
+            }
+
+            return (
+              <button
+                key={i}
+                onClick={() => jumpToPage(i)}
+                style={{
+                  width: displayPage === i ? 14 : 8,
+                  height: displayPage === i ? 14 : 8,
+                  borderRadius: 2,
+                  background:
+                    displayPage === i ? "#DA100C" : "rgba(255,255,255,0.28)",
+                  border: `2px solid ${
+                    displayPage === i ? "#000" : "rgba(255,255,255,0.18)"
+                  }`,
+                  boxShadow: displayPage === i ? "2px 2px 0 #000" : "none",
+                  transform: `rotate(${displayPage === i ? 45 : 0}deg)`,
+                  cursor: "pointer",
+                  flexShrink: 0,
+                  transition: "all 0.2s ease",
+                }}
+                title={`Member ${i + 1}`}
+                aria-label={`Go to member ${i + 1}`}
+              />
+            );
+          })}
         </div>
 
         <div
           className="absolute z-30"
           style={
             isMobile
-              ? { bottom: 100, left: "50%", transform: "translateX(-50%)" }
+              ? { bottom: 70, left: "50%", transform: "translateX(-50%)" }
               : { right: 24, bottom: 80 }
           }
         >
@@ -1080,50 +1364,6 @@ export default function Team() {
             </span>
           </span>
         </div>
-
-        {isMobile && (
-          <div
-            className="absolute left-1/2 z-30 flex items-center gap-3"
-            style={{ bottom: 20, transform: "translateX(-50%)" }}
-          >
-            <button
-              onClick={flipBackward}
-              disabled={displayPage === 0}
-              style={{
-                padding: "8px 14px",
-                borderRadius: 12,
-                border: "2px solid #000",
-                background: displayPage === 0 ? "#bdbdbd" : "#fff",
-                color: "#000",
-                fontFamily: "'Dela Gothic One', sans-serif",
-                fontSize: "0.72rem",
-                boxShadow: "3px 3px 0 rgba(0,0,0,0.25)",
-                opacity: displayPage === 0 ? 0.6 : 1,
-              }}
-            >
-              ← Prev
-            </button>
-
-            <button
-              onClick={flipForward}
-              disabled={displayPage === TOTAL_MEMBERS - 1}
-              style={{
-                padding: "8px 14px",
-                borderRadius: 12,
-                border: "2px solid #000",
-                background:
-                  displayPage === TOTAL_MEMBERS - 1 ? "#bdbdbd" : "#DA100C",
-                color: "#fff",
-                fontFamily: "'Dela Gothic One', sans-serif",
-                fontSize: "0.72rem",
-                boxShadow: "3px 3px 0 rgba(0,0,0,0.25)",
-                opacity: displayPage === TOTAL_MEMBERS - 1 ? 0.6 : 1,
-              }}
-            >
-              Next →
-            </button>
-          </div>
-        )}
       </div>
 
       <Navbar />

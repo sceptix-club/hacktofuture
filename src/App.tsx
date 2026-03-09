@@ -20,9 +20,6 @@ import PSPage from "./pages/ps";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-// Sits inside <Canvas> <Suspense> — only runs after all suspended
-// content has mounted. Checks that 3D meshes actually have geometry
-// (troika Text renders geometry async after mount).
 function FrameSignal({ onReady }: { onReady: () => void }) {
   const fired = useRef(false);
   const { scene } = useThree();
@@ -30,8 +27,6 @@ function FrameSignal({ onReady }: { onReady: () => void }) {
   useFrame(() => {
     if (fired.current) return;
 
-    // Check if there's at least one mesh with actual geometry in the scene
-    // (troika Text creates geometry asynchronously after mount)
     let hasMeshWithGeometry = false;
     scene.traverse((obj) => {
       const mesh = obj as THREE.Mesh;
@@ -59,58 +54,83 @@ function HomePage() {
   const smootherRef = useRef<ScrollSmoother | null>(null);
   const textTimelineRef = useRef<gsap.core.Timeline | null>(null);
   const [currentScene, setCurrentScene] = useState<number>(0);
+  const mountedRef = useRef(true);
 
   const { active, progress } = useProgress();
 
   // ── readiness flags ──
-  const [threeReady, setThreeReady] = useState(false);   // drei assets + scene has real geometry
+  const [threeReady, setThreeReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
-  const [domReady, setDomReady] = useState(false);        // window load + all <img> loaded
-  const [threeDFontReady, setThreeDFontReady] = useState(false); // troika 3D font file cached
+  const [domReady, setDomReady] = useState(false);
+  const [threeDFontReady, setThreeDFontReady] = useState(false);
 
-  // ── 1. Three.js: drei progress done ──
   const [assetsLoaded, setAssetsLoaded] = useState(false);
+
+  // Track mount state for safe async updates
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!active && progress === 100) setAssetsLoaded(true);
   }, [active, progress]);
 
-  // Called from FrameSignal inside <Suspense> once meshes have real geometry
   const handleSceneReady = useCallback(() => {
-    setThreeReady(true);
+    if (mountedRef.current) setThreeReady(true);
   }, []);
 
-  // ── 1b. Preload the 3D font used by HackToFuture text ──
+  // ── Preload the 3D font ──
   useEffect(() => {
-    fetch("/fonts/DelaGothicOne-Regular.ttf")
-      .then(res => res.arrayBuffer())
-      .then(() => setThreeDFontReady(true))
-      .catch(() => setThreeDFontReady(true)); // don't block on failure
+    const controller = new AbortController();
+    fetch("/fonts/DelaGothicOne-Regular.ttf", { signal: controller.signal })
+      .then((res) => res.arrayBuffer())
+      .then(() => {
+        if (mountedRef.current) setThreeDFontReady(true);
+      })
+      .catch(() => {
+        if (mountedRef.current) setThreeDFontReady(true);
+      });
+    return () => controller.abort();
   }, []);
 
-  // ── 2. Fonts — check Dela Gothic One specifically ──
+  // ── Fonts ──
   useEffect(() => {
+    let cancelled = false;
     const checkFont = async () => {
-      await document.fonts.ready;
-      // Explicitly wait for the critical overlay font
       try {
+        await document.fonts.ready;
         await document.fonts.load('700 16px "Dela Gothic One"');
       } catch (_) {
-        // font load can reject if already loaded, that's fine
+        // fine
       }
-      setFontsReady(true);
+      if (!cancelled) setFontsReady(true);
     };
     checkFont();
+    // Safety timeout — never block forever
+    const timeout = setTimeout(() => {
+      if (!cancelled) setFontsReady(true);
+    }, 5000);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
   }, []);
 
-  // ── 3. DOM: window.load + all <img> elements ──
+  // ── DOM ready ──
   useEffect(() => {
+    let cancelled = false;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
     const checkAllImages = () => {
       const images = Array.from(document.querySelectorAll("img"));
-      return images.every((img) => img.complete && img.naturalHeight > 0);
+      return images.length === 0 || images.every((img) => img.complete && img.naturalHeight > 0);
     };
 
     const tryResolve = () => {
+      if (cancelled) return true;
       if (document.readyState === "complete" && checkAllImages()) {
         setDomReady(true);
         return true;
@@ -120,51 +140,63 @@ function HomePage() {
 
     if (tryResolve()) return;
 
-    // Poll images every 200ms after window.load
     const handler = () => {
       if (tryResolve()) return;
-      const interval = setInterval(() => {
-        if (tryResolve()) clearInterval(interval);
+      interval = setInterval(() => {
+        if (tryResolve()) {
+          clearInterval(interval);
+          interval = undefined;
+        }
       }, 200);
-      // Safety: stop polling after 15s
-      setTimeout(() => {
-        clearInterval(interval);
-        setDomReady(true);
-      }, 15000);
     };
 
     if (document.readyState === "complete") {
       handler();
     } else {
       window.addEventListener("load", handler);
-      return () => window.removeEventListener("load", handler);
     }
+
+    // Safety: always resolve after 10s
+    const safetyTimeout = setTimeout(() => {
+      if (!cancelled) setDomReady(true);
+    }, 10000);
+
+    return () => {
+      cancelled = true;
+      if (interval) clearInterval(interval);
+      clearTimeout(safetyTimeout);
+      window.removeEventListener("load", handler);
+    };
   }, []);
 
-  // ── 4. All conditions ──
   const canDismiss = threeReady && assetsLoaded && fontsReady && domReady && threeDFontReady;
 
-  // ── Fade out pre-loader from index.html once React Loader is mounted ──
+  // ── Fade out pre-loader from index.html ──
   useEffect(() => {
     const el = document.getElementById("pre-loader");
     if (el) {
-      // Fade it out smoothly behind the React Loader (z-99999 vs z-999999)
       el.style.opacity = "0";
-      // Remove from DOM after transition completes
       const timer = setTimeout(() => el.remove(), 400);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  // ── When Loader fade-out finishes ──
   const handleLoaderComplete = useCallback(() => {
     requestAnimationFrame(() => {
       ScrollTrigger.refresh();
     });
   }, []);
 
+  // ── GSAP ScrollSmoother + ScrollTrigger ──
   useEffect(() => {
+    // Ensure wrapper/content exist before initializing
+    const wrapper = document.getElementById("smooth-wrapper");
+    const content = document.getElementById("smooth-content");
+    if (!wrapper || !content) return;
+
     const timer = setTimeout(() => {
+      if (!mountedRef.current) return;
+
       ScrollTrigger.config({ ignoreMobileResize: true });
 
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -185,6 +217,7 @@ function HomePage() {
         start: "top top",
         end: "bottom bottom",
         onUpdate: (self) => {
+          if (!mountedRef.current) return;
           scrollProgressRef.current = self.progress;
           const time = self.progress * SCENES;
           const current = Math.min(Math.floor(time), SCENES - 1);
@@ -199,14 +232,38 @@ function HomePage() {
 
     return () => {
       clearTimeout(timer);
-      if (smootherRef.current) smootherRef.current.kill();
+
+      // Kill ScrollSmoother first
+      if (smootherRef.current) {
+        smootherRef.current.kill();
+        smootherRef.current = null;
+      }
+
+      // Kill all ScrollTrigger instances
       ScrollTrigger.getAll().forEach((t) => t.kill());
+
+      // Disable normalizeScroll so it doesn't affect other pages
+      ScrollTrigger.normalizeScroll(false);
+
+      // Clear any inline styles GSAP may have added to body/html
+      ScrollTrigger.clearScrollMemory();
+      
+      // Reset body/html scroll styles that ScrollSmoother may have set
+      document.documentElement.style.overflow = "";
+      document.documentElement.style.height = "";
+      document.body.style.overflow = "";
+      document.body.style.height = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
     };
   }, []);
 
   return (
     <>
-      {/* ===== CANVAS — always mounted, black by default ===== */}
+      {/* ===== CANVAS ===== */}
       <div className="fixed inset-0 z-10">
         <Canvas
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
@@ -217,7 +274,6 @@ function HomePage() {
             gl.setClearColor("#000000", 1);
           }}
         >
-          {/* Force black before environment loads */}
           <color attach="background" args={["#000000"]} />
 
           <Suspense fallback={null}>
@@ -233,7 +289,7 @@ function HomePage() {
         </Canvas>
       </div>
 
-      {/* ===== SCROLL STRUCTURE — renders behind the loader ===== */}
+      {/* ===== SCROLL STRUCTURE ===== */}
       <Overlay />
 
       <div id="smooth-wrapper">
@@ -249,10 +305,40 @@ function HomePage() {
         scenes={SCENES}
       />
 
-      {/* ===== LOADER — always mounted, on top of everything ===== */}
+      {/* ===== LOADER ===== */}
       <Loader canDismiss={canDismiss} onComplete={handleLoaderComplete} />
     </>
   );
+}
+
+// ── Layout wrapper for non-homepage routes ──
+function PageLayout({ children }: { children: React.ReactNode }) {
+  // Remove the pre-loader on non-home pages too
+  useEffect(() => {
+    const el = document.getElementById("pre-loader");
+    if (el) {
+      el.style.opacity = "0";
+      const timer = setTimeout(() => el.remove(), 400);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Clean up any leftover GSAP scroll state from HomePage
+  useEffect(() => {
+    // Ensure body is scrollable on these pages
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.height = "";
+    document.body.style.overflow = "";
+    document.body.style.height = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, 0);
+  }, []);
+
+  return <>{children}</>;
 }
 
 function App() {
@@ -260,11 +346,46 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/team" element={<Team />} />
-        <Route path="/themes" element={<Themes />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sponsors" element={<Sponsors />} />
-        <Route path="/theme/:theme" element={<PSPage />} />
+        <Route
+          path="/team"
+          element={
+            <PageLayout>
+              <Team />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/themes"
+          element={
+            <PageLayout>
+              <Themes />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PageLayout>
+              <About />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/sponsors"
+          element={
+            <PageLayout>
+              <Sponsors />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/theme/:theme"
+          element={
+            <PageLayout>
+              <PSPage />
+            </PageLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -7,3 +7,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export const coreTeamPrefix =
   "https://raw.githubusercontent.com/sceptix-club/htf-4-assets/main/core_team/";
+
+// export const wallImagesPrefix =
+//   "https://cdn.jsdelivr.net/gh/sceptix-club/htf-4-assets@main/wall_images/";
+
+export const wallImagesPrefix =
+  "https://raw.githubusercontent.com/sceptix-club/htf-4-assets/main/wall_images/";

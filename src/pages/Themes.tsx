@@ -4,8 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { useNavigate } from "react-router-dom";
-import { themes, type ThemeSlug } from "../content/data";
-import Background from "../components/Background";
+import { type ThemeSlug } from "../content/data";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -26,19 +25,19 @@ const THEME_CARDS = [
     number: "01",
   },
   {
-    slug: "industry-and-trade" as ThemeSlug,
-    title: "Industry & Trade",
-    description:
-      "Optimize supply chains, streamline manufacturing, and empower businesses with intelligent tools for procurement, forecasting, and trade compliance.",
-    accent: colors.yellow,
-    number: "02",
-  },
-  {
     slug: "infrastructure-and-smart-cities" as ThemeSlug,
     title: "Infrastructure & Smart Cities",
     description:
       "Design the cities of tomorrow — smarter waste management, connected transit, road safety systems, and data-driven urban planning for a better quality of life.",
     accent: colors.blue,
+    number: "02",
+  },
+  {
+    slug: "industry-and-trade" as ThemeSlug,
+    title: "Industry & Trade",
+    description:
+      "Optimize supply chains, streamline manufacturing, and empower businesses with intelligent tools for procurement, forecasting, and trade compliance.",
+    accent: colors.yellow,
     number: "03",
   },
   {
@@ -54,7 +53,6 @@ const THEME_CARDS = [
 /* ─── Individual Theme Card ─── */
 function ThemeCard({
   theme,
-  index,
   onClick,
 }: {
   theme: (typeof THEME_CARDS)[number];
@@ -97,9 +95,8 @@ function ThemeCard({
       onMouseLeave={handleMouseLeave}
       className="relative flex flex-col justify-between cursor-pointer select-none overflow-hidden"
       style={{
+        height: "100%", // ← fill the wrapper cell
         background: "#FFFEF2",
-        // backgroundImage:
-        //   "repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(0,0,0,0.025) 28px, rgba(0,0,0,0.025) 29px)",
         border: "3px solid #000",
         padding: 0,
         willChange: "transform",
@@ -145,7 +142,7 @@ function ThemeCard({
           </span>
 
           {/* Arrow — comic panel style */}
-          <div
+          {/* <div
             className="flex items-center justify-center transition-all duration-200"
             style={{
               width: 32,
@@ -168,7 +165,7 @@ function ThemeCard({
               <line x1="7" y1="17" x2="17" y2="7" />
               <polyline points="7 7 17 7 17 17" />
             </svg>
-          </div>
+          </div> */}
         </div>
 
         {/* Title */}
@@ -178,6 +175,7 @@ function ThemeCard({
             fontSize: "clamp(1rem, 2vw, 1.4rem)",
             color: "#111",
             lineHeight: 1.15,
+            minHeight: "2.3em", // ← always reserves 2 lines of space
           }}
         >
           {theme.title}
@@ -212,7 +210,7 @@ function ThemeCard({
           style={{ borderTop: "2px solid rgba(0,0,0,0.08)" }}
         >
           {/* PS count badge */}
-          <div
+          {/* <div
             className="flex items-center gap-2"
             style={{
               background: "rgba(0,0,0,0.06)",
@@ -231,7 +229,7 @@ function ThemeCard({
             >
               {themes[theme.slug].problemStatements.length} PS
             </span>
-          </div>
+          </div> */}
 
           {/* CTA */}
           <span
@@ -243,8 +241,7 @@ function ThemeCard({
               letterSpacing: "0.1em",
             }}
           >
-            Explore
-            <span style={{ fontSize: "1.1em" }}>→</span>
+            Coming Soon ...
           </span>
         </div>
       </div>
@@ -291,6 +288,7 @@ export default function Themes() {
       smooth: 0.75,
       effects: false,
       smoothTouch: 0.25,
+      normalizeScroll: true,
     });
     return () => {
       smootherRef.current?.kill();
@@ -301,128 +299,140 @@ export default function Themes() {
 
   return (
     <>
-     
+      {/* ── Fixed background — position:fixed so it never moves ── */}
       <div
         style={{
           position: "fixed",
           inset: 0,
           backgroundImage: "url('/textures/background.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
+          backgroundAttachment: "scroll", // NOT fixed/local — just let position:fixed handle it
           zIndex: 0,
           pointerEvents: "none",
+          willChange: "unset", // prevent compositing layer shifts
+          transform: "none", // prevent any inherited transforms
         }}
       />
 
-     
       <Navbar />
 
       <div id="smooth-page-wrapper">
         <div id="smooth-page-content">
           <div className="relative w-full min-h-screen">
-            {/* ── Foreground ── */}
             <div
               className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
               style={{ zIndex: 2 }}
             >
-          {/* ── Header ── */}
-          <div
-            ref={headerRef}
-            className="-mt-12 mb-14 flex flex-col items-center"
-          >
-            {/* Subtitle caption box */}
-             <p
-            className="comic-sans uppercase tracking-widest mb-3"
-            style={{
-              fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
-              color: "rgba(255,255,255,0.6)",
-            }}
-          >
-            HackToFuture 4.0
-          </p>
-
-            {/* Title */}
-            <h1
-              className="hero-title font-black uppercase"
-              style={{
-                fontSize: "clamp(2.5rem, 8vw, 5rem)",
-                lineHeight: 0.9,
-                color: "#fff",
-              }}
-            >
-              Themes
-            </h1>
-
-            {/* Red accent bar */}
-            <div
-              className="mt-4"
-              style={{
-                height: 5,
-                width: "clamp(60px, 10vw, 120px)",
-                background: colors.red,
-                boxShadow: "2px 2px 0 #000",
-              }}
-            />
-
-            {/* Subtitle text */}
-            <p
-              className="comic-sans text-center mt-5 max-w-lg"
-              style={{
-                fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
-                color: "rgba(255,255,255,0.85)",
-                lineHeight: 1.6,
-              }}
-            >
-              Choose a theme and explore the problem statements. Each one is a
-              chance to build something that matters.
-            </p>
-          </div>
-
-          {/* ── Cards ── */}
-          <div ref={cardsRef} className="max-w-5xl mx-auto">
-            {/* Mobile: single column */}
-            <div className="flex flex-col gap-6 md:hidden">
-              {THEME_CARDS.map((theme, index) => (
-                <div key={theme.slug} className="theme-card-wrapper">
-                  <ThemeCard
-                    theme={theme}
-                    index={index}
-                    onClick={() => navigate(`/theme/${theme.slug}`)}
-                  />
-                </div>
-              ))}
-            </div>
-
-            {/* Desktop: 2×2 grid */}
-            <div className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8">
-              {THEME_CARDS.map((theme, index) => (
-                <div key={theme.slug} className="theme-card-wrapper">
-                  <ThemeCard
-                    theme={theme}
-                    index={index}
-                    onClick={() => navigate(`/theme/${theme.slug}`)}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Speed-line footer accent ── */}
-          <div className="flex items-center justify-center mt-14 gap-1.5">
-            {[...Array(5)].map((_, i) => (
+              {/* ── Header ── */}
               <div
-                key={i}
-                style={{
-                  width: i === 2 ? 32 : i === 1 || i === 3 ? 16 : 8,
-                  height: 3,
-                  background: "rgba(255,255,255,0.1)",
-                  borderRadius: 2,
-                }}
-              />
-            ))}
-          </div>
-        </div>
+                ref={headerRef}
+                className="-mt-12 mb-14 flex flex-col items-center"
+              >
+                <p
+                  className="comic-sans uppercase tracking-widest mb-3"
+                  style={{
+                    fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
+                >
+                  HackToFuture 4.0
+                </p>
+
+                <h1
+                  className="hero-title font-black uppercase"
+                  style={{
+                    fontSize: "clamp(2.5rem, 8vw, 5rem)",
+                    lineHeight: 0.9,
+                    color: "#fff",
+                  }}
+                >
+                  Themes
+                </h1>
+
+                <div
+                  className="mt-4"
+                  style={{
+                    height: 5,
+                    width: "clamp(60px, 10vw, 120px)",
+                    background: colors.red,
+                    boxShadow: "2px 2px 0 #000",
+                  }}
+                />
+
+                <p
+                  className="comic-sans text-center mt-5 max-w-lg"
+                  style={{
+                    fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+                    color: "rgba(255,255,255,0.85)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Choose a theme and explore the problem statements. Each one is
+                  a chance to build something that matters.
+                </p>
+              </div>
+
+              {/* ── Cards ── */}
+              <div ref={cardsRef} className="max-w-5xl mx-auto">
+                {/* Mobile: single column */}
+                <div className="flex flex-col gap-6 md:hidden">
+                  {THEME_CARDS.map((theme, index) => (
+                    <div
+                      key={theme.slug}
+                      className="theme-card-wrapper"
+                      style={{ minHeight: 320 }} // fixed min-height mobile
+                    >
+                      <ThemeCard
+                        theme={theme}
+                        index={index}
+                        onClick={() => navigate(`/theme/${theme.slug}`)}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop: 2×2 grid — all cells equal height */}
+                <div
+                  className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8"
+                  style={{ gridAutoRows: "1fr" }} // ← key fix: all rows equal height
+                >
+                  {THEME_CARDS.map((theme, index) => (
+                    <div
+                      key={theme.slug}
+                      className="theme-card-wrapper"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        minHeight: 380, // floor so short-content cards don't collapse
+                      }}
+                    >
+                      <ThemeCard
+                        theme={theme}
+                        index={index}
+                        onClick={() => navigate(`/theme/${theme.slug}`)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Speed-line footer accent ── */}
+              <div className="flex items-center justify-center mt-14 gap-1.5">
+                {[...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: i === 2 ? 32 : i === 1 || i === 3 ? 16 : 8,
+                      height: 3,
+                      background: "rgba(255,255,255,0.1)",
+                      borderRadius: 2,
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
