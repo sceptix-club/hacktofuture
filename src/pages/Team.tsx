@@ -234,17 +234,6 @@ function DetailsContent({
         >
           {member.role}
         </div>
-        {/* 
-        <p
-          className="comic-sans text-black/80 leading-relaxed text-center"
-          style={{
-            fontSize: "clamp(0.78rem, 1.4vw, 1.02rem)",
-            marginBottom: 18,
-            maxWidth: 400,
-          }}
-        >
-          {member.bio}
-        </p> */}
 
         <div
           style={{
@@ -294,81 +283,23 @@ function DetailsContent({
   );
 }
 
-function MobileMemberCard({
+/* ────────────────────────────────────────────────────────────────────────────
+ *  Mobile Card Stack – vertical swipe (up = next, down = prev)
+ *  Each card is absolutely positioned; we render a window of 3 cards max
+ *  (prev, current, next) for perf. GSAP handles transforms on the GPU.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+function MobileCardContent({
   member,
   index,
-  dragX,
 }: {
   member: TeamMember;
   index: number;
-  dragX: number;
 }) {
   const photoSrc = getPhotoSrc(member);
-  const rotation = dragX * 0.04;
-  const likeOpacity = Math.max(0, Math.min(1, dragX / 80));
-  const nopeOpacity = Math.max(0, Math.min(1, -dragX / 80));
 
   return (
-    <div
-      className="relative overflow-hidden select-none"
-      style={{
-        ...paperStyle,
-        border: "3px solid #000",
-        borderRadius: 14,
-        boxShadow: "0 10px 30px rgba(0,0,0,0.35), 5px 5px 0 rgba(0,0,0,0.25)",
-        width: 250,
-        height: 350,
-        transform: `translateX(${dragX}px) rotate(${rotation}deg)`,
-        transition:
-          dragX === 0
-            ? "transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94)"
-            : "none",
-        cursor: "grab",
-        willChange: "transform",
-      }}
-    >
-      {/* Like indicator */}
-      <div
-        style={{
-          position: "absolute",
-          top: 14,
-          left: 12,
-          zIndex: 20,
-          border: "3px solid #22c55e",
-          borderRadius: 6,
-          padding: "2px 8px",
-          color: "#22c55e",
-          fontFamily: "'Dela Gothic One', sans-serif",
-          fontSize: "0.75rem",
-          transform: "rotate(-20deg)",
-          opacity: likeOpacity,
-          pointerEvents: "none",
-        }}
-      >
-        NEXT
-      </div>
-
-      {/* Nope indicator */}
-      <div
-        style={{
-          position: "absolute",
-          top: 14,
-          right: 12,
-          zIndex: 20,
-          border: "3px solid #DA100C",
-          borderRadius: 6,
-          padding: "2px 8px",
-          color: "#DA100C",
-          fontFamily: "'Dela Gothic One', sans-serif",
-          fontSize: "0.75rem",
-          transform: "rotate(20deg)",
-          opacity: nopeOpacity,
-          pointerEvents: "none",
-        }}
-      >
-        BACK
-      </div>
-
+    <>
       <div
         className="absolute inset-x-0 top-0 h-2"
         style={{ background: "linear-gradient(90deg, #DA100C, #000, #DA100C)" }}
@@ -499,29 +430,154 @@ function MobileMemberCard({
           </div>
         </div>
       </div>
-    </div>
+    </>
+  );
+}
+
+function MobileCardStack({
+  displayPage,
+  dragY,
+}: {
+  displayPage: number;
+  dragY: number;
+}) {
+  // Render a window of cards: current + up to 2 behind it (visible as stack)
+  const VISIBLE_BEHIND = 2;
+  const indices: number[] = [];
+
+  // Cards behind (underneath), rendered first so they're below
+  for (let offset = VISIBLE_BEHIND; offset >= 1; offset--) {
+    const idx = displayPage + offset;
+    if (idx < TOTAL_MEMBERS) indices.push(idx);
+  }
+  // Current card on top
+  indices.push(displayPage);
+
+  return (
+    <>
+      {indices.map((idx) => {
+        const isCurrent = idx === displayPage;
+        const depth = idx - displayPage; // 0 = top, 1 = behind, 2 = further behind
+
+        // Stack offset: cards behind peek out slightly and are scaled down
+        const stackScale = isCurrent ? 1 : 1 - depth * 0.045;
+        const stackY = isCurrent ? 0 : depth * 14;
+        const stackOpacity = isCurrent ? 1 : Math.max(0.3, 1 - depth * 0.3);
+
+        // Apply drag only to the current card
+        const translateY = isCurrent ? dragY : stackY;
+        const rotation = isCurrent ? dragY * 0.02 : 0;
+        const scale = isCurrent ? 1 + Math.abs(dragY) * 0.0001 : stackScale;
+
+        // As current card is dragged up, cards behind should animate closer
+        const pullUp = isCurrent
+          ? 0
+          : Math.min(1, Math.abs(dragY) / 120) * stackY;
+        const behindY = isCurrent ? 0 : stackY - pullUp;
+        const behindScale = isCurrent
+          ? 1
+          : stackScale + Math.min(1, Math.abs(dragY) / 120) * (depth * 0.045);
+
+        const finalY = isCurrent ? translateY : behindY;
+        const finalScale = isCurrent ? scale : behindScale;
+        const finalOpacity = isCurrent
+          ? 1
+          : stackOpacity + Math.min(1, Math.abs(dragY) / 120) * (depth * 0.3);
+
+        return (
+          <div
+            key={idx}
+            className="absolute select-none overflow-hidden"
+            data-card-index={idx}
+            data-card-current={isCurrent ? "true" : "false"}
+            style={{
+              ...paperStyle,
+              border: "3px solid #000",
+              borderRadius: 14,
+              boxShadow: isCurrent
+                ? "0 10px 30px rgba(0,0,0,0.35), 5px 5px 0 rgba(0,0,0,0.25)"
+                : `0 ${4 + depth * 2}px ${10 + depth * 4}px rgba(0,0,0,0.2)`,
+              width: 250,
+              height: 350,
+              transform: `translateY(${finalY}px) rotate(${rotation}deg) scale(${finalScale})`,
+              opacity: Math.min(1, finalOpacity),
+              transition: dragY === 0 ? "none" : "none",
+              willChange: "transform, opacity",
+              zIndex: 10 - depth,
+              pointerEvents: isCurrent ? "auto" : "none",
+            }}
+          >
+            {/* Swipe up indicator */}
+            {isCurrent && (
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "0%",
+                  left: "0",
+                  transform: "translateX(-50%)",
+                  zIndex: 20,
+                  border: "3px solid #22c55e",
+                  borderRadius: 6,
+                  padding: "2px 10px",
+                  color: "#22c55e",
+                  fontFamily: "'Dela Gothic One', sans-serif",
+                  fontSize: "0.7rem",
+                  opacity: Math.max(0, Math.min(1, -dragY / 70)),
+                  pointerEvents: "none",
+                }}
+              >
+                NEXT ↑
+              </div>
+            )}
+            {/* Swipe down indicator */}
+            {isCurrent && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: 10,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  zIndex: 20,
+                  border: "3px solid #DA100C",
+                  borderRadius: 6,
+                  padding: "2px 10px",
+                  color: "#DA100C",
+                  fontFamily: "'Dela Gothic One', sans-serif",
+                  fontSize: "0.7rem",
+                  opacity: Math.max(0, Math.min(1, dragY / 70)),
+                  pointerEvents: "none",
+                }}
+              >
+                ↓ BACK
+              </div>
+            )}
+
+            <MobileCardContent member={TEAM_MEMBERS[idx]} index={idx} />
+          </div>
+        );
+      })}
+    </>
   );
 }
 
 export default function Team() {
   const isMobile = useIsMobile();
   const [displayPage, setDisplayPage] = useState(0);
-  const [dragX, setDragX] = useState(0);
+  const [dragY, setDragY] = useState(0);
   const [imagesReady, setImagesReady] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<HTMLDivElement>(null);
-  const mobileCardRef = useRef<HTMLDivElement>(null);
+  const mobileStackRef = useRef<HTMLDivElement>(null);
   const sheetRefs = useRef<(HTMLDivElement | null)[]>([]);
   const currentMemberRef = useRef(0);
   const isAnimating = useRef(false);
   const flippedState = useRef<boolean[]>(new Array(TOTAL_SHEETS).fill(false));
 
-  // Tinder swipe state
+  // Mobile vertical swipe state
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
   const isDragging = useRef(false);
-  const dragStartX = useRef(0);
 
   useEffect(() => {
     currentMemberRef.current = displayPage;
@@ -567,8 +623,9 @@ export default function Team() {
     rebuildZIndices();
   }, [isMobile, displayPage]);
 
+  // Entrance animation
   useEffect(() => {
-    const target = isMobile ? mobileCardRef.current : bookRef.current;
+    const target = isMobile ? mobileStackRef.current : bookRef.current;
     if (!target) return;
 
     gsap.fromTo(
@@ -578,18 +635,134 @@ export default function Team() {
     );
   }, [isMobile]);
 
+  const mobileFlipForward = () => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    if (cur >= TOTAL_MEMBERS - 1) {
+      // Snap back
+      const cardEl = mobileStackRef.current?.querySelector(
+        '[data-card-current="true"]'
+      ) as HTMLElement | null;
+      if (cardEl) {
+        gsap.to(cardEl, {
+          y: 0,
+          rotation: 0,
+          duration: 0.4,
+          ease: "back.out(1.7)",
+        });
+      }
+      setDragY(0);
+      return;
+    }
+
+    isAnimating.current = true;
+    const cardEl = mobileStackRef.current?.querySelector(
+      '[data-card-current="true"]'
+    ) as HTMLElement | null;
+
+    if (cardEl) {
+      gsap.to(cardEl, {
+        y: -window.innerHeight,
+        rotation: -8,
+        scale: 0.85,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power3.in",
+        onComplete: () => {
+          const next = cur + 1;
+          currentMemberRef.current = next;
+          setDragY(0);
+          setDisplayPage(next);
+          isAnimating.current = false;
+        },
+      });
+    } else {
+      const next = cur + 1;
+      currentMemberRef.current = next;
+      setDragY(0);
+      setDisplayPage(next);
+      isAnimating.current = false;
+    }
+  };
+
+  const mobileFlipBackward = () => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    if (cur <= 0) {
+      const cardEl = mobileStackRef.current?.querySelector(
+        '[data-card-current="true"]'
+      ) as HTMLElement | null;
+      if (cardEl) {
+        gsap.to(cardEl, {
+          y: 0,
+          rotation: 0,
+          duration: 0.4,
+          ease: "back.out(1.7)",
+        });
+      }
+      setDragY(0);
+      return;
+    }
+
+    isAnimating.current = true;
+    const next = cur - 1;
+    currentMemberRef.current = next;
+    setDragY(0);
+    setDisplayPage(next);
+
+    // Animate the new current card in from the top
+    requestAnimationFrame(() => {
+      const cardEl = mobileStackRef.current?.querySelector(
+        '[data-card-current="true"]'
+      ) as HTMLElement | null;
+      if (cardEl) {
+        gsap.fromTo(
+          cardEl,
+          {
+            y: -window.innerHeight * 0.6,
+            rotation: -6,
+            scale: 0.9,
+            opacity: 0,
+          },
+          {
+            y: 0,
+            rotation: 0,
+            scale: 1,
+            opacity: 1,
+            duration: 0.45,
+            ease: "back.out(1.4)",
+            onComplete: () => {
+              isAnimating.current = false;
+            },
+          }
+        );
+      } else {
+        isAnimating.current = false;
+      }
+    });
+  };
+
+  const mobileSnapBack = () => {
+    const cardEl = mobileStackRef.current?.querySelector(
+      '[data-card-current="true"]'
+    ) as HTMLElement | null;
+    if (cardEl) {
+      gsap.to(cardEl, {
+        y: 0,
+        rotation: 0,
+        scale: 1,
+        duration: 0.5,
+        ease: "back.out(2)",
+      });
+    }
+    setDragY(0);
+  };
+
   const flipForward = () => {
     if (isAnimating.current) return;
 
     if (isMobile) {
-      if (currentMemberRef.current >= TOTAL_MEMBERS - 1) {
-        setDragX(0);
-        return;
-      }
-      const next = currentMemberRef.current + 1;
-      currentMemberRef.current = next;
-      setDragX(0);
-      setDisplayPage(next);
+      mobileFlipForward();
       return;
     }
 
@@ -621,14 +794,7 @@ export default function Team() {
     if (isAnimating.current) return;
 
     if (isMobile) {
-      if (currentMemberRef.current <= 0) {
-        setDragX(0);
-        return;
-      }
-      const next = currentMemberRef.current - 1;
-      currentMemberRef.current = next;
-      setDragX(0);
-      setDisplayPage(next);
+      mobileFlipBackward();
       return;
     }
 
@@ -663,7 +829,7 @@ export default function Team() {
 
     if (isMobile) {
       currentMemberRef.current = target;
-      setDragX(0);
+      setDragY(0);
       setDisplayPage(target);
       return;
     }
@@ -686,27 +852,30 @@ export default function Team() {
     }, 100);
   };
 
-  // Tinder swipe handlers for mobile
+  // Mobile vertical swipe handlers
   useEffect(() => {
     if (!isMobile) return;
 
-    const SWIPE_THRESHOLD = 60;
+    const SWIPE_THRESHOLD = 55;
 
     const handleTouchStart = (e: TouchEvent) => {
+      if (isAnimating.current) return;
       touchStartX.current = e.touches[0].clientX;
       touchStartY.current = e.touches[0].clientY;
-      dragStartX.current = e.touches[0].clientX;
       isDragging.current = false;
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      if (isAnimating.current) return;
       const dx = e.touches[0].clientX - touchStartX.current;
       const dy = e.touches[0].clientY - touchStartY.current;
 
       if (!isDragging.current) {
-        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 8) {
+        // Decide swipe axis – vertical gets priority
+        if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 6) {
           isDragging.current = true;
-        } else if (Math.abs(dy) > 8) {
+        } else if (Math.abs(dx) > 10) {
+          // Horizontal – ignore
           return;
         }
       }
@@ -714,26 +883,30 @@ export default function Team() {
       if (isDragging.current) {
         e.preventDefault();
         const cur = currentMemberRef.current;
-        const clampedDx =
-          (dx > 0 && cur === 0) || (dx < 0 && cur === TOTAL_MEMBERS - 1)
-            ? dx * 0.2
-            : dx;
-        setDragX(clampedDx);
+        // Rubber-band at edges
+        const clampedDy =
+          (dy > 0 && cur === 0) || (dy < 0 && cur === TOTAL_MEMBERS - 1)
+            ? dy * 0.18
+            : dy;
+        setDragY(clampedDy);
       }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
+      if (isAnimating.current) return;
       if (!isDragging.current) return;
       isDragging.current = false;
 
-      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      const dy = e.changedTouches[0].clientY - touchStartY.current;
 
-      if (dx < -SWIPE_THRESHOLD) {
-        flipForward();
-      } else if (dx > SWIPE_THRESHOLD) {
-        flipBackward();
+      if (dy < -SWIPE_THRESHOLD) {
+        // Swiped up → next
+        mobileFlipForward();
+      } else if (dy > SWIPE_THRESHOLD) {
+        // Swiped down → prev
+        mobileFlipBackward();
       } else {
-        setDragX(0);
+        mobileSnapBack();
       }
     };
 
@@ -951,7 +1124,7 @@ export default function Team() {
           />
         )}
 
-        {/* ── Header — copied from Themes.tsx ── */}
+        {/* ── Header ── */}
         <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center mt-4 max-md:mt-6">
           <p
             className="comic-sans uppercase tracking-widest mb-3 text-center"
@@ -984,7 +1157,6 @@ export default function Team() {
             }}
           />
 
-          {/* Subtitle — mobile only shows swipe hint */}
           <p
             className="comic-sans text-center mt-5 mb-5 max-w-lg"
             style={{
@@ -994,7 +1166,7 @@ export default function Team() {
             }}
           >
             {isMobile
-              ? "Swipe left or right to meet the team."
+              ? "Swipe up or down to meet the team."
               : "Flip through the pages to meet the people building HackToFuture 4.0."}
           </p>
         </div>
@@ -1002,14 +1174,14 @@ export default function Team() {
         {isMobile ? (
           <div
             className="absolute inset-x-0 z-20 flex items-center justify-center"
-            style={{ top: 160, bottom: 110 }}
+            style={{ top: 180, bottom: 110 }}
           >
-            <div ref={mobileCardRef} className="flex justify-center">
-              <MobileMemberCard
-                member={TEAM_MEMBERS[displayPage]}
-                index={displayPage}
-                dragX={dragX}
-              />
+            <div
+              ref={mobileStackRef}
+              className="relative flex items-center justify-center"
+              style={{ width: 250, height: 350 }}
+            >
+              <MobileCardStack displayPage={displayPage} dragY={dragY} />
             </div>
           </div>
         ) : (
@@ -1083,7 +1255,7 @@ export default function Team() {
           </div>
         )}
 
-        {/* ── Mobile pagination — truncated dots ── */}
+        {/* ── Pagination dots ── */}
         <div
           className="absolute z-30 flex gap-2 items-center"
           style={
@@ -1105,7 +1277,6 @@ export default function Team() {
         >
           {TEAM_MEMBERS.map((_, i) => {
             if (isMobile) {
-              // show window of 5 dots centred around current page
               const window = 5;
               const half = Math.floor(window / 2);
               const start = Math.max(
@@ -1182,7 +1353,7 @@ export default function Team() {
                 opacity: displayPage === 0 ? 0.6 : 1,
               }}
             >
-              ← Prev
+              ↑ Prev
             </button>
 
             <button
@@ -1201,7 +1372,7 @@ export default function Team() {
                 opacity: displayPage === TOTAL_MEMBERS - 1 ? 0.6 : 1,
               }}
             >
-              Next →
+              Next ↓
             </button>
           </div>
         )}
