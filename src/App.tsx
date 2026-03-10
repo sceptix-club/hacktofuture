@@ -63,9 +63,9 @@ function HomePage() {
   const { active, progress } = useProgress();
 
   // ── readiness flags ──
-  const [threeReady, setThreeReady] = useState(false);   // drei assets + scene has real geometry
+  const [threeReady, setThreeReady] = useState(false); // drei assets + scene has real geometry
   const [fontsReady, setFontsReady] = useState(false);
-  const [domReady, setDomReady] = useState(false);        // window load + all <img> loaded
+  const [domReady, setDomReady] = useState(false); // window load + all <img> loaded
   const [threeDFontReady, setThreeDFontReady] = useState(false); // troika 3D font file cached
 
   // ── 1. Three.js: drei progress done ──
@@ -83,7 +83,7 @@ function HomePage() {
   // ── 1b. Preload the 3D font used by HackToFuture text ──
   useEffect(() => {
     fetch("/fonts/DelaGothicOne-Regular.ttf")
-      .then(res => res.arrayBuffer())
+      .then((res) => res.arrayBuffer())
       .then(() => setThreeDFontReady(true))
       .catch(() => setThreeDFontReady(true)); // don't block on failure
   }, []);
@@ -142,7 +142,8 @@ function HomePage() {
   }, []);
 
   // ── 4. All conditions ──
-  const canDismiss = threeReady && assetsLoaded && fontsReady && domReady && threeDFontReady;
+  const canDismiss =
+    threeReady && assetsLoaded && fontsReady && domReady && threeDFontReady;
 
   // ── Fade out pre-loader from index.html once React Loader is mounted ──
   useEffect(() => {
@@ -251,16 +252,80 @@ function HomePage() {
   );
 }
 
+function PageLayout({ children }: { children: React.ReactNode }) {
+  // Remove the pre-loader on non-home pages too
+  useEffect(() => {
+    const el = document.getElementById("pre-loader");
+    if (el) {
+      el.style.opacity = "0";
+      const timer = setTimeout(() => el.remove(), 400);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Clean up any leftover GSAP scroll state from HomePage
+  useEffect(() => {
+    // Ensure body is scrollable on these pages
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.height = "";
+    document.body.style.overflow = "";
+    document.body.style.height = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    window.scrollTo(0, 0);
+  }, []);
+
+  return <>{children}</>;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/team" element={<Team />} />
-        <Route path="/themes" element={<Themes />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sponsors" element={<Sponsors />} />
-        <Route path="/theme/:theme" element={<PSPage />} />
+        <Route
+          path="/team"
+          element={
+            <PageLayout>
+              <Team />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/themes"
+          element={
+            <PageLayout>
+              <Themes />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PageLayout>
+              <About />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/sponsors"
+          element={
+            <PageLayout>
+              <Sponsors />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/theme/:theme"
+          element={
+            <PageLayout>
+              <PSPage />
+            </PageLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
