@@ -1,103 +1,60 @@
-import { forwardRef, useRef, useEffect, useCallback } from "react";
+import { forwardRef, useRef, useEffect } from "react";
 import gsap from "gsap";
 import Barcode from "../components/Barcode";
+
+const LETTERS = "HACKTOFUTURE4.0".split("");
 
 const Footer = forwardRef<HTMLDivElement>((_, ref) => {
   const lettersRef = useRef<(HTMLSpanElement | null)[]>([]);
   const letterContainerRef = useRef<HTMLDivElement | null>(null);
-  const isVisible = useRef(false);
-
-  const letters = [
-    "H", "A", "C", "K", "T", "O", "F", "U", "T", "U", "R", "E", "4", ".", "0",
-  ];
-
-  const triggerLetterAnimation = useCallback(() => {
-    const els = lettersRef.current.filter(Boolean) as HTMLSpanElement[];
-    if (els.length === 0) return;
-
-    // Reset to hidden state first
-    gsap.set(els, { y: 200, opacity: 0 });
-
-    // Then animate in
-    gsap.to(els, {
-      y: 0,
-      opacity: 1,
-      duration: 0.3,
-      stagger: 0.04,
-      ease: "back.out(1.4)",
-    });
-  }, []);
-
-  const resetLetters = useCallback(() => {
-    const els = lettersRef.current.filter(Boolean) as HTMLSpanElement[];
-    if (els.length === 0) return;
-
-    gsap.set(els, { y: 200, opacity: 0 });
-  }, []);
 
   useEffect(() => {
-    // Set initial hidden state
     const els = lettersRef.current.filter(Boolean) as HTMLSpanElement[];
+    if (!els.length || !letterContainerRef.current) return;
+
     gsap.set(els, { y: 200, opacity: 0 });
 
-    // Poll for visibility
-    const interval = setInterval(() => {
-      const container = letterContainerRef.current;
-      if (!container) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.to(els, {
+            y: 0,
+            opacity: 1,
+            duration: 0.3,
+            stagger: 0.04,
+            ease: "back.out(1.4)",
+          });
+        } else {
+          gsap.set(els, { y: 200, opacity: 0 });
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-      const rect = container.getBoundingClientRect();
-      const nowVisible =
-        rect.top < window.innerHeight &&
-        rect.bottom > 0 &&
-        rect.width > 0 &&
-        rect.height > 0;
+    observer.observe(letterContainerRef.current);
 
-      // Entered view
-      if (nowVisible && !isVisible.current) {
-        isVisible.current = true;
-        triggerLetterAnimation();
-      }
-
-      // Left view
-      if (!nowVisible && isVisible.current) {
-        isVisible.current = false;
-        resetLetters();
-      }
-    }, 150);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [triggerLetterAnimation, resetLetters]);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-50 flex flex-col w-full"
+      className="fixed inset-0 z-50 flex flex-col w-full bg-black"
       style={{
         transform: "translateY(100%)",
         willChange: "transform",
         overflow: "hidden",
-        height: "100dvh",
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        height: "100%",
+        minHeight: "-webkit-fill-available",
       }}
     >
-      <div
-        className="absolute inset-[-8px] pointer-events-none z-[0]"
-        style={{
-          backgroundImage: "url(/textures/background.jpg)",
-          filter: "blur(4px)",
-        }}
-      />
       <div className="absolute inset-0 bg-black/70 pointer-events-none z-[1]" />
       <div className="absolute inset-0 grid-bg pointer-events-none z-[2]" />
 
-      <div
-        className="relative z-10 flex flex-col flex-1"
-        style={{ overflow: "hidden", height: "100%" }}
-      >
+      <div className="relative z-10 flex flex-col flex-1 overflow-hidden">
         <div className="flex flex-col h-full justify-between">
-          <div className="flex-1 flex flex-col justify-start min-h-0 overflow-y-auto">
+          {/* Scrollable content */}
+          <div className="flex-1 flex flex-col justify-start min-h-0 overflow-y-auto overscroll-none">
             <div className="px-4 md:px-12 lg:px-20 pt-4 md:pt-6">
               <div className="w-full rounded-xl overflow-hidden border border-white/10">
                 <iframe
@@ -108,15 +65,13 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+                  title="Location Map"
+                />
               </div>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-6 px-4 md:px-12 lg:px-20 pb-2 md:pb-6 mt-3 md:mt-6">
-              <div
-                className="col-span-2 md:col-span-1 rounded-xl overflow-hidden border border-white/10 flex items-center justify-center py-3 md:py-0"
-                style={{ minHeight: "60px" }}
-              >
+              <div className="col-span-2 md:col-span-1 rounded-xl overflow-hidden border border-white/10 flex items-center justify-center py-3 md:py-0 min-h-[60px]">
                 <Barcode height={50} />
               </div>
 
@@ -125,9 +80,19 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                   QUERIES & CONTACT
                 </h3>
                 <div className="flex flex-col gap-0.5 md:gap-2 comic-sans">
-                  <a href="mailto:hacktofuture@gmail.com" className="text-white/70 hover:text-white transition-colors flex items-center gap-2 truncate text-[10px] md:text-sm">hacktofuture@gmail.com</a>
-                  <a href="tel:+919876543210" className="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-[10px] md:text-sm">+91 98765 43210</a>
-                  <a href="tel:+919876543211" className="text-white/70 hover:text-white transition-colors flex items-center gap-2 text-[10px] md:text-sm">+91 98765 43211</a>
+                  {[
+                    { href: "mailto:hacktofuture@gmail.com", label: "hacktofuture@gmail.com" },
+                    { href: "tel:+919876543210", label: "+91 98765 43210" },
+                    { href: "tel:+919876543211", label: "+91 98765 43211" },
+                  ].map(({ href, label }) => (
+                    <a
+                      key={href}
+                      href={href}
+                      className="text-white/70 hover:text-white transition-colors flex items-center gap-2 truncate text-[10px] md:text-sm"
+                    >
+                      {label}
+                    </a>
+                  ))}
                 </div>
               </div>
 
@@ -136,31 +101,34 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                   FOLLOW US
                 </h3>
                 <div className="grid grid-cols-2 gap-0.5 md:gap-2 comic-sans">
-                  <a href="#" className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm">Instagram</a>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm">Twitter / X</a>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm">Discord</a>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm">LinkedIn</a>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm">GitHub</a>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm">YouTube</a>
+                  {["Instagram", "Twitter / X", "Discord", "LinkedIn", "GitHub", "YouTube"].map(
+                    (name) => (
+                      <a
+                        key={name}
+                        href="#"
+                        className="text-white/70 hover:text-white transition-colors py-0.5 text-[10px] md:text-sm"
+                      >
+                        {name}
+                      </a>
+                    )
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Pinned bottom */}
           <div className="w-full border-t border-white/10 flex flex-col shrink-0">
             <div
               ref={letterContainerRef}
               className="flex justify-center items-center w-full px-1 md:px-4"
-              style={{
-                height: "clamp(2.5rem, 10vw, 10rem)",
-                minHeight: "2.5rem",
-              }}
+              style={{ height: "clamp(2.5rem, 10vw, 10rem)" }}
             >
               <div
                 className="flex items-center justify-center"
                 style={{ gap: "clamp(0px, 0.5vw, 4px)" }}
               >
-                {letters.map((letter, i) => (
+                {LETTERS.map((letter, i) => (
                   <span
                     key={i}
                     ref={(el) => {
@@ -173,7 +141,6 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                       WebkitTextStroke: "1px white",
                       lineHeight: 1,
                       willChange: "transform, opacity",
-                      transform: "translate3d(0, 0, 0)",
                       letterSpacing: "-0.02em",
                     }}
                   >
@@ -183,18 +150,16 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
               </div>
             </div>
 
-            <div
-              className="flex justify-between items-center px-4 md:px-12 lg:px-20 py-1 md:py-2"
-              style={{
-                paddingBottom: "max(0.25rem, calc(env(safe-area-inset-bottom, 0px) + 0.25rem))",
-              }}
-            >
+            <div className="flex justify-between items-center px-4 md:px-12 lg:px-20 py-1 md:py-2 pb-[max(0.25rem,calc(env(safe-area-inset-bottom)+0.25rem))]">
               <span className="text-white/40 comic-sans text-[8px] md:text-xs">
                 © 2026 Hack to Future. All rights reserved.
               </span>
               <span className="text-white/40 comic-sans text-[8px] md:text-xs">
                 Built by{" "}
-                <a href="#" className="text-white/60 hover:text-white transition-colors underline underline-offset-2">
+                <a
+                  href="#"
+                  className="text-white/60 hover:text-white transition-colors underline underline-offset-2"
+                >
                   The Sceptix Club
                 </a>
               </span>
