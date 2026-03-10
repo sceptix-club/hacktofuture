@@ -3,6 +3,7 @@ import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { MapPin } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -218,8 +219,8 @@ function SponsorDialog({
         style={{
           maxWidth: "min(780px, 95vw)",
           background: "#FFFEF2",
-          backgroundImage:
-            "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
+          // backgroundImage:
+          //   "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
           border: "3px solid #000",
           borderTop: `5px solid ${accent}`,
           borderRadius: "0.75rem",
@@ -392,7 +393,7 @@ function SponsorDialog({
                   background: "rgba(0,0,0,0.05)",
                 }}
               >
-                📍 {sponsor.headquarters}
+              <MapPin className="inline-block mb-1" size={14} /> {sponsor.headquarters}
               </span>
             )}
           </div>
@@ -461,8 +462,8 @@ function SponsorCard({
         height: cardH,
         background: "#FFFEF2",
         // lined paper texture — same as ThemeCard
-        backgroundImage:
-          "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
+        // backgroundImage:
+        //   "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
         border: "3px solid #000",
         borderTop: "none", // accent strip takes the top
         borderRadius: 0, // flat comic style

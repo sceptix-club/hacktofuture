@@ -270,7 +270,7 @@ function DetailsContent({
         </div>
       </div>
 
-      <svg
+      {/* <svg
         className="absolute bottom-4 right-4 opacity-10"
         width="50"
         height="50"
@@ -280,7 +280,7 @@ function DetailsContent({
           points="50,0 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35"
           fill="#DA100C"
         />
-      </svg>
+      </svg> */}
     </div>
   );
 }
@@ -1150,11 +1150,11 @@ export default function Team() {
           </div>
         )}
 
-        {!isMobile && (
+        {/* {!isMobile && (
           <ComicDecorations
             bookRef={bookRef as React.RefObject<HTMLDivElement>}
           />
-        )}
+        )} */}
 
         {/* ── Header ── */}
         <div className="absolute top-0 left-0 right-0 z-30 px-4 sm:px-6 md:px-12 pt-6 pb-4 flex flex-col items-center mt-4 max-md:mt-6">
