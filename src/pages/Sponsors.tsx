@@ -178,7 +178,7 @@ function SponsorDialog({
 
   // Portal to document.body — escapes the ScrollSmoother transform context
   // so position:fixed is always relative to the actual viewport
-  return createPortalcreatePortal(
+  return createPortal(
     <div
       ref={backdropRef}
       className="fixed inset-0 flex items-center justify-center p-4 md:p-8"

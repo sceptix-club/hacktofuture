@@ -940,7 +940,7 @@ const handleTouchEnd = (e: TouchEvent) => {
               color: "#fff",
             }}
           >
-            Our Team
+            Core Team
           </h1>
 
           <div
