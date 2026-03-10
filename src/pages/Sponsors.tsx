@@ -111,11 +111,11 @@ const SILVER_SPONSORS: Sponsor[] = [
 
 const BRONZE_SPONSORS: Sponsor[] = [];
 
-const TIER_COLORS = {
-  title: "#E8003D",
-  gold: "#C8980A",
-  silver: "#7A7A7A",
-  bronze: "#A0522D",
+const TIER_COLORS: Record<string, { bg: string; text: string }> = {
+  title: { bg: "#DA100C", text: "#000" },
+  gold: { bg: "#FFE105", text: "#000" },
+  silver: { bg: "#50BAEA", text: "#000" },
+  bronze: { bg: "#A0522D", text: "#fff" },
 };
 
 /* ─── Dialog (portaled to document.body) ─── */
@@ -132,7 +132,7 @@ function SponsorDialog({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-      const smoother = ScrollSmoother.get();
+    const smoother = ScrollSmoother.get();
     if (smoother) smoother.paused(true);
 
     gsap.fromTo(
@@ -176,8 +176,6 @@ function SponsorDialog({
     return () => window.removeEventListener("keydown", handler);
   }, [close]);
 
-  // Portal the dialog to document.body so it's outside ScrollSmoother's
-  // transformed container — this ensures position:fixed works correctly
   return createPortal(
     <div
       ref={backdropRef}
@@ -199,7 +197,6 @@ function SponsorDialog({
           boxShadow: "6px 6px 0 rgba(0,0,0,0.7)",
         }}
       >
-        {/* Close button */}
         <button
           onClick={close}
           className="absolute top-3 right-3 z-10 flex items-center justify-center"
@@ -220,7 +217,6 @@ function SponsorDialog({
           ×
         </button>
 
-        {/* Left — logo panel */}
         <div
           className="flex flex-col items-center justify-center p-8 md:p-10 gap-4"
           style={{
@@ -280,13 +276,11 @@ function SponsorDialog({
           )}
         </div>
 
-        {/* Divider */}
         <div
           className="hidden md:block flex-shrink-0"
           style={{ width: 3, background: "#000" }}
         />
 
-        {/* Right — info panel */}
         <div className="flex flex-col gap-4 p-6 md:p-8 flex-1">
           <div>
             <h2
@@ -545,17 +539,19 @@ function SponsorCard({
 /* ─── Tier row ─── */
 function TierRow({
   label,
-  accent,
+  tier,
   sponsors,
   size,
 }: {
   label: string;
-  accent: string;
+  tier: keyof typeof TIER_COLORS;
   sponsors: Sponsor[];
   size: "lg" | "md" | "sm";
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<Sponsor | null>(null);
+
+  const { bg: accent, text: tierText } = TIER_COLORS[tier];
 
   useEffect(() => {
     if (!rowRef.current) return;
@@ -585,29 +581,50 @@ function TierRow({
       )}
       <div className="w-full -mt-24" style={{ height: "0.5rem" }} />
       <div className="flex flex-col items-center gap-5 w-full">
-        <div className="flex items-center gap-3 w-full max-w-4xl">
+        {/* ── Tier label — comic badge style ── */}
+        <div className="flex items-center gap-4 w-full max-w-4xl">
+            <div
+                style={{
+                  height: 3,
+                  flex: 1,
+                 background: accent,
+                  boxShadow: "2px 2px 0 #000",
+   
+                }}
+              />
           <div
-            style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
-          />
-          <div
-            className="px-4 py-1"
-            style={{ border: `2px solid ${accent}`, borderRadius: "2px" }}
+            className="inline-block"
+            style={{
+              background: accent,
+              color: tierText,
+              padding: "0.4rem 1rem",
+              border: "3px solid #000",
+              boxShadow: "3px 3px 0 #000",
+            }}
           >
             <span
-              className="hero-title uppercase tracking-widest"
+              className="comic-sans font-bold"
               style={{
-                fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
-                color: accent,
+                fontSize: "clamp(0.7rem, 1.2vw, 0.85rem)",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
               }}
             >
               {label}
             </span>
           </div>
           <div
-            style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
-          />
+                style={{
+                  height: 3,
+                  flex: 1,
+                 background: accent,
+                  boxShadow: "2px 2px 0 #000",
+   
+                }}
+              />
         </div>
 
+        {/* Cards */}
         <div
           ref={rowRef}
           className="flex flex-wrap items-center mt-4 justify-center gap-4 md:gap-6"
@@ -743,7 +760,7 @@ export default function Sponsors() {
               {TITLE_SPONSORS.length > 0 && (
                 <TierRow
                   label="Title Sponsor"
-                  accent={TIER_COLORS.title}
+                  tier="title"
                   sponsors={TITLE_SPONSORS}
                   size="lg"
                 />
@@ -751,7 +768,7 @@ export default function Sponsors() {
               {GOLD_SPONSORS.length > 0 && (
                 <TierRow
                   label="Gold Sponsors"
-                  accent={TIER_COLORS.gold}
+                  tier="gold"
                   sponsors={GOLD_SPONSORS}
                   size="lg"
                 />
@@ -759,7 +776,7 @@ export default function Sponsors() {
               {SILVER_SPONSORS.length > 0 && (
                 <TierRow
                   label="Silver Sponsors"
-                  accent={TIER_COLORS.silver}
+                  tier="silver"
                   sponsors={SILVER_SPONSORS}
                   size="md"
                 />
@@ -767,7 +784,7 @@ export default function Sponsors() {
               {BRONZE_SPONSORS.length > 0 && (
                 <TierRow
                   label="Bronze Sponsors"
-                  accent={TIER_COLORS.bronze}
+                  tier="bronze"
                   sponsors={BRONZE_SPONSORS}
                   size="sm"
                 />

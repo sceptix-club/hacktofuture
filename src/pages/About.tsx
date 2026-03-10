@@ -106,7 +106,7 @@
                 About
               </h1>
               
-              {/* Updated Dash Below Title (Matching Themes Page Style) */}
+             
               <div
                 className="mt-4"
                 style={{
