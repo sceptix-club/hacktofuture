@@ -43,7 +43,7 @@ export function Overlay() {
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }} />
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }} />
         <img
-          src="src/assets/logo_white.png"
+          src="/logo_white.png"
           alt="logo"
           style={{
             height: "clamp(20px, 3vw, 30px)",

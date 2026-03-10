@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -161,7 +162,6 @@ function SponsorDialog({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // entrance
     gsap.fromTo(
       backdropRef.current,
       { opacity: 0 },
@@ -172,7 +172,6 @@ function SponsorDialog({
       { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
     );
-    // lock scroll
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
@@ -194,7 +193,6 @@ function SponsorDialog({
     });
   }, [onClose]);
 
-  // close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
@@ -203,11 +201,17 @@ function SponsorDialog({
     return () => window.removeEventListener("keydown", handler);
   }, [close]);
 
-  return (
+  // Portal to document.body — escapes the ScrollSmoother transform context
+  // so position:fixed is always relative to the actual viewport
+  return createPortal(
     <div
       ref={backdropRef}
-      className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-8"
-      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+      className="fixed inset-0 flex items-center justify-center p-4 md:p-8"
+      style={{
+        zIndex: 9999,
+        background: "rgba(0,0,0,0.75)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={(e) => {
         if (e.target === backdropRef.current) close();
       }}
@@ -217,6 +221,8 @@ function SponsorDialog({
         className="relative w-full flex flex-col md:flex-row overflow-hidden"
         style={{
           maxWidth: "min(780px, 95vw)",
+          maxHeight: "85vh",
+          overflowY: "auto",
           background: "#FFFEF2",
           backgroundImage:
             "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
@@ -398,7 +404,8 @@ function SponsorDialog({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

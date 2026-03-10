@@ -126,7 +126,10 @@ function HomePage() {
 
     const checkAllImages = () => {
       const images = Array.from(document.querySelectorAll("img"));
-      return images.length === 0 || images.every((img) => img.complete && img.naturalHeight > 0);
+      return (
+        images.length === 0 ||
+        images.every((img) => img.complete && img.naturalHeight > 0)
+      );
     };
 
     const tryResolve = () => {
@@ -169,7 +172,8 @@ function HomePage() {
     };
   }, []);
 
-  const canDismiss = threeReady && assetsLoaded && fontsReady && domReady && threeDFontReady;
+  const canDismiss =
+    threeReady && assetsLoaded && fontsReady && domReady && threeDFontReady;
 
   // ── Fade out pre-loader from index.html ──
   useEffect(() => {
@@ -200,10 +204,9 @@ function HomePage() {
       ScrollTrigger.config({ ignoreMobileResize: true });
 
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      
+
       if (!isIOS) {
- ScrollTrigger.normalizeScroll(true);
-       
+        ScrollTrigger.normalizeScroll(true);
       }
 
       smootherRef.current = ScrollSmoother.create({
@@ -249,7 +252,7 @@ function HomePage() {
 
       // Clear any inline styles GSAP may have added to body/html
       ScrollTrigger.clearScrollMemory();
-      
+
       // Reset body/html scroll styles that ScrollSmoother may have set
       document.documentElement.style.overflow = "";
       document.documentElement.style.height = "";
