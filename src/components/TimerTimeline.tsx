@@ -106,6 +106,7 @@ function Timeline() {
   const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
+	const timelineRef = useRef<HTMLDivElement>(null);
 
   const originalPos = [
     { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -172,17 +173,28 @@ function Timeline() {
     }
 
     difference = Math.abs(difference);
-    console.log("diff: ", difference);
-    for (let i = 0; i < difference; i++) {
+		let i = 0;
+    for (; i < difference; i++) {
       setTimeout(animateCards, 700 * i);
     }
+
+		if (timelineRef.current) {
+			timelineRef.current.style.pointerEvents = 'none';
+		}
+
+		setTimeout(()=>{
+			if (timelineRef.current) {
+				timelineRef.current.style.pointerEvents = 'auto';
+			}
+		}, 700*i)
+		
   };
 
   const flipForward = (updateButton: Boolean | undefined) => {
     setCurrentCard((prev) => {
       const next = prev === totalCards - 1 ? 0 : prev + 1;
-
       const prevCard = cardRefs.current[prev];
+
       if (prevCard) {
         const finalPosIdx = (prev - next + totalCards) % totalCards;
         const tl1 = gsap.timeline();
@@ -273,6 +285,14 @@ function Timeline() {
     const rect = currentEl.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const midpoint = rect.width / 2;
+		if (timelineRef.current) {
+				timelineRef.current.style.pointerEvents = 'none';
+			}
+		setTimeout(()=>{
+			if (timelineRef.current) {
+				timelineRef.current.style.pointerEvents = 'auto';
+			}
+		}, 700)
     if (x > midpoint) {
       flipForward(true);
     } else {
@@ -306,6 +326,7 @@ function Timeline() {
     <div
       className="flex flex-col items-center justify-center w-full px-2 sm:px-4"
       style={{ paddingBottom: "clamp(3rem, 6vh, 4.5rem)" }}
+			ref={timelineRef}
     >
       <div className="flex gap-2 sm:gap-4 mb-2 sm:mb-3">
         {dayLabels.map((label, i) => (
@@ -401,7 +422,7 @@ function Timeline() {
 // ✅ UPDATED TimerTimeline layout
 export default function TimerTimeline() {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 lg:gap-6 w-full px-4">
+    <div className="flex flex-col items-center justify-center gap-4 lg:gap-6 w-full px-4 select-none">
       {/* Heading */}
       <div className="htf-panel w-full flex justify-center">
         <h2
