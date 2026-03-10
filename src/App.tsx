@@ -20,7 +20,6 @@ import PSPage from "./pages/ps";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-// ...existing code... (FrameSignal stays the same)
 function FrameSignal({ onReady }: { onReady: () => void }) {
   const fired = useRef(false);
   const { scene } = useThree();
@@ -49,7 +48,6 @@ function FrameSignal({ onReady }: { onReady: () => void }) {
   return null;
 }
 
-// ...existing code... (HomePage stays exactly the same)
 function HomePage() {
   const SCENES = 4;
   const scrollProgressRef = useRef(0);
@@ -230,9 +228,8 @@ function HomePage() {
 
 function PageLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const [, setLoaderDone] = useState(false);
+  const [loaderDone, setLoaderDone] = useState(false);
 
-  // Remove the pre-loader on non-home pages too
   useEffect(() => {
     const el = document.getElementById("pre-loader");
     if (el) {
@@ -242,18 +239,16 @@ function PageLayout({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // On every route change: kill all leftover ScrollTrigger / ScrollSmoother
-  // instances from other pages + reset body scroll locks from HomePage
+  // On every route change: kill leftover GSAP from previous page + reset body
   useEffect(() => {
     setLoaderDone(false);
 
-    // Kill any lingering ScrollSmoother / ScrollTrigger from previous page
     const smoother = ScrollSmoother.get();
     if (smoother) smoother.kill();
     ScrollTrigger.getAll().forEach((t) => t.kill());
     ScrollTrigger.clearMatchMedia();
+    ScrollTrigger.normalizeScroll(false);
 
-    // Reset body styles that HomePage's normalizeScroll may have set
     document.documentElement.style.overflow = "";
     document.documentElement.style.height = "";
     document.body.style.overflow = "";
@@ -264,14 +259,19 @@ function PageLayout({ children }: { children: React.ReactNode }) {
     document.body.style.right = "";
     document.body.style.width = "";
     window.scrollTo(0, 0);
-
-    // Also disable normalizeScroll that HomePage may have left on
-    ScrollTrigger.normalizeScroll(false);
   }, [location.pathname]);
 
   return (
     <>
-      {children}
+      {typeof children === "object" && children !== null
+        ? // Clone children to inject loaderDone prop
+          (() => {
+            const child = children as React.ReactElement<{
+              loaderDone?: boolean;
+            }>;
+            return <child.type {...child.props} loaderDone={loaderDone} />;
+          })()
+        : children}
       <Loader
         key={location.pathname}
         canDismiss={true}

@@ -95,7 +95,7 @@ function ThemeCard({
       onMouseLeave={handleMouseLeave}
       className="relative flex flex-col justify-between cursor-pointer select-none overflow-hidden"
       style={{
-        height: "100%", // ← fill the wrapper cell
+        height: "100%",
         background: "#FFFEF2",
         border: "3px solid #000",
         padding: 0,
@@ -103,10 +103,8 @@ function ThemeCard({
         boxShadow: "5px 5px 0 #000",
       }}
     >
-      {/* Accent strip top */}
       <div style={{ height: 6, background: theme.accent }} />
 
-      {/* ── Halftone: top-right corner── */}
       <div
         className="absolute pointer-events-none"
         style={{
@@ -127,7 +125,6 @@ function ThemeCard({
         className="relative flex flex-col justify-between h-full"
         style={{ padding: "clamp(1.25rem, 2.5vw, 2rem)" }}
       >
-        {/* Number + Arrow row */}
         <div className="flex items-start justify-between mb-4">
           <span
             className="hero-title font-black"
@@ -140,48 +137,20 @@ function ThemeCard({
           >
             {theme.number}
           </span>
-
-          {/* Arrow — comic panel style */}
-          {/* <div
-            className="flex items-center justify-center transition-all duration-200"
-            style={{
-              width: 32,
-              height: 32,
-              background: theme.accent,
-              border: "2px solid #000",
-              boxShadow: "2px 2px 0 #000",
-              color: theme.accent === colors.yellow ? "#000" : "#fff",
-              flexShrink: 0,
-            }}
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-            >
-              <line x1="7" y1="17" x2="17" y2="7" />
-              <polyline points="7 7 17 7 17 17" />
-            </svg>
-          </div> */}
         </div>
 
-        {/* Title */}
         <h3
           className="hero-title font-black uppercase mb-3"
           style={{
             fontSize: "clamp(1rem, 2vw, 1.4rem)",
             color: "#111",
             lineHeight: 1.15,
-            minHeight: "2.3em", // ← always reserves 2 lines of space
+            minHeight: "2.3em",
           }}
         >
           {theme.title}
         </h3>
 
-        {/* Accent dash under title */}
         <div
           style={{
             width: "clamp(30px, 6vw, 50px)",
@@ -191,7 +160,6 @@ function ThemeCard({
           }}
         />
 
-        {/* Description */}
         <p
           className="comic-sans"
           style={{
@@ -204,34 +172,10 @@ function ThemeCard({
           {theme.description}
         </p>
 
-        {/* Bottom — PS count + CTA */}
         <div
           className="flex items-center justify-between mt-5 pt-4"
           style={{ borderTop: "2px solid rgba(0,0,0,0.08)" }}
         >
-          {/* PS count badge */}
-          {/* <div
-            className="flex items-center gap-2"
-            style={{
-              background: "rgba(0,0,0,0.06)",
-              padding: "0.3rem 0.7rem",
-              border: "1.5px solid rgba(0,0,0,0.1)",
-            }}
-          >
-            <span
-              className="comic-sans font-bold"
-              style={{
-                fontSize: "clamp(0.65rem, 1vw, 0.75rem)",
-                color: "rgba(0,0,0,0.5)",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-              }}
-            >
-              {themes[theme.slug].problemStatements.length} PS
-            </span>
-          </div> */}
-
-          {/* CTA */}
           <span
             className="comic-sans font-bold flex items-center gap-1"
             style={{
@@ -250,7 +194,7 @@ function ThemeCard({
 }
 
 /* ─── Main Themes Page ─── */
-export default function Themes() {
+export default function Themes({ loaderDone }: { loaderDone?: boolean }) {
   const cardsRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -281,25 +225,32 @@ export default function Themes() {
     );
   }, []);
 
+  // ScrollSmoother — only create after loader is done
   useEffect(() => {
-    smootherRef.current = ScrollSmoother.create({
-      wrapper: "#smooth-page-wrapper",
-      content: "#smooth-page-content",
-      smooth: 0.75,
-      effects: false,
-      smoothTouch: 0.25,
-      normalizeScroll: true,
-    });
+    if (!loaderDone) return;
+
+    const timer = setTimeout(() => {
+      smootherRef.current = ScrollSmoother.create({
+        wrapper: "#smooth-page-wrapper",
+        content: "#smooth-page-content",
+        smooth: 0.75,
+        effects: false,
+        smoothTouch: 0.25,
+        normalizeScroll: true,
+      });
+      ScrollTrigger.refresh();
+    }, 100);
+
     return () => {
+      clearTimeout(timer);
       smootherRef.current?.kill();
       smootherRef.current = null;
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [loaderDone]);
 
   return (
     <>
-      {/* ── Fixed background — position:fixed so it never moves ── */}
       <div
         style={{
           position: "fixed",
@@ -308,11 +259,11 @@ export default function Themes() {
           backgroundSize: "cover",
           backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
-          backgroundAttachment: "scroll", // NOT fixed/local — just let position:fixed handle it
+          backgroundAttachment: "scroll",
           zIndex: 0,
           pointerEvents: "none",
-          willChange: "unset", // prevent compositing layer shifts
-          transform: "none", // prevent any inherited transforms
+          willChange: "unset",
+          transform: "none",
         }}
       />
 
@@ -325,7 +276,6 @@ export default function Themes() {
               className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24"
               style={{ zIndex: 2 }}
             >
-              {/* ── Header ── */}
               <div
                 ref={headerRef}
                 className="-mt-12 mb-14 flex flex-col items-center"
@@ -374,15 +324,13 @@ export default function Themes() {
                 </p>
               </div>
 
-              {/* ── Cards ── */}
               <div ref={cardsRef} className="max-w-5xl mx-auto">
-                {/* Mobile: single column */}
                 <div className="flex flex-col gap-6 md:hidden">
                   {THEME_CARDS.map((theme, index) => (
                     <div
                       key={theme.slug}
                       className="theme-card-wrapper"
-                      style={{ minHeight: 320 }} // fixed min-height mobile
+                      style={{ minHeight: 320 }}
                     >
                       <ThemeCard
                         theme={theme}
@@ -393,10 +341,9 @@ export default function Themes() {
                   ))}
                 </div>
 
-                {/* Desktop: 2×2 grid — all cells equal height */}
                 <div
                   className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8"
-                  style={{ gridAutoRows: "1fr" }} 
+                  style={{ gridAutoRows: "1fr" }}
                 >
                   {THEME_CARDS.map((theme, index) => (
                     <div
@@ -405,7 +352,7 @@ export default function Themes() {
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        minHeight: 380, // floor so short-content cards don't collapse
+                        minHeight: 380,
                       }}
                     >
                       <ThemeCard
@@ -418,7 +365,6 @@ export default function Themes() {
                 </div>
               </div>
 
-              {/* ── Speed-line footer accent ── */}
               <div className="flex items-center justify-center mt-14 gap-1.5">
                 {[...Array(5)].map((_, i) => (
                   <div

@@ -591,15 +591,14 @@ function TierRow({
       <div className="flex flex-col items-center gap-5 w-full">
         {/* ── Tier label — comic badge style ── */}
         <div className="flex items-center gap-4 w-full max-w-4xl">
-            <div
-                style={{
-                  height: 3,
-                  flex: 1,
-                 background: accent,
-                  boxShadow: "2px 2px 0 #000",
-   
-                }}
-              />
+          <div
+            style={{
+              height: 3,
+              flex: 1,
+              background: accent,
+              boxShadow: "2px 2px 0 #000",
+            }}
+          />
           <div
             className="inline-block"
             style={{
@@ -622,14 +621,13 @@ function TierRow({
             </span>
           </div>
           <div
-                style={{
-                  height: 3,
-                  flex: 1,
-                 background: accent,
-                  boxShadow: "2px 2px 0 #000",
-   
-                }}
-              />
+            style={{
+              height: 3,
+              flex: 1,
+              background: accent,
+              boxShadow: "2px 2px 0 #000",
+            }}
+          />
         </div>
 
         {/* Cards */}
@@ -654,7 +652,7 @@ function TierRow({
 }
 
 /* ─── Main Page ─── */
-export default function Sponsors() {
+export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
   const headerRef = useRef<HTMLDivElement>(null);
   const smootherRef = useRef<ScrollSmoother | null>(null);
 
@@ -667,21 +665,29 @@ export default function Sponsors() {
     );
   }, []);
 
+  // ScrollSmoother — only create after loader is done
   useEffect(() => {
-    smootherRef.current = ScrollSmoother.create({
-      wrapper: "#sponsors-smooth-wrapper",
-      content: "#sponsors-smooth-content",
-      smooth: 0.75,
-      effects: false,
-      smoothTouch: 0.25,
-      normalizeScroll: true,
-    });
+    if (!loaderDone) return;
+
+    const timer = setTimeout(() => {
+      smootherRef.current = ScrollSmoother.create({
+        wrapper: "#sponsors-smooth-wrapper",
+        content: "#sponsors-smooth-content",
+        smooth: 0.75,
+        effects: false,
+        smoothTouch: 0.25,
+        normalizeScroll: true,
+      });
+      ScrollTrigger.refresh();
+    }, 100);
+
     return () => {
+      clearTimeout(timer);
       smootherRef.current?.kill();
       smootherRef.current = null;
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [loaderDone]);
 
   return (
     <>

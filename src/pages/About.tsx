@@ -7,7 +7,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-export default function About() {
+export default function About({ loaderDone }: { loaderDone?: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -17,13 +17,7 @@ export default function About() {
 
   // Entrance animation
   useEffect(() => {
-    if (
-      !headerRef.current ||
-      !contentRef.current ||
-      !statsRef.current ||
-      !tickerRef.current
-    )
-      return;
+    if (!headerRef.current || !contentRef.current || !statsRef.current) return;
 
     gsap.fromTo(
       headerRef.current,
@@ -31,11 +25,13 @@ export default function About() {
       { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
     );
 
-    gsap.fromTo(
-      tickerRef.current,
-      { opacity: 0, scale: 0.95 },
-      { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out", delay: 0.2 }
-    );
+    if (tickerRef.current) {
+      gsap.fromTo(
+        tickerRef.current,
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out", delay: 0.2 }
+      );
+    }
 
     const cards = [
       contentRef.current,
@@ -56,22 +52,30 @@ export default function About() {
     );
   }, []);
 
-  // ScrollSmoother — same config as Sponsors.tsx
+  // ScrollSmoother — only create after loader is done
   useEffect(() => {
-    smootherRef.current = ScrollSmoother.create({
-      wrapper: "#about-smooth-wrapper",
-      content: "#about-smooth-content",
-      smooth: 0.75,
-      effects: false,
-      smoothTouch: 0.25,
-      normalizeScroll: true,
-    });
+    if (!loaderDone) return;
+
+    // Small delay to let DOM settle after loader fade-out
+    const timer = setTimeout(() => {
+      smootherRef.current = ScrollSmoother.create({
+        wrapper: "#about-smooth-wrapper",
+        content: "#about-smooth-content",
+        smooth: 0.75,
+        effects: false,
+        smoothTouch: 0.25,
+        normalizeScroll: true,
+      });
+      ScrollTrigger.refresh();
+    }, 100);
+
     return () => {
+      clearTimeout(timer);
       smootherRef.current?.kill();
       smootherRef.current = null;
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [loaderDone]);
 
   const stats = [
     { label: "PRIZE POOL", value: "₹3,80,000", color: "#E8003D" },
@@ -85,7 +89,7 @@ export default function About() {
     <>
       <Navbar />
 
-      {/* Fixed background — same as Sponsors.tsx */}
+      {/* Fixed background */}
       <div
         style={{
           position: "fixed",
@@ -102,7 +106,7 @@ export default function About() {
         }}
       />
 
-      {/* Dot grid overlay — same as Sponsors.tsx */}
+      {/* Dot grid overlay */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
@@ -171,7 +175,6 @@ export default function About() {
                       boxShadow: "6px 6px 0px rgba(0,0,0,0.8)",
                     }}
                   >
-                    {/* Number/Icon badge */}
                     <div className="flex items-start justify-between mb-6">
                       <span
                         className="hero-title font-black"
@@ -342,7 +345,6 @@ export default function About() {
                     </div>
                   ))}
 
-                  {/* Extra comic-style graphic card */}
                   <div
                     className="col-span-2 relative overflow-hidden flex items-center justify-center"
                     style={{
