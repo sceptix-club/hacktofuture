@@ -237,16 +237,16 @@ function DetailsContent({
           {member.role}
         </div>
 
-        <div
+        {/* <div
           style={{
             height: 3,
             width: 52,
             background: "linear-gradient(90deg, #DA100C, #000)",
             marginBottom: 14,
           }}
-        />
+        /> */}
 
-        <div className="flex flex-wrap justify-center gap-2 pb-1">
+        <div className="flex flex-wrap justify-center gap-2 pb-1 mt-2">
           {member.links.map((link) => (
             <a
               key={link.label}
@@ -399,16 +399,9 @@ function MobileCardContent({
             {member.role}
           </div>
 
-          <div
-            style={{
-              height: 3,
-              width: 36,
-              background: "linear-gradient(90deg, #DA100C, #000)",
-              marginBottom: 8,
-            }}
-          />
+          
 
-          <div className="flex flex-wrap justify-center gap-2 pb-1">
+          <div className="flex flex-wrap justify-center gap-2 pb-1 mt-2">
             {member.links.map((link) => (
               <a
                 key={link.label}

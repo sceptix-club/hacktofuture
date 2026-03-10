@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -108,38 +109,7 @@ const SILVER_SPONSORS: Sponsor[] = [
   },
 ];
 
-const BRONZE_SPONSORS: Sponsor[] = [
-  // {
-  //   name: "Sponsor A",
-  //   logo: "/sponsors/a.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor B",
-  //   logo: "/sponsors/b.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor C",
-  //   logo: "/sponsors/c.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor D",
-  //   logo: "/sponsors/d.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor E",
-  //   logo: "/sponsors/e.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-];
+const BRONZE_SPONSORS: Sponsor[] = [];
 
 const TIER_COLORS = {
   title: "#E8003D",
@@ -148,7 +118,7 @@ const TIER_COLORS = {
   bronze: "#A0522D",
 };
 
-/* ─── Dialog ─── */
+/* ─── Dialog (portaled to document.body) ─── */
 function SponsorDialog({
   sponsor,
   accent,
@@ -162,7 +132,9 @@ function SponsorDialog({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // entrance
+      const smoother = ScrollSmoother.get();
+    if (smoother) smoother.paused(true);
+
     gsap.fromTo(
       backdropRef.current,
       { opacity: 0 },
@@ -173,9 +145,10 @@ function SponsorDialog({
       { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
     );
-    // lock scroll
     document.body.style.overflow = "hidden";
     return () => {
+      const sm = ScrollSmoother.get();
+      if (sm) sm.paused(false);
       document.body.style.overflow = "";
     };
   }, []);
@@ -195,7 +168,6 @@ function SponsorDialog({
     });
   }, [onClose]);
 
-  // close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
@@ -204,7 +176,9 @@ function SponsorDialog({
     return () => window.removeEventListener("keydown", handler);
   }, [close]);
 
-  return (
+  // Portal the dialog to document.body so it's outside ScrollSmoother's
+  // transformed container — this ensures position:fixed works correctly
+  return createPortal(
     <div
       ref={backdropRef}
       className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-8"
@@ -219,8 +193,6 @@ function SponsorDialog({
         style={{
           maxWidth: "min(780px, 95vw)",
           background: "#FFFEF2",
-          // backgroundImage:
-          //   "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
           border: "3px solid #000",
           borderTop: `5px solid ${accent}`,
           borderRadius: "0.75rem",
@@ -254,7 +226,6 @@ function SponsorDialog({
           style={{
             minWidth: "clamp(140px, 30%, 220px)",
             borderBottom: "3px solid #000",
-            /* on desktop, right border instead */
           }}
         >
           <div
@@ -309,7 +280,7 @@ function SponsorDialog({
           )}
         </div>
 
-        {/* Divider — vertical on desktop, horizontal on mobile (CSS handles it) */}
+        {/* Divider */}
         <div
           className="hidden md:block flex-shrink-0"
           style={{ width: 3, background: "#000" }}
@@ -317,7 +288,6 @@ function SponsorDialog({
 
         {/* Right — info panel */}
         <div className="flex flex-col gap-4 p-6 md:p-8 flex-1">
-          {/* Name + tagline */}
           <div>
             <h2
               className="hero-title font-black uppercase"
@@ -332,10 +302,8 @@ function SponsorDialog({
             </h2>
           </div>
 
-          {/* Divider */}
           <div style={{ height: 2, background: "#000", opacity: 0.1 }} />
 
-          {/* Description */}
           {sponsor.description && (
             <p
               className="comic-sans"
@@ -349,7 +317,6 @@ function SponsorDialog({
             </p>
           )}
 
-          {/* Meta chips */}
           <div className="flex flex-wrap gap-2 mt-auto pt-2">
             {sponsor.industry && (
               <span
@@ -393,13 +360,15 @@ function SponsorDialog({
                   background: "rgba(0,0,0,0.05)",
                 }}
               >
-              <MapPin className="inline-block mb-1" size={14} /> {sponsor.headquarters}
+                <MapPin className="inline-block mb-1" size={14} />{" "}
+                {sponsor.headquarters}
               </span>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -461,12 +430,9 @@ function SponsorCard({
         width: cardW,
         height: cardH,
         background: "#FFFEF2",
-        // lined paper texture — same as ThemeCard
-        // backgroundImage:
-        //   "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
         border: "3px solid #000",
-        borderTop: "none", // accent strip takes the top
-        borderRadius: 0, // flat comic style
+        borderTop: "none",
+        borderRadius: 0,
         boxShadow: "4px 4px 0 rgba(0,0,0,0.55)",
         willChange: "transform",
         flexShrink: 0,
@@ -474,7 +440,6 @@ function SponsorCard({
         textAlign: "center",
       }}
     >
-      {/* ── Accent strip top — identical to ThemeCard ── */}
       <div
         style={{
           position: "absolute",
@@ -486,7 +451,6 @@ function SponsorCard({
         }}
       />
 
-      {/* ── Halftone: top-right corner — identical to ThemeCard ── */}
       <div
         className="absolute pointer-events-none"
         style={{
@@ -503,7 +467,6 @@ function SponsorCard({
         }}
       />
 
-      {/* ── Content — sits above halftone ── */}
       <div
         className="relative flex flex-col items-center justify-center gap-3 w-full h-full"
         style={{
@@ -513,7 +476,6 @@ function SponsorCard({
           paddingRight: 12,
         }}
       >
-        {/* Logo */}
         <div
           className="flex items-center justify-center"
           style={{ width: imgSize + 16, height: imgSize }}
@@ -543,7 +505,6 @@ function SponsorCard({
           />
         </div>
 
-        {/* Accent dash — same as ThemeCard title underline */}
         <div
           style={{
             width: "clamp(24px, 5vw, 40px)",
@@ -552,7 +513,6 @@ function SponsorCard({
           }}
         />
 
-        {/* Name */}
         <span
           className="hero-title uppercase"
           style={{
@@ -565,7 +525,6 @@ function SponsorCard({
           {sponsor.name}
         </span>
 
-        {/* Tap hint */}
         <span
           className="comic-sans"
           style={{
@@ -626,7 +585,6 @@ function TierRow({
       )}
       <div className="w-full -mt-24" style={{ height: "0.5rem" }} />
       <div className="flex flex-col items-center gap-5 w-full">
-        {/* Tier label */}
         <div className="flex items-center gap-3 w-full max-w-4xl">
           <div
             style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
@@ -650,7 +608,6 @@ function TierRow({
           />
         </div>
 
-        {/* Cards */}
         <div
           ref={rowRef}
           className="flex flex-wrap items-center mt-4 justify-center gap-4 md:gap-6"
@@ -703,7 +660,6 @@ export default function Sponsors() {
 
   return (
     <>
-      {/* ── Fixed background — identical to Themes.tsx ── */}
       <div
         style={{
           position: "fixed",
@@ -720,7 +676,6 @@ export default function Sponsors() {
         }}
       />
 
-      {/* ── Dot grid overlay — identical to Themes.tsx ── */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
@@ -737,7 +692,6 @@ export default function Sponsors() {
         <div id="sponsors-smooth-content">
           <div className="relative w-full min-h-screen">
             <div className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-14 md:gap-20">
-              {/* Header */}
               <div
                 ref={headerRef}
                 className="-mt-12 mb-14 flex flex-col items-center"
@@ -788,7 +742,7 @@ export default function Sponsors() {
 
               {TITLE_SPONSORS.length > 0 && (
                 <TierRow
-                  label="Title Sponsors"
+                  label="Title Sponsor"
                   accent={TIER_COLORS.title}
                   sponsors={TITLE_SPONSORS}
                   size="lg"
