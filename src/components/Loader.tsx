@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import logoWhite from "../assets/logo_white.png";
 
 type LoaderProps = {
@@ -8,8 +8,12 @@ type LoaderProps = {
 
 export default function Loader({ canDismiss, onComplete }: LoaderProps) {
   const [phase, setPhase] = useState<"visible" | "fading" | "done">("visible");
-  const minTimeReachedRef = useRef(false);
+  const [progress, setProgress] = useState(0);
+
   const canDismissRef = useRef(false);
+  const progressRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const startTimeRef = useRef(Date.now());
 
   const MIN_DISPLAY_MS = 3000;
   const FADE_OUT_MS = 1200;
@@ -18,20 +22,56 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
     canDismissRef.current = canDismiss;
   }, [canDismiss]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      minTimeReachedRef.current = true;
-      if (canDismissRef.current) setPhase("fading");
-    }, MIN_DISPLAY_MS);
-    return () => clearTimeout(timer);
+  // Use requestAnimationFrame for smooth 60fps progress
+  const tick = useCallback(() => {
+    const elapsed = Date.now() - startTimeRef.current;
+    const canFinish = canDismissRef.current;
+    const minTimeReached = elapsed >= MIN_DISPLAY_MS;
+
+    let target: number;
+
+    if (canFinish && minTimeReached) {
+      // Both conditions met — race to 100%
+      target = 100;
+      const next = progressRef.current + (target - progressRef.current) * 0.08;
+      progressRef.current = next >= 99.5 ? 100 : next;
+    } else if (canFinish && !minTimeReached) {
+      // Content loaded but we're still within min display time
+      // Map remaining time proportionally: fill from current to 90%
+      const ratio = Math.min(elapsed / MIN_DISPLAY_MS, 1);
+      target = 10 + ratio * 80; // 10% → 90% over MIN_DISPLAY_MS
+      progressRef.current = Math.max(progressRef.current, target);
+    } else {
+      // Still loading — ease toward 70% based on elapsed time
+      // Use a curve that fills faster at first then plateaus
+      const ratio = Math.min(elapsed / (MIN_DISPLAY_MS * 2), 1);
+      // Ease-out curve: fast start, slow finish
+      target = 70 * (1 - Math.pow(1 - ratio, 3));
+      progressRef.current = Math.max(progressRef.current, target);
+    }
+
+    setProgress(progressRef.current);
+
+    if (progressRef.current >= 100) {
+      // Progress complete — trigger fade
+      setPhase((prev) => (prev === "visible" ? "fading" : prev));
+      return; // stop the loop
+    }
+
+    rafRef.current = requestAnimationFrame(tick);
   }, []);
 
+  // Start the rAF loop
   useEffect(() => {
-    if (canDismiss && minTimeReachedRef.current && phase === "visible") {
-      setPhase("fading");
-    }
-  }, [canDismiss, phase]);
+    startTimeRef.current = Date.now();
+    rafRef.current = requestAnimationFrame(tick);
 
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [tick]);
+
+  // Handle fade-out → done
   useEffect(() => {
     if (phase !== "fading") return;
     const timer = setTimeout(() => {
@@ -43,13 +83,27 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
 
   if (phase === "done") return null;
 
+  const roundedProgress = Math.round(progress);
+  const statusText =
+    roundedProgress < 30
+      ? "Initializing…"
+      : roundedProgress < 60
+      ? "Loading resources…"
+      : roundedProgress < 95
+      ? "Almost there…"
+      : "Ready!";
+
   return (
     <>
       <style>{`
-        @keyframes fadeInOut {
-          0%   { opacity: 0; }
-          50%  { opacity: 1; }
-          100% { opacity: 0; }
+        @keyframes loaderPulse {
+          0%, 100% { opacity: 0.6; }
+          50%      { opacity: 1; }
+        }
+
+        @keyframes shimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
         }
 
         .htf-loader {
@@ -57,11 +111,14 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
           inset: 0;
           z-index: 99999;
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
+          gap: 40px;
           opacity: 1;
           transition: opacity ${FADE_OUT_MS}ms ease-out;
           overflow: hidden;
+          will-change: opacity;
         }
 
         .htf-loader.fading {
@@ -74,7 +131,6 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
           opacity: 1;
         }
 
-        /* Background layer — blurred texture, separate from content */
         .htf-loader-bg {
           position: absolute;
           inset: -20px;
@@ -86,7 +142,6 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
           z-index: 0;
         }
 
-        /* Dark overlay on top of the blurred bg */
         .htf-loader-overlay {
           position: absolute;
           inset: 0;
@@ -97,30 +152,99 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
         .htf-loader-logo {
           position: relative;
           z-index: 2;
-          width: min(320px, 70vw);
+          width: min(280px, 60vw);
           height: auto;
           object-fit: contain;
           user-select: none;
           -webkit-user-drag: none;
-          opacity: 0;
-          animation: fadeInOut 2s ease-in-out infinite;
+          animation: loaderPulse 2s ease-in-out infinite;
+        }
+
+        /* Progress container */
+        .htf-progress-wrapper {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+          width: min(360px, 75vw);
+        }
+
+        .htf-progress-track {
+          width: 100%;
+          height: 4px;
+          background: rgba(255, 255, 255, 0.12);
+          border-radius: 99px;
+          overflow: hidden;
+          backdrop-filter: blur(4px);
+        }
+
+        .htf-progress-fill {
+          height: 100%;
+          border-radius: 99px;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.9)
+          );
+          background-size: 200% 100%;
+          animation: shimmer 2s linear infinite;
+          will-change: width;
+          box-shadow: 0 0 12px rgba(168, 130, 255, 0.4);
+        }
+
+        .htf-progress-info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .htf-progress-text {
+          font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+          font-size: 0.75rem;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: uppercase;
+        }
+
+        .htf-progress-percent {
+          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          font-size: 12px;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.6);
+          min-width: 36px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
         }
       `}</style>
 
       <div className={`htf-loader${phase === "fading" ? " fading" : ""}`}>
-        {/* Blurred background — inset: -20px so blur edges don't show */}
         <div className="htf-loader-bg" />
-
-        {/* Dark tint overlay */}
         <div className="htf-loader-overlay" />
 
-        {/* Logo on top */}
         <img
           src={logoWhite}
           alt="HackToFuture"
           className="htf-loader-logo"
           draggable={false}
         />
+
+        <div className="htf-progress-wrapper">
+          <div className="htf-progress-track">
+            <div
+              className="htf-progress-fill"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <div className="htf-progress-info">
+            <span className="comic-sans htf-progress-text">{statusText}</span>
+            <span className="htf-progress-percent">{roundedProgress}%</span>
+          </div>
+        </div>
       </div>
     </>
   );
