@@ -9,7 +9,7 @@ import { ScrollSmoother } from "gsap/ScrollSmoother";
 import TextContent from "./scenes/TextContent";
 import Navbar from "./components/ui/Navbar";
 import Loader from "./components/Loader";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Team from "./pages/Team";
 import { Environment, Preload, useProgress } from "@react-three/drei";
 import Sponsors from "./pages/Sponsors";
@@ -20,9 +20,7 @@ import PSPage from "./pages/ps";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
-// Sits inside <Canvas> <Suspense> — only runs after all suspended
-// content has mounted. Checks that 3D meshes actually have geometry
-// (troika Text renders geometry async after mount).
+// ...existing code... (FrameSignal stays the same)
 function FrameSignal({ onReady }: { onReady: () => void }) {
   const fired = useRef(false);
   const { scene } = useThree();
@@ -30,8 +28,6 @@ function FrameSignal({ onReady }: { onReady: () => void }) {
   useFrame(() => {
     if (fired.current) return;
 
-    // Check if there's at least one mesh with actual geometry in the scene
-    // (troika Text creates geometry asynchronously after mount)
     let hasMeshWithGeometry = false;
     scene.traverse((obj) => {
       const mesh = obj as THREE.Mesh;
@@ -53,6 +49,7 @@ function FrameSignal({ onReady }: { onReady: () => void }) {
   return null;
 }
 
+// ...existing code... (HomePage stays exactly the same)
 function HomePage() {
   const SCENES = 4;
   const scrollProgressRef = useRef(0);
@@ -62,48 +59,39 @@ function HomePage() {
 
   const { active, progress } = useProgress();
 
-  // ── readiness flags ──
-  const [threeReady, setThreeReady] = useState(false); // drei assets + scene has real geometry
+  const [threeReady, setThreeReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
-  const [domReady, setDomReady] = useState(false); // window load + all <img> loaded
-  const [threeDFontReady, setThreeDFontReady] = useState(false); // troika 3D font file cached
+  const [domReady, setDomReady] = useState(false);
+  const [threeDFontReady, setThreeDFontReady] = useState(false);
 
-  // ── 1. Three.js: drei progress done ──
   const [assetsLoaded, setAssetsLoaded] = useState(false);
 
   useEffect(() => {
     if (!active && progress === 100) setAssetsLoaded(true);
   }, [active, progress]);
 
-  // Called from FrameSignal inside <Suspense> once meshes have real geometry
   const handleSceneReady = useCallback(() => {
     setThreeReady(true);
   }, []);
 
-  // ── 1b. Preload the 3D font used by HackToFuture text ──
   useEffect(() => {
     fetch("/fonts/DelaGothicOne-Regular.ttf")
       .then((res) => res.arrayBuffer())
       .then(() => setThreeDFontReady(true))
-      .catch(() => setThreeDFontReady(true)); // don't block on failure
+      .catch(() => setThreeDFontReady(true));
   }, []);
 
-  // ── 2. Fonts — check Dela Gothic One specifically ──
   useEffect(() => {
     const checkFont = async () => {
       await document.fonts.ready;
-      // Explicitly wait for the critical overlay font
       try {
         await document.fonts.load('700 16px "Dela Gothic One"');
-      } catch (_) {
-        // font load can reject if already loaded, that's fine
-      }
+      } catch (_) {}
       setFontsReady(true);
     };
     checkFont();
   }, []);
 
-  // ── 3. DOM: window.load + all <img> elements ──
   useEffect(() => {
     const checkAllImages = () => {
       const images = Array.from(document.querySelectorAll("img"));
@@ -120,13 +108,11 @@ function HomePage() {
 
     if (tryResolve()) return;
 
-    // Poll images every 200ms after window.load
     const handler = () => {
       if (tryResolve()) return;
       const interval = setInterval(() => {
         if (tryResolve()) clearInterval(interval);
       }, 200);
-      // Safety: stop polling after 15s
       setTimeout(() => {
         clearInterval(interval);
         setDomReady(true);
@@ -141,23 +127,18 @@ function HomePage() {
     }
   }, []);
 
-  // ── 4. All conditions ──
   const canDismiss =
     threeReady && assetsLoaded && fontsReady && domReady && threeDFontReady;
 
-  // ── Fade out pre-loader from index.html once React Loader is mounted ──
   useEffect(() => {
     const el = document.getElementById("pre-loader");
     if (el) {
-      // Fade it out smoothly behind the React Loader (z-99999 vs z-999999)
       el.style.opacity = "0";
-      // Remove from DOM after transition completes
       const timer = setTimeout(() => el.remove(), 400);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  // ── When Loader fade-out finishes ──
   const handleLoaderComplete = useCallback(() => {
     requestAnimationFrame(() => {
       ScrollTrigger.refresh();
@@ -203,7 +184,6 @@ function HomePage() {
 
   return (
     <>
-      {/* ===== CANVAS — always mounted, black by default ===== */}
       <div className="fixed inset-0 z-10">
         <Canvas
           camera={{ position: [0, 0, 20], fov: 45, near: 0.1, far: 5000 }}
@@ -214,7 +194,6 @@ function HomePage() {
             gl.setClearColor("#000000", 1);
           }}
         >
-          {/* Force black before environment loads */}
           <color attach="background" args={["#000000"]} />
 
           <Suspense fallback={null}>
@@ -230,14 +209,12 @@ function HomePage() {
         </Canvas>
       </div>
 
-      {/* ===== SCROLL STRUCTURE — renders behind the loader ===== */}
       <Overlay />
 
       <div id="smooth-wrapper">
         <div id="smooth-content" style={{ height: `${SCENES * 400}dvh` }} />
       </div>
 
-      {/* ===== Navbar ===== */}
       <Navbar />
 
       <TextContent
@@ -246,13 +223,15 @@ function HomePage() {
         scenes={SCENES}
       />
 
-      {/* ===== LOADER — always mounted, on top of everything ===== */}
       <Loader canDismiss={canDismiss} onComplete={handleLoaderComplete} />
     </>
   );
 }
 
 function PageLayout({ children }: { children: React.ReactNode }) {
+  const location = useLocation();
+  const [, setLoaderDone] = useState(false);
+
   // Remove the pre-loader on non-home pages too
   useEffect(() => {
     const el = document.getElementById("pre-loader");
@@ -263,9 +242,18 @@ function PageLayout({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Clean up any leftover GSAP scroll state from HomePage
+  // On every route change: kill all leftover ScrollTrigger / ScrollSmoother
+  // instances from other pages + reset body scroll locks from HomePage
   useEffect(() => {
-    // Ensure body is scrollable on these pages
+    setLoaderDone(false);
+
+    // Kill any lingering ScrollSmoother / ScrollTrigger from previous page
+    const smoother = ScrollSmoother.get();
+    if (smoother) smoother.kill();
+    ScrollTrigger.getAll().forEach((t) => t.kill());
+    ScrollTrigger.clearMatchMedia();
+
+    // Reset body styles that HomePage's normalizeScroll may have set
     document.documentElement.style.overflow = "";
     document.documentElement.style.height = "";
     document.body.style.overflow = "";
@@ -276,9 +264,23 @@ function PageLayout({ children }: { children: React.ReactNode }) {
     document.body.style.right = "";
     document.body.style.width = "";
     window.scrollTo(0, 0);
-  }, []);
 
-  return <>{children}</>;
+    // Also disable normalizeScroll that HomePage may have left on
+    ScrollTrigger.normalizeScroll(false);
+  }, [location.pathname]);
+
+  return (
+    <>
+      {children}
+      <Loader
+        key={location.pathname}
+        canDismiss={true}
+        minDisplayMs={750}
+        fadeOutMs={600}
+        onComplete={() => setLoaderDone(true)}
+      />
+    </>
+  );
 }
 
 function App() {

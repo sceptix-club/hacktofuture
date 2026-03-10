@@ -400,8 +400,6 @@ function MobileCardContent({
             {member.role}
           </div>
 
-          
-
           <div className="flex flex-wrap justify-center gap-2 pb-1 mt-2">
             {member.links.map((link) => (
               <a
@@ -429,8 +427,6 @@ function MobileCardContent({
     </>
   );
 }
-
-
 
 export default function Team() {
   const isMobile = useIsMobile();
@@ -504,80 +500,121 @@ export default function Team() {
     );
   }, [isMobile]);
 
-// ── Mobile swipe forward (left swipe → next) ──
-const mobileFlipForward = (fromX = 0) => {
-  if (isAnimating.current) return;
-  const cur = currentMemberRef.current;
-  const el = mobileCardRef.current;
-  if (cur >= TOTAL_MEMBERS - 1) {
-    if (el) gsap.to(el, { x: 0, scale: 1, opacity: 1, duration: 0.35, ease: "expo.out" });
-    return;
-  }
+  // ── Mobile swipe forward (left swipe → next) ──
+  const mobileFlipForward = (fromX = 0) => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    const el = mobileCardRef.current;
+    if (cur >= TOTAL_MEMBERS - 1) {
+      if (el)
+        gsap.to(el, {
+          x: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.35,
+          ease: "expo.out",
+        });
+      return;
+    }
 
-  isAnimating.current = true;
-  if (el) {
-    gsap.fromTo(el,
-      { x: fromX, scale: 1 - Math.abs(fromX) / 1000, opacity: 1 },
-      {
-        x: -window.innerWidth * 1.1,
-        scale: 0.85,
-        opacity: 0,
-        duration: 0.28,
-        ease: "power2.in",
-        onComplete: () => {
-          const next = cur + 1;
-          currentMemberRef.current = next;
-          setDisplayPage(next);
-          gsap.fromTo(el,
-            { x: window.innerWidth * 0.6, scale: 0.92, opacity: 0 },
-            { x: 0, scale: 1, opacity: 1, duration: 0.42, ease: "expo.out",
-              onComplete: () => { isAnimating.current = false; } }
-          );
-        },
-      }
-    );
-  }
-};
+    isAnimating.current = true;
+    if (el) {
+      gsap.fromTo(
+        el,
+        { x: fromX, scale: 1 - Math.abs(fromX) / 1000, opacity: 1 },
+        {
+          x: -window.innerWidth * 1.1,
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.28,
+          ease: "power2.in",
+          onComplete: () => {
+            const next = cur + 1;
+            currentMemberRef.current = next;
+            setDisplayPage(next);
+            gsap.fromTo(
+              el,
+              { x: window.innerWidth * 0.6, scale: 0.92, opacity: 0 },
+              {
+                x: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 0.42,
+                ease: "expo.out",
+                onComplete: () => {
+                  isAnimating.current = false;
+                },
+              }
+            );
+          },
+        }
+      );
+    }
+  };
 
-// ── Mobile swipe backward (right swipe → prev) ──
-const mobileFlipBackward = (fromX = 0) => {
-  if (isAnimating.current) return;
-  const cur = currentMemberRef.current;
-  const el = mobileCardRef.current;
-  if (cur <= 0) {
-    if (el) gsap.to(el, { x: 0, scale: 1, opacity: 1, duration: 0.35, ease: "expo.out" });
-    return;
-  }
+  // ── Mobile swipe backward (right swipe → prev) ──
+  const mobileFlipBackward = (fromX = 0) => {
+    if (isAnimating.current) return;
+    const cur = currentMemberRef.current;
+    const el = mobileCardRef.current;
+    if (cur <= 0) {
+      if (el)
+        gsap.to(el, {
+          x: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.35,
+          ease: "expo.out",
+        });
+      return;
+    }
 
-  isAnimating.current = true;
-  if (el) {
-    gsap.fromTo(el,
-      { x: fromX, scale: 1 - Math.abs(fromX) / 1000, opacity: 1 },
-      {
-        x: window.innerWidth * 1.1,
-        scale: 0.85,
-        opacity: 0,
-        duration: 0.28,
-        ease: "power2.in",
-        onComplete: () => {
-          const next = cur - 1;
-          currentMemberRef.current = next;
-          setDisplayPage(next);
-          gsap.fromTo(el,
-            { x: -window.innerWidth * 0.6, scale: 0.92, opacity: 0 },
-            { x: 0, scale: 1, opacity: 1, duration: 0.42, ease: "expo.out",
-              onComplete: () => { isAnimating.current = false; } }
-          );
-        },
-      }
-    );
-  }
-};
+    isAnimating.current = true;
+    if (el) {
+      gsap.fromTo(
+        el,
+        { x: fromX, scale: 1 - Math.abs(fromX) / 1000, opacity: 1 },
+        {
+          x: window.innerWidth * 1.1,
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.28,
+          ease: "power2.in",
+          onComplete: () => {
+            const next = cur - 1;
+            currentMemberRef.current = next;
+            setDisplayPage(next);
+            gsap.fromTo(
+              el,
+              { x: -window.innerWidth * 0.6, scale: 0.92, opacity: 0 },
+              {
+                x: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 0.42,
+                ease: "expo.out",
+                onComplete: () => {
+                  isAnimating.current = false;
+                },
+              }
+            );
+          },
+        }
+      );
+    }
+  };
 
-const mobileSnapBack = () => {
-  const el = mobileCardRef.current;
-  if (el) gsap.to(el, { x: 0, scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.4)" });
-};
+  const mobileSnapBack = () => {
+    const el = mobileCardRef.current;
+    if (el)
+      gsap.to(el, {
+        x: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 0.4,
+        ease: "back.out(1.4)",
+      });
+  };
 
   const flipForward = () => {
     if (isAnimating.current) return;
@@ -679,54 +716,54 @@ const mobileSnapBack = () => {
   useEffect(() => {
     if (!isMobile) return;
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (isAnimating.current) return;
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+      isDragging.current = false;
+      if (mobileCardRef.current) gsap.killTweensOf(mobileCardRef.current);
+    };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isAnimating.current) return;
+      const dx = e.touches[0].clientX - touchStartX.current;
+      const dy = e.touches[0].clientY - touchStartY.current;
 
-const handleTouchStart = (e: TouchEvent) => {
-  if (isAnimating.current) return;
-  touchStartX.current = e.touches[0].clientX;
-  touchStartY.current = e.touches[0].clientY;
-  isDragging.current = false;
-  if (mobileCardRef.current) gsap.killTweensOf(mobileCardRef.current);
-};
+      if (!isDragging.current) {
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6)
+          isDragging.current = true;
+        else if (Math.abs(dy) > 10) return;
+      }
 
-const handleTouchMove = (e: TouchEvent) => {
-  if (isAnimating.current) return;
-  const dx = e.touches[0].clientX - touchStartX.current;
-  const dy = e.touches[0].clientY - touchStartY.current;
+      if (isDragging.current) {
+        e.preventDefault();
+        const cur = currentMemberRef.current;
+        const atEdge =
+          (dx > 0 && cur === 0) || (dx < 0 && cur === TOTAL_MEMBERS - 1);
+        const clampedDx = atEdge ? dx * 0.18 : dx;
+        const progress = Math.abs(clampedDx) / 300;
 
-  if (!isDragging.current) {
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) isDragging.current = true;
-    else if (Math.abs(dy) > 10) return;
-  }
+        // ✅ Use GSAP set — keeps GSAP as the single source of truth
+        gsap.set(mobileCardRef.current, {
+          x: clampedDx,
+          scale: Math.max(0.9, 1 - progress * 0.08),
+          opacity: Math.max(0.3, 1 - progress * 0.6),
+        });
+      }
+    };
 
-  if (isDragging.current) {
-    e.preventDefault();
-    const cur = currentMemberRef.current;
-    const atEdge = (dx > 0 && cur === 0) || (dx < 0 && cur === TOTAL_MEMBERS - 1);
-    const clampedDx = atEdge ? dx * 0.18 : dx;
-    const progress = Math.abs(clampedDx) / 300;
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isAnimating.current || !isDragging.current) return;
+      isDragging.current = false;
 
-    // ✅ Use GSAP set — keeps GSAP as the single source of truth
-    gsap.set(mobileCardRef.current, {
-      x: clampedDx,
-      scale: Math.max(0.9, 1 - progress * 0.08),
-      opacity: Math.max(0.3, 1 - progress * 0.6),
-    });
-  }
-};
+      const dx = e.changedTouches[0].clientX - touchStartX.current;
+      // Pass current x so exit animation starts from finger-release position
+      const currentX = gsap.getProperty(mobileCardRef.current, "x") as number;
 
-const handleTouchEnd = (e: TouchEvent) => {
-  if (isAnimating.current || !isDragging.current) return;
-  isDragging.current = false;
-
-  const dx = e.changedTouches[0].clientX - touchStartX.current;
-  // Pass current x so exit animation starts from finger-release position
-  const currentX = gsap.getProperty(mobileCardRef.current, "x") as number;
-
-  if (dx < -50) mobileFlipForward(currentX);
-  else if (dx > 50) mobileFlipBackward(currentX);
-  else mobileSnapBack();
-};
+      if (dx < -50) mobileFlipForward(currentX);
+      else if (dx > 50) mobileFlipBackward(currentX);
+      else mobileSnapBack();
+    };
 
     const el = containerRef.current;
     if (!el) return;
@@ -912,7 +949,22 @@ const handleTouchEnd = (e: TouchEvent) => {
           />
         </div>
 
-        {!imagesReady && <Loader canDismiss={false} />}
+        {!imagesReady && (
+          <div
+            className="fixed inset-0 z-[99998] flex items-center justify-center"
+            style={{
+              background: "rgba(0,0,0,0.7)",
+              backdropFilter: "blur(6px)",
+            }}
+          >
+            <span
+              className="hero-title text-white/60"
+              style={{ fontSize: "0.9rem" }}
+            >
+              Loading photos…
+            </span>
+          </div>
+        )}
 
         {/* {!isMobile && (
           <ComicDecorations

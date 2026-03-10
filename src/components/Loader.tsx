@@ -4,9 +4,16 @@ import logoWhite from "../assets/logo_white.png";
 type LoaderProps = {
   canDismiss: boolean;
   onComplete?: () => void;
+  minDisplayMs?: number;
+  fadeOutMs?: number;
 };
 
-export default function Loader({ canDismiss, onComplete }: LoaderProps) {
+export default function Loader({
+  canDismiss,
+  onComplete,
+  minDisplayMs = 3000,
+  fadeOutMs = 1200,
+}: LoaderProps) {
   const [phase, setPhase] = useState<"visible" | "fading" | "done">("visible");
   const [progress, setProgress] = useState(0);
 
@@ -14,19 +21,24 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
   const progressRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef(Date.now());
+  const minDisplayMsRef = useRef(minDisplayMs);
 
-  const MIN_DISPLAY_MS = 3000;
-  const FADE_OUT_MS = 1200;
+  const FADE_OUT_MS = fadeOutMs;
 
   useEffect(() => {
     canDismissRef.current = canDismiss;
   }, [canDismiss]);
 
+  useEffect(() => {
+    minDisplayMsRef.current = minDisplayMs;
+  }, [minDisplayMs]);
+
   // Use requestAnimationFrame for smooth 60fps progress
   const tick = useCallback(() => {
     const elapsed = Date.now() - startTimeRef.current;
     const canFinish = canDismissRef.current;
-    const minTimeReached = elapsed >= MIN_DISPLAY_MS;
+    const min = minDisplayMsRef.current;
+    const minTimeReached = elapsed >= min;
 
     let target: number;
 
@@ -37,15 +49,12 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
       progressRef.current = next >= 99.5 ? 100 : next;
     } else if (canFinish && !minTimeReached) {
       // Content loaded but we're still within min display time
-      // Map remaining time proportionally: fill from current to 90%
-      const ratio = Math.min(elapsed / MIN_DISPLAY_MS, 1);
-      target = 10 + ratio * 80; // 10% → 90% over MIN_DISPLAY_MS
+      const ratio = Math.min(elapsed / min, 1);
+      target = 10 + ratio * 80; // 10% → 90% over minDisplayMs
       progressRef.current = Math.max(progressRef.current, target);
     } else {
       // Still loading — ease toward 70% based on elapsed time
-      // Use a curve that fills faster at first then plateaus
-      const ratio = Math.min(elapsed / (MIN_DISPLAY_MS * 2), 1);
-      // Ease-out curve: fast start, slow finish
+      const ratio = Math.min(elapsed / (min * 2), 1);
       target = 70 * (1 - Math.pow(1 - ratio, 3));
       progressRef.current = Math.max(progressRef.current, target);
     }
@@ -53,9 +62,8 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
     setProgress(progressRef.current);
 
     if (progressRef.current >= 100) {
-      // Progress complete — trigger fade
       setPhase((prev) => (prev === "visible" ? "fading" : prev));
-      return; // stop the loop
+      return;
     }
 
     rafRef.current = requestAnimationFrame(tick);
@@ -79,7 +87,7 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
       onComplete?.();
     }, FADE_OUT_MS);
     return () => clearTimeout(timer);
-  }, [phase, onComplete]);
+  }, [phase, onComplete, FADE_OUT_MS]);
 
   if (phase === "done") return null;
 
@@ -204,7 +212,7 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
 
         .htf-progress-text {
           font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-          font-size: 0.75rem;
+          font-size: 12px;
           font-weight: 500;
           letter-spacing: 0.5px;
           color: rgba(255, 255, 255, 0.5);
@@ -241,7 +249,7 @@ export default function Loader({ canDismiss, onComplete }: LoaderProps) {
             />
           </div>
           <div className="htf-progress-info">
-            <span className="comic-sans htf-progress-text">{statusText}</span>
+            <span className="htf-progress-text">{statusText}</span>
             <span className="htf-progress-percent">{roundedProgress}%</span>
           </div>
         </div>
