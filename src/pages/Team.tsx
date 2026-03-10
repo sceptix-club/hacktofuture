@@ -6,8 +6,6 @@ import { TEAM_MEMBERS } from "../content/team";
 import type { TeamMember } from "../content/team";
 import { coreTeamPrefix } from "../lib/utils";
 
-import Loader from "../components/Loader";
-
 const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
 
