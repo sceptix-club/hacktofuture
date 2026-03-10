@@ -1,7 +1,6 @@
   import { useRef, useEffect } from "react";
   import "../App.css";
   import Navbar from "../components/ui/Navbar";
-  import Background from "../components/Background";
   import gsap from "gsap";
   import { MapPin } from "lucide-react";
 
