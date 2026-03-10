@@ -396,7 +396,7 @@ export default function Themes() {
                 {/* Desktop: 2×2 grid — all cells equal height */}
                 <div
                   className="hidden md:grid md:grid-cols-2 gap-6 lg:gap-8"
-                  style={{ gridAutoRows: "1fr" }} // ← key fix: all rows equal height
+                  style={{ gridAutoRows: "1fr" }} 
                 >
                   {THEME_CARDS.map((theme, index) => (
                     <div

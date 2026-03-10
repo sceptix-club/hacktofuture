@@ -4,6 +4,7 @@ import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { MapPin } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
@@ -108,47 +109,16 @@ const SILVER_SPONSORS: Sponsor[] = [
   },
 ];
 
-const BRONZE_SPONSORS: Sponsor[] = [
-  // {
-  //   name: "Sponsor A",
-  //   logo: "/sponsors/a.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor B",
-  //   logo: "/sponsors/b.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor C",
-  //   logo: "/sponsors/c.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor D",
-  //   logo: "/sponsors/d.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor E",
-  //   logo: "/sponsors/e.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-];
+const BRONZE_SPONSORS: Sponsor[] = [];
 
-const TIER_COLORS = {
-  title: "#E8003D",
-  gold: "#C8980A",
-  silver: "#7A7A7A",
-  bronze: "#A0522D",
+const TIER_COLORS: Record<string, { bg: string; text: string }> = {
+  title: { bg: "#DA100C", text: "#000" },
+  gold: { bg: "#FFE105", text: "#000" },
+  silver: { bg: "#50BAEA", text: "#000" },
+  bronze: { bg: "#A0522D", text: "#fff" },
 };
 
-/* ─── Dialog ─── */
+/* ─── Dialog (portaled to document.body) ─── */
 function SponsorDialog({
   sponsor,
   accent,
@@ -162,6 +132,9 @@ function SponsorDialog({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const smoother = ScrollSmoother.get();
+    if (smoother) smoother.paused(true);
+
     gsap.fromTo(
       backdropRef.current,
       { opacity: 0 },
@@ -174,6 +147,8 @@ function SponsorDialog({
     );
     document.body.style.overflow = "hidden";
     return () => {
+      const sm = ScrollSmoother.get();
+      if (sm) sm.paused(false);
       document.body.style.overflow = "";
     };
   }, []);
@@ -203,7 +178,7 @@ function SponsorDialog({
 
   // Portal to document.body — escapes the ScrollSmoother transform context
   // so position:fixed is always relative to the actual viewport
-  return createPortal(
+  return createPortalcreatePortal(
     <div
       ref={backdropRef}
       className="fixed inset-0 flex items-center justify-center p-4 md:p-8"
@@ -224,15 +199,12 @@ function SponsorDialog({
           maxHeight: "85vh",
           overflowY: "auto",
           background: "#FFFEF2",
-          backgroundImage:
-            "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
           border: "3px solid #000",
           borderTop: `5px solid ${accent}`,
           borderRadius: "0.75rem",
           boxShadow: "6px 6px 0 rgba(0,0,0,0.7)",
         }}
       >
-        {/* Close button */}
         <button
           onClick={close}
           className="absolute top-3 right-3 z-10 flex items-center justify-center"
@@ -253,13 +225,11 @@ function SponsorDialog({
           ×
         </button>
 
-        {/* Left — logo panel */}
         <div
           className="flex flex-col items-center justify-center p-8 md:p-10 gap-4"
           style={{
             minWidth: "clamp(140px, 30%, 220px)",
             borderBottom: "3px solid #000",
-            /* on desktop, right border instead */
           }}
         >
           <div
@@ -314,15 +284,12 @@ function SponsorDialog({
           )}
         </div>
 
-        {/* Divider — vertical on desktop, horizontal on mobile (CSS handles it) */}
         <div
           className="hidden md:block flex-shrink-0"
           style={{ width: 3, background: "#000" }}
         />
 
-        {/* Right — info panel */}
         <div className="flex flex-col gap-4 p-6 md:p-8 flex-1">
-          {/* Name + tagline */}
           <div>
             <h2
               className="hero-title font-black uppercase"
@@ -337,10 +304,8 @@ function SponsorDialog({
             </h2>
           </div>
 
-          {/* Divider */}
           <div style={{ height: 2, background: "#000", opacity: 0.1 }} />
 
-          {/* Description */}
           {sponsor.description && (
             <p
               className="comic-sans"
@@ -354,7 +319,6 @@ function SponsorDialog({
             </p>
           )}
 
-          {/* Meta chips */}
           <div className="flex flex-wrap gap-2 mt-auto pt-2">
             {sponsor.industry && (
               <span
@@ -398,7 +362,8 @@ function SponsorDialog({
                   background: "rgba(0,0,0,0.05)",
                 }}
               >
-                📍 {sponsor.headquarters}
+                <MapPin className="inline-block mb-1" size={14} />{" "}
+                {sponsor.headquarters}
               </span>
             )}
           </div>
@@ -467,12 +432,9 @@ function SponsorCard({
         width: cardW,
         height: cardH,
         background: "#FFFEF2",
-        // lined paper texture — same as ThemeCard
-        backgroundImage:
-          "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
         border: "3px solid #000",
-        borderTop: "none", // accent strip takes the top
-        borderRadius: 0, // flat comic style
+        borderTop: "none",
+        borderRadius: 0,
         boxShadow: "4px 4px 0 rgba(0,0,0,0.55)",
         willChange: "transform",
         flexShrink: 0,
@@ -480,7 +442,6 @@ function SponsorCard({
         textAlign: "center",
       }}
     >
-      {/* ── Accent strip top — identical to ThemeCard ── */}
       <div
         style={{
           position: "absolute",
@@ -492,7 +453,6 @@ function SponsorCard({
         }}
       />
 
-      {/* ── Halftone: top-right corner — identical to ThemeCard ── */}
       <div
         className="absolute pointer-events-none"
         style={{
@@ -509,7 +469,6 @@ function SponsorCard({
         }}
       />
 
-      {/* ── Content — sits above halftone ── */}
       <div
         className="relative flex flex-col items-center justify-center gap-3 w-full h-full"
         style={{
@@ -519,7 +478,6 @@ function SponsorCard({
           paddingRight: 12,
         }}
       >
-        {/* Logo */}
         <div
           className="flex items-center justify-center"
           style={{ width: imgSize + 16, height: imgSize }}
@@ -549,7 +507,6 @@ function SponsorCard({
           />
         </div>
 
-        {/* Accent dash — same as ThemeCard title underline */}
         <div
           style={{
             width: "clamp(24px, 5vw, 40px)",
@@ -558,7 +515,6 @@ function SponsorCard({
           }}
         />
 
-        {/* Name */}
         <span
           className="hero-title uppercase"
           style={{
@@ -571,7 +527,6 @@ function SponsorCard({
           {sponsor.name}
         </span>
 
-        {/* Tap hint */}
         <span
           className="comic-sans"
           style={{
@@ -592,17 +547,19 @@ function SponsorCard({
 /* ─── Tier row ─── */
 function TierRow({
   label,
-  accent,
+  tier,
   sponsors,
   size,
 }: {
   label: string;
-  accent: string;
+  tier: keyof typeof TIER_COLORS;
   sponsors: Sponsor[];
   size: "lg" | "md" | "sm";
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<Sponsor | null>(null);
+
+  const { bg: accent, text: tierText } = TIER_COLORS[tier];
 
   useEffect(() => {
     if (!rowRef.current) return;
@@ -632,28 +589,47 @@ function TierRow({
       )}
       <div className="w-full -mt-24" style={{ height: "0.5rem" }} />
       <div className="flex flex-col items-center gap-5 w-full">
-        {/* Tier label */}
-        <div className="flex items-center gap-3 w-full max-w-4xl">
+        {/* ── Tier label — comic badge style ── */}
+        <div className="flex items-center gap-4 w-full max-w-4xl">
+            <div
+                style={{
+                  height: 3,
+                  flex: 1,
+                 background: accent,
+                  boxShadow: "2px 2px 0 #000",
+   
+                }}
+              />
           <div
-            style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
-          />
-          <div
-            className="px-4 py-1"
-            style={{ border: `2px solid ${accent}`, borderRadius: "2px" }}
+            className="inline-block"
+            style={{
+              background: accent,
+              color: tierText,
+              padding: "0.4rem 1rem",
+              border: "3px solid #000",
+              boxShadow: "3px 3px 0 #000",
+            }}
           >
             <span
-              className="hero-title uppercase tracking-widest"
+              className="comic-sans font-bold"
               style={{
-                fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
-                color: accent,
+                fontSize: "clamp(0.7rem, 1.2vw, 0.85rem)",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
               }}
             >
               {label}
             </span>
           </div>
           <div
-            style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
-          />
+                style={{
+                  height: 3,
+                  flex: 1,
+                 background: accent,
+                  boxShadow: "2px 2px 0 #000",
+   
+                }}
+              />
         </div>
 
         {/* Cards */}
@@ -709,7 +685,6 @@ export default function Sponsors() {
 
   return (
     <>
-      {/* ── Fixed background — identical to Themes.tsx ── */}
       <div
         style={{
           position: "fixed",
@@ -726,7 +701,6 @@ export default function Sponsors() {
         }}
       />
 
-      {/* ── Dot grid overlay — identical to Themes.tsx ── */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
@@ -743,7 +717,6 @@ export default function Sponsors() {
         <div id="sponsors-smooth-content">
           <div className="relative w-full min-h-screen">
             <div className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-14 md:gap-20">
-              {/* Header */}
               <div
                 ref={headerRef}
                 className="-mt-12 mb-14 flex flex-col items-center"
@@ -794,8 +767,8 @@ export default function Sponsors() {
 
               {TITLE_SPONSORS.length > 0 && (
                 <TierRow
-                  label="Title Sponsors"
-                  accent={TIER_COLORS.title}
+                  label="Title Sponsor"
+                  tier="title"
                   sponsors={TITLE_SPONSORS}
                   size="lg"
                 />
@@ -803,7 +776,7 @@ export default function Sponsors() {
               {GOLD_SPONSORS.length > 0 && (
                 <TierRow
                   label="Gold Sponsors"
-                  accent={TIER_COLORS.gold}
+                  tier="gold"
                   sponsors={GOLD_SPONSORS}
                   size="lg"
                 />
@@ -811,7 +784,7 @@ export default function Sponsors() {
               {SILVER_SPONSORS.length > 0 && (
                 <TierRow
                   label="Silver Sponsors"
-                  accent={TIER_COLORS.silver}
+                  tier="silver"
                   sponsors={SILVER_SPONSORS}
                   size="md"
                 />
@@ -819,7 +792,7 @@ export default function Sponsors() {
               {BRONZE_SPONSORS.length > 0 && (
                 <TierRow
                   label="Bronze Sponsors"
-                  accent={TIER_COLORS.bronze}
+                  tier="bronze"
                   sponsors={BRONZE_SPONSORS}
                   size="sm"
                 />
