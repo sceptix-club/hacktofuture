@@ -200,8 +200,10 @@ function HomePage() {
       ScrollTrigger.config({ ignoreMobileResize: true });
 
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      
       if (!isIOS) {
-        ScrollTrigger.normalizeScroll(true);
+ ScrollTrigger.normalizeScroll(true);
+       
       }
 
       smootherRef.current = ScrollSmoother.create({
