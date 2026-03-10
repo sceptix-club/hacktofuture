@@ -6,6 +6,7 @@ import { TEAM_MEMBERS } from "../content/team";
 import type { TeamMember } from "../content/team";
 import { coreTeamPrefix } from "../lib/utils";
 import ComicDecorations from "../components/ComicDecorations";
+import Loader from "../components/Loader";
 
 const TOTAL_MEMBERS = TEAM_MEMBERS.length;
 const TOTAL_SHEETS = TOTAL_MEMBERS - 1;
@@ -1126,29 +1127,7 @@ export default function Team() {
           />
         </div>
 
-        {!imagesReady && (
-          <div
-            className="absolute inset-0 z-50 flex flex-col items-center justify-center"
-            style={{ background: "#0a0a0a" }}
-          >
-            <span
-              className="hero-title text-white"
-              style={{ fontSize: "clamp(1.2rem, 4vw, 2rem)" }}
-            >
-              Loading Team...
-            </span>
-            <div
-              className="mt-4"
-              style={{
-                height: 5,
-                width: 80,
-                background: "#DA100C",
-                boxShadow: "2px 2px 0 #000",
-                animation: "pulse 1s ease-in-out infinite",
-              }}
-            />
-          </div>
-        )}
+        {!imagesReady && <Loader canDismiss={false} />}
 
         {!isMobile && (
           <ComicDecorations
