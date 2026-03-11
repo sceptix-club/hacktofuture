@@ -1,6 +1,6 @@
 import { Info, Users, Lightbulb, Heart, LogIn, BookText } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { rootPrefix } from "../../lib/utils";
+import { ruleBookLink } from "../../lib/utils";
 
 interface NavbarProps {
   className?: string;
@@ -18,7 +18,7 @@ const Navbar = ({ className }: NavbarProps) => {
     { icon: Heart, href: "#sponsors", label: "Sponsors", route: "/sponsors" },
     {
       icon: BookText,
-      href: `${rootPrefix}rulebook.pdf`,
+      href: `${ruleBookLink}`,
       label: "Rulebook",
       route: null,
     },
