@@ -192,7 +192,7 @@ const TextContent = ({
       tl.to(
         card4TextRef.current,
         { opacity: 0, duration: 0.15, pointerEvents: "none" },
-        7.05
+        8.1
       );
     }
 
