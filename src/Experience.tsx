@@ -312,7 +312,10 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       </Clouds>
 
       {/* Scene 1 */}
-      <MarqueeGrid viewportWidth={stableViewportWidth} />
+ <MarqueeGrid 
+  viewportWidth={stableViewportWidth} 
+  scrollProgressRef={scrollProgressRef}
+/>
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
