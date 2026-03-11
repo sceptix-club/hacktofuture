@@ -1,44 +1,65 @@
-import { Text } from "@react-three/drei";
-import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import { Text } from '@react-three/drei';
+import { useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
 
 type HtfProps = {
   viewportWidth: number;
-  timeline: gsap.core.Timeline | null;
+  tlRef: React.RefObject<gsap.core.Timeline | null>;
 };
 
-const HackToFuture = ({ viewportWidth, timeline }: HtfProps) => {
+const HackToFuture = ({ viewportWidth, tlRef }: HtfProps) => {
   const group = useRef<THREE.Group>(null);
   const font = "/fonts/DelaGothicOne-Regular.ttf";
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (!timeline || !group.current) return;
+    // Guard: Check both refs exist
+    if (!group.current) return;
+    if (!tlRef?.current) return;
+    
+    // Prevent re-initialization
+    if (isInitialized) return;
 
-    group.current.position.set(0, 0, 5);
+    try {
+      // Set initial position
+      group.current.position.set(0, 0, 5);
 
-    const tween = timeline.to(
-      group.current.position,
-      {
-        z: 15,
-        duration: 1,
-        ease: "none",
-      },
-      0.0
-    );
+      // Add to timeline
+      tlRef.current.to(
+        group.current.position,
+        {
+          z: 15,
+          duration: 1,
+          ease: "none",
+        },
+        0.0
+      );
 
+      setIsInitialized(true);
+    } catch (error) {
+      console.error('HackToFuture animation error:', error);
+    }
+  }, [tlRef, tlRef?.current, isInitialized]); // Added tlRef.current as dependency
+
+  // Reset initialization if tlRef changes
+  useEffect(() => {
     return () => {
-      // Clean up the tween if component unmounts
-      if (tween) {
-        tween.kill();
-      }
+      setIsInitialized(false);
     };
-  }, [timeline]);
+  }, [tlRef]);
+
+  // Don't render until we have valid viewport width
+  if (!viewportWidth || viewportWidth <= 0) {
+    return null;
+  }
+
+  const fontSize = viewportWidth < 15 ? 0.5 : 1.0;
 
   return (
     <group ref={group}>
       <Text
         font={font}
-        fontSize={viewportWidth < 15 ? 0.5 : 1.0}
+        fontSize={fontSize}
         color="black"
         anchorX="center"
         anchorY="middle"
@@ -52,7 +73,7 @@ const HackToFuture = ({ viewportWidth, timeline }: HtfProps) => {
 
       <Text
         font={font}
-        fontSize={viewportWidth < 15 ? 0.5 : 1.0}
+        fontSize={fontSize}
         color="grey"
         anchorX="center"
         anchorY="middle"
@@ -66,7 +87,7 @@ const HackToFuture = ({ viewportWidth, timeline }: HtfProps) => {
 
       <Text
         font={font}
-        fontSize={viewportWidth < 15 ? 0.5 : 1.0}
+        fontSize={fontSize}
         color="white"
         anchorX="center"
         anchorY="middle"

@@ -20,19 +20,24 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const pointerRef = useRef<THREE.PointLight | null>(null);
   const scene6Ref = useRef<THREE.Group | null>(null);
   const cardsGroupRef = useRef<THREE.Group | null>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  const [timeline, setTimeline] = useState<gsap.core.Timeline | null>(null);
+  // Track if component is mounted and ready
+  const [isReady, setIsReady] = useState(false);
 
-  const initialViewportWidth = useRef(viewport.width);
+  // Capture initial viewport width with fallback
+  const initialViewportWidth = useRef(viewport.width || 10);
   const [stableViewportWidth, setStableViewportWidth] = useState(
-    viewport.width
+    viewport.width || 10 // Fallback to prevent issues
   );
 
+  // Update viewport width on actual window resize
   useEffect(() => {
     const handleResize = () => {
       setTimeout(() => {
-        initialViewportWidth.current = viewport.width;
-        setStableViewportWidth(viewport.width);
+        const newWidth = viewport.width || 10;
+        initialViewportWidth.current = newWidth;
+        setStableViewportWidth(newWidth);
       }, 100);
     };
 
@@ -42,6 +47,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
+    tlRef.current = tl;
 
     const isMobile = stableViewportWidth < 20;
     const base = isMobile ? 0.6 : 1.0;
@@ -59,6 +65,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         rotZ: Math.PI / 6,
         duration: 1,
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(
             scene1Camera.posX,
             scene1Camera.posY,
@@ -78,10 +85,9 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         rotY: Math.PI / 3,
         duration: 1,
         onUpdate: () => {
-          if (tvRef.current) {
-            tvRef.current.scale.setScalar(scene1TV.scale);
-            tvRef.current.rotation.y = scene1TV.rotY;
-          }
+          if (!tvRef.current) return;
+          tvRef.current.scale.setScalar(scene1TV.scale);
+          tvRef.current.rotation.y = scene1TV.rotY;
         },
       },
       0
@@ -97,6 +103,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         duration: 0.8,
         ease: "power2.inOut",
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(cam2.x, cam2.y, cam2.z);
           camera.lookAt(0, -30, 0);
         },
@@ -107,6 +114,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     tl.to(cam2, {
       duration: 0.1,
       onUpdate: () => {
+        if (!camera) return;
         camera.position.set(cam2.x, cam2.y, cam2.z);
         camera.lookAt(0, -30, 0);
       },
@@ -120,6 +128,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 1,
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(0, -60, 0);
           camera.lookAt(0, -60, 0);
         },
@@ -135,6 +144,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 1.55,
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(0, -60, 0);
           camera.lookAt(0, -60, 0);
         },
@@ -148,6 +158,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     const radius = 10;
 
     const updateCardCamera = () => {
+      if (!camera) return;
       const a = scene5State.angle;
       camera.position.set(
         pivot.x - Math.cos(a) * radius,
@@ -209,7 +220,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       onUpdate: updateCardCamera,
     });
 
-    // Scene6: CTA + FAQ
+    // Scene6: CTA + FAQ section
     const scene6State = { progress: 0 };
     tl.to(
       scene6State,
@@ -217,6 +228,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 4.4,
         onUpdate: () => {
+          if (!camera) return;
           const a = Math.PI * 3;
           camera.position.set(
             pivot.x - Math.cos(a) * radius,
@@ -229,6 +241,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       7.8
     );
 
+    // Fade 3D cards out
     const cardFade = { opacity: 1 };
     tl.to(
       cardFade,
@@ -236,16 +249,17 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         opacity: 0,
         duration: 0.4,
         onUpdate: () => {
-          if (cardsGroupRef.current) {
-            cardsGroupRef.current.traverse((child) => {
-              if ((child as THREE.Mesh).isMesh) {
-                const mat = (child as THREE.Mesh)
-                  .material as THREE.MeshStandardMaterial;
+          if (!cardsGroupRef.current) return;
+          cardsGroupRef.current.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const mat = (child as THREE.Mesh)
+                .material as THREE.MeshStandardMaterial;
+              if (mat) {
                 mat.transparent = true;
                 mat.opacity = cardFade.opacity;
               }
-            });
-          }
+            }
+          });
         },
       },
       8.2
@@ -253,34 +267,39 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
     tl.set({}, {}, 12.2);
 
-    setTimeline(tl);
+    // Mark as ready after timeline is created
+    setIsReady(true);
 
     return () => {
       tl.kill();
-      setTimeline(null);
+      setIsReady(false);
     };
   }, [scenes, camera, stableViewportWidth]);
 
   useFrame((state) => {
-    const scrollProgress = scrollProgressRef.current || 0;
-    if (timeline) {
-      timeline.progress(scrollProgress);
-    }
+    // Guard: Check all refs before using
+    if (!tlRef.current) return;
+    
+    const scrollProgress = scrollProgressRef.current ?? 0;
+    tlRef.current.progress(scrollProgress);
 
-    if (pointerRef.current) {
+    // Pointer light - with full null checks
+    if (pointerRef.current && state.camera) {
       const p = state.pointer;
-      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
-        state.camera
-      );
+      if (p) {
+        const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
+          state.camera
+        );
 
-      const dir = worldPoint.sub(state.camera.position).normalize();
-      const ray = new THREE.Ray(state.camera.position, dir);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        const dir = worldPoint.sub(state.camera.position).normalize();
+        const ray = new THREE.Ray(state.camera.position, dir);
+        const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
-      const hit = new THREE.Vector3();
-      if (ray.intersectPlane(plane, hit)) {
-        pointerRef.current.position.copy(hit);
-        pointerRef.current.position.z += 2;
+        const hit = new THREE.Vector3();
+        if (ray.intersectPlane(plane, hit)) {
+          pointerRef.current.position.copy(hit);
+          pointerRef.current.position.z += 2;
+        }
       }
     }
   });
@@ -306,12 +325,15 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
-      <HackToFuture viewportWidth={stableViewportWidth} timeline={timeline} />
+      
+      {/* Only render HackToFuture when ready */}
+      {isReady && stableViewportWidth > 0 && (
+        <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
+      )}
 
       {/* Scene 2 */}
       <group position={[0, -30, 0]}>
         <ambientLight intensity={0.85} />
-
         <directionalLight
           position={[8, 12, 6]}
           intensity={1.6}
@@ -319,8 +341,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-
-        <Comic timeline={timeline} />
+        <Comic tlRef={tlRef} />
       </group>
 
       {/* Scene 3: Blank space for Sponsors */}
