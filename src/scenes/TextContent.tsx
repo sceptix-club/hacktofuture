@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
-import Footer from "./Footer";
 import CTA from "./CTA";
 import FAQ from "./FAQ";
 
