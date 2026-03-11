@@ -296,7 +296,7 @@ const TextContent = ({
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
       >
         <SponsorsBento
-          title={{ name: "EGDK" }}
+          title={{ name: "EGDK", logo: "/sponsors/egdk.png" }}
           platinum={[{ name: "Company A" }, { name: "Company B" }]}
           gold={[{ name: "Company C" }, { name: "Company D" }]}
           silver={[

@@ -74,9 +74,22 @@ export function Overlay() {
             marginLeft: "auto",
           }}
         />
+        <div style={{ width: "1rem" }} />
+        <img
+          src="/logo_white.png"
+          alt="logo"
+          style={{
+            height: "clamp(20px, 3vw, 30px)",
+            objectFit: "contain",
+            textAlign: "right",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginLeft: "auto",
+          }}
+        />
       </div>
 
-      <div style={{ height: 40 }} />
+      <div style={{ height: "1rem" }} />
 
       {/* Sub-header */}
       <div
