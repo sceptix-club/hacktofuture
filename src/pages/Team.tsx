@@ -1013,7 +1013,7 @@ export default function Team() {
           >
             {isMobile
               ? "Swipe left or right to meet the team."
-              : "Flip through the pages to meet the people building HackToFuture 4.0."}
+              : "Scroll through the pages to meet the people building HackToFuture 4.0."}
           </p>
         </div>
 

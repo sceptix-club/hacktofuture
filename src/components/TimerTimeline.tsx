@@ -56,9 +56,7 @@ function Timer() {
         draggable={false}
         onLoad={(e) => {
           const img = e.currentTarget;
-          console.log(
-            `Width: ${img.naturalWidth}, Height: ${img.naturalHeight}`,
-          );
+          
         }}
       />
 

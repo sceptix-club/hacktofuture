@@ -21,7 +21,7 @@ const Navbar = ({ className }: NavbarProps) => {
 
   return (
     <nav
-      className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-50 ${
+      className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-[60] ${
         className ?? ""
       }`}
     >
