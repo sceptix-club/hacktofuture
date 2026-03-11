@@ -22,18 +22,22 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const cardsGroupRef = useRef<THREE.Group | null>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Capture initial viewport width
-  const initialViewportWidth = useRef(viewport.width);
+  // Track if component is mounted and ready
+  const [isReady, setIsReady] = useState(false);
+
+  // Capture initial viewport width with fallback
+  const initialViewportWidth = useRef(viewport.width || 10);
   const [stableViewportWidth, setStableViewportWidth] = useState(
-    viewport.width
+    viewport.width || 10 // Fallback to prevent issues
   );
+
   // Update viewport width on actual window resize
   useEffect(() => {
     const handleResize = () => {
-      // Small delay to ensure viewport has updated
       setTimeout(() => {
-        initialViewportWidth.current = viewport.width;
-        setStableViewportWidth(viewport.width);
+        const newWidth = viewport.width || 10;
+        initialViewportWidth.current = newWidth;
+        setStableViewportWidth(newWidth);
       }, 100);
     };
 
@@ -61,6 +65,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         rotZ: Math.PI / 6,
         duration: 1,
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(
             scene1Camera.posX,
             scene1Camera.posY,
@@ -80,17 +85,15 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         rotY: Math.PI / 3,
         duration: 1,
         onUpdate: () => {
-          if (tvRef.current) {
-            tvRef.current.scale.setScalar(scene1TV.scale);
-            tvRef.current.rotation.y = scene1TV.rotY;
-          }
+          if (!tvRef.current) return;
+          tvRef.current.scale.setScalar(scene1TV.scale);
+          tvRef.current.rotation.y = scene1TV.rotY;
         },
       },
       0
     );
 
     // Scene 2: Circular camera around Rulebook
-    // const scene2State = { progress: 0 };
     const cam2 = { x: 0, y: -28, z: 10 };
 
     tl.to(
@@ -100,6 +103,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         duration: 0.8,
         ease: "power2.inOut",
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(cam2.x, cam2.y, cam2.z);
           camera.lookAt(0, -30, 0);
         },
@@ -110,6 +114,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     tl.to(cam2, {
       duration: 0.1,
       onUpdate: () => {
+        if (!camera) return;
         camera.position.set(cam2.x, cam2.y, cam2.z);
         camera.lookAt(0, -30, 0);
       },
@@ -123,6 +128,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 1,
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(0, -60, 0);
           camera.lookAt(0, -60, 0);
         },
@@ -130,7 +136,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       2.0
     );
 
-    // Scene 4: Still camera (3.0 - 4.55) – TimerTimeline dwell
+    // Scene 4: Still camera (3.0 - 4.55)
     const scene4State = { progress: 0 };
     tl.to(
       scene4State,
@@ -138,6 +144,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 1.55,
         onUpdate: () => {
+          if (!camera) return;
           camera.position.set(0, -60, 0);
           camera.lookAt(0, -60, 0);
         },
@@ -145,12 +152,13 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       3.0
     );
 
-    // Scene 5: Cards with pauses – starts at 4.55 (aligned with theme 1 text)
+    // Scene 5: Cards with pauses
     const scene5State = { angle: Math.PI * 1.5 };
     const pivot = { x: 0, y: -124, z: 0 };
     const radius = 10;
 
     const updateCardCamera = () => {
+      if (!camera) return;
       const a = scene5State.angle;
       camera.position.set(
         pivot.x - Math.cos(a) * radius,
@@ -166,7 +174,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       4.55
     );
 
-    // Theme 3 (bottom) – pause
     tl.to(
       scene5State,
       {
@@ -177,49 +184,43 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       4.55
     );
 
-    // Theme 3 → Theme 4 (left)
     tl.to(scene5State, {
       angle: Math.PI * 2,
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
-    // Theme 4 – pause
     tl.to(scene5State, {
       angle: Math.PI * 2,
       duration: 0.4,
       onUpdate: updateCardCamera,
     });
 
-    // Theme 4 → Theme 1 (top)
     tl.to(scene5State, {
       angle: Math.PI * 2.5,
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
-    // Theme 1 – pause
     tl.to(scene5State, {
       angle: Math.PI * 2.5,
       duration: 0.4,
       onUpdate: updateCardCamera,
     });
 
-    // Theme 1 → Theme 2 (right)
     tl.to(scene5State, {
       angle: Math.PI * 3,
       duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
-    // Theme 2 – pause
     tl.to(scene5State, {
       angle: Math.PI * 3,
       duration: 0.4,
       onUpdate: updateCardCamera,
     });
 
-    // Scene6: CTA + FAQ section (extended duration) – camera stays on last card
+    // Scene6: CTA + FAQ section
     const scene6State = { progress: 0 };
     tl.to(
       scene6State,
@@ -227,6 +228,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         progress: 1,
         duration: 4.4,
         onUpdate: () => {
+          if (!camera) return;
           const a = Math.PI * 3;
           camera.position.set(
             pivot.x - Math.cos(a) * radius,
@@ -239,7 +241,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       7.8
     );
 
-    // Fade 3D cards out once CTA is halfway visible
+    // Fade 3D cards out
     const cardFade = { opacity: 1 };
     tl.to(
       cardFade,
@@ -247,16 +249,17 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         opacity: 0,
         duration: 0.4,
         onUpdate: () => {
-          if (cardsGroupRef.current) {
-            cardsGroupRef.current.traverse((child) => {
-              if ((child as THREE.Mesh).isMesh) {
-                const mat = (child as THREE.Mesh)
-                  .material as THREE.MeshStandardMaterial;
+          if (!cardsGroupRef.current) return;
+          cardsGroupRef.current.traverse((child) => {
+            if ((child as THREE.Mesh).isMesh) {
+              const mat = (child as THREE.Mesh)
+                .material as THREE.MeshStandardMaterial;
+              if (mat) {
                 mat.transparent = true;
                 mat.opacity = cardFade.opacity;
               }
-            });
-          }
+            }
+          });
         },
       },
       8.2
@@ -264,32 +267,39 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
     tl.set({}, {}, 12.2);
 
+    // Mark as ready after timeline is created
+    setIsReady(true);
+
     return () => {
       tl.kill();
+      setIsReady(false);
     };
-  }, [scenes, camera, stableViewportWidth]); // Added stableViewportWidth as dependency
+  }, [scenes, camera, stableViewportWidth]);
 
   useFrame((state) => {
-    const scrollProgress = scrollProgressRef.current || 0;
-    if (tlRef.current) {
-      tlRef.current.progress(scrollProgress);
-    }
+    // Guard: Check all refs before using
+    if (!tlRef.current) return;
+    
+    const scrollProgress = scrollProgressRef.current ?? 0;
+    tlRef.current.progress(scrollProgress);
 
-    // pointer light
-    if (pointerRef.current) {
+    // Pointer light - with full null checks
+    if (pointerRef.current && state.camera) {
       const p = state.pointer;
-      const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
-        state.camera
-      );
+      if (p) {
+        const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
+          state.camera
+        );
 
-      const dir = worldPoint.sub(state.camera.position).normalize();
-      const ray = new THREE.Ray(state.camera.position, dir);
-      const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        const dir = worldPoint.sub(state.camera.position).normalize();
+        const ray = new THREE.Ray(state.camera.position, dir);
+        const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
-      const hit = new THREE.Vector3();
-      if (ray.intersectPlane(plane, hit)) {
-        pointerRef.current.position.copy(hit);
-        pointerRef.current.position.z += 2;
+        const hit = new THREE.Vector3();
+        if (ray.intersectPlane(plane, hit)) {
+          pointerRef.current.position.copy(hit);
+          pointerRef.current.position.z += 2;
+        }
       }
     }
   });
@@ -315,12 +325,15 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
-      <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
+      
+      {/* Only render HackToFuture when ready */}
+      {isReady && stableViewportWidth > 0 && (
+        <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
+      )}
 
       {/* Scene 2 */}
       <group position={[0, -30, 0]}>
         <ambientLight intensity={0.85} />
-
         <directionalLight
           position={[8, 12, 6]}
           intensity={1.6}
@@ -328,7 +341,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-
         <Comic tlRef={tlRef} />
       </group>
 
@@ -347,7 +359,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
       {/* Scene 4 */}
       <group position={[0, -60, 0]}>
-        {/* <mesh position={[0, 0, 0]}>*/}
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[2, 2, 2, 2]} />
           <meshStandardMaterial
