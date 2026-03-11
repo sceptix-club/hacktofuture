@@ -42,9 +42,7 @@ const socialLinks = [
 ];
 
 const contactLinks = [
-  { href: "mailto:hacktofuture@gmail.com", label: "hacktofuture@gmail.com" },
-  { href: "tel:+919876543210", label: "+91 98765 43210" },
-  { href: "tel:+919876543211", label: "+91 98765 43211" },
+  { href: "mailto:hacktofuture@sjec.ac.in", label: "hacktofuture@sjec.ac.in" },
 ];
 
 const Footer = forwardRef<HTMLDivElement>((_, ref) => {

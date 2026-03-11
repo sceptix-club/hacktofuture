@@ -13,9 +13,7 @@ type SponsorsProps = {
 
 export function SponsorsBento({
   title,
-  platinum,
-  gold,
-  prizePool = "₹3,50,000",
+  prizePool = "₹4,00,000+",
 }: SponsorsProps) {
   return (
     <div className="w-full max-w-6xl mx-auto mt-0 p-3 md:p-4 pt-0 pb-24 md:pb-6">
@@ -23,23 +21,6 @@ export function SponsorsBento({
       <div className="sponsor-panel mb-3 md:mb-4">
         <div className="flex flex-col items-center md:flex-row md:items-center md:justify-center gap-3 md:gap-6">
           {/* SPONSORS heading */}
-          <div
-            className="inline-block relative px-2 shrink-0"
-            style={{ transform: "rotate(-2deg)" }}
-          >
-            <h2
-              className="text-white px-3 md:px-8 py-2 md:py-4 font-black leading-tight text-center"
-              style={{
-                textShadow: "2px 2px 0 #000, 4px 4px 0 rgba(0,0,0,0.3)",
-                letterSpacing: "0.03em",
-                fontFamily: "Dela Gothic One",
-                WebkitTextStroke: "1.5px black",
-                fontSize: "clamp(2rem, 6vw, 5.5rem)",
-              }}
-            >
-              SPONSORS & REWARDS
-            </h2>
-          </div>
         </div>
       </div>
 
@@ -100,7 +81,6 @@ export function SponsorsBento({
             transform: "rotate(0.5deg)",
           }}
         >
-          {/* Inner card with overflow hidden */}
           <div
             className="relative w-full h-full"
             style={{
@@ -125,7 +105,6 @@ export function SponsorsBento({
                   "polygon(0% 0%, 27% 24%, 28% 0%, 46% 24%, 60% 0%, 71% 28%, 99% 1%, 83% 30%, 99% 28%, 84% 40%, 100% 51%, 82% 60%, 100% 69%, 78% 73%, 100% 100%, 66% 79%, 61% 100%, 45% 78%, 33% 100%, 28% 81%, 0% 85%, 21% 65%, 0% 61%, 24% 47%, 0% 32%, 15% 28%)",
               }}
             />
-            {/* Second starburst bottom-left */}
             <div
               className="absolute pointer-events-none"
               style={{
@@ -138,7 +117,6 @@ export function SponsorsBento({
                   "polygon(0% 0%, 27% 24%, 28% 0%, 46% 24%, 60% 0%, 71% 28%, 99% 1%, 83% 30%, 99% 28%, 84% 40%, 100% 51%, 82% 60%, 100% 69%, 78% 73%, 100% 100%, 66% 79%, 61% 100%, 45% 78%, 33% 100%, 28% 81%, 0% 85%, 21% 65%, 0% 61%, 24% 47%, 0% 32%, 15% 28%)",
               }}
             />
-            {/* Halftone dots overlay */}
             <div
               className="absolute inset-0 pointer-events-none opacity-10"
               style={{
@@ -148,7 +126,6 @@ export function SponsorsBento({
               }}
             />
 
-            {/* Content */}
             <div className="relative z-10 h-full flex flex-col items-center justify-center text-center p-4 md:p-8 gap-1.5 md:gap-2">
               <span
                 className="font-black uppercase tracking-widest text-black leading-none"
@@ -191,7 +168,7 @@ export function SponsorsBento({
           </div>
         </div>
 
-        {/* Platinum sponsors */}
+        {/* Total Prizes Worth — Silver-styled box */}
         <div
           className="sponsor-panel col-span-1 relative"
           style={{
@@ -200,33 +177,57 @@ export function SponsorsBento({
             borderRadius: "4px",
             boxShadow: "4px 4px 0 rgba(0,0,0,0.25)",
             transform: "rotate(-0.5deg)",
+            overflow: "hidden",
           }}
         >
-          <div className="absolute -top-2 -left-2 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider rotate-[-2deg] border-2 border-white">
-            PLATINUM
+          <div className="absolute -top-2 -left-2 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider rotate-[-2deg] border-2 border-white z-10">
+            PRIZES
           </div>
-          <div className="p-2 md:p-4 pt-5 md:pt-7">
-            <div className="space-y-1.5 md:space-y-2.5">
-              {platinum.map((s, i) => (
-                <div
-                  key={i}
-                  className="h-10 md:h-12 flex items-center justify-center bg-white border-2 md:border-3 border-black rounded p-2"
-                  style={{ boxShadow: "2px 2px 0 rgba(0,0,0,0.2)" }}
-                >
-                  {s.logo ? (
-                    <img
-                      src={s.logo}
-                      className="max-h-6 md:max-h-7 object-contain"
-                      alt={s.name}
-                    />
-                  ) : (
-                    <span className="text-black font-bold text-xs uppercase tracking-wide text-center">
-                      {s.name}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+          {/* Starburst */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              right: "-30px",
+              top: "-30px",
+              width: "140px",
+              height: "140px",
+              background: "rgba(0,0,0,0.06)",
+              clipPath:
+                "polygon(0% 0%, 27% 24%, 28% 0%, 46% 24%, 60% 0%, 71% 28%, 99% 1%, 83% 30%, 99% 28%, 84% 40%, 100% 51%, 82% 60%, 100% 69%, 78% 73%, 100% 100%, 66% 79%, 61% 100%, 45% 78%, 33% 100%, 28% 81%, 0% 85%, 21% 65%, 0% 61%, 24% 47%, 0% 32%, 15% 28%)",
+            }}
+          />
+          <div className="p-3 md:p-4 pt-6 md:pt-8 flex flex-col items-center justify-center text-center gap-1">
+            <span
+              className="font-black uppercase tracking-widest text-black/60 leading-none"
+              style={{
+                fontFamily: '"Bangers", "Impact", sans-serif',
+                fontSize: "clamp(0.5rem, 1.2vw, 0.7rem)",
+                letterSpacing: "0.2em",
+              }}
+            >
+              TOTAL PRIZES WORTH
+            </span>
+            <span
+              className="font-black text-black leading-none"
+              style={{
+                fontFamily: '"Bangers", "Impact", sans-serif',
+                fontSize: "clamp(1.4rem, 5vw, 2.8rem)",
+                textShadow:
+                  "2px 2px 0 rgba(255,255,255,0.5), -1px -1px 0 rgba(0,0,0,0.1)",
+              }}
+            >
+              {prizePool}
+            </span>
+            <span
+              className="font-bold uppercase text-black/50 tracking-wider"
+              style={{
+                fontFamily: '"Bangers", "Impact", sans-serif',
+                fontSize: "clamp(0.5rem, 1vw, 0.65rem)",
+                letterSpacing: "0.15em",
+              }}
+            >
+              IN CASH & GOODIES
+            </span>
           </div>
           <div
             className="absolute inset-0 opacity-5 pointer-events-none"
@@ -238,7 +239,7 @@ export function SponsorsBento({
           />
         </div>
 
-        {/* Gold sponsors */}
+        {/* Exciting Rewards — Red-styled box (original Gold color) */}
         <div
           className="sponsor-panel col-span-1 relative"
           style={{
@@ -247,33 +248,62 @@ export function SponsorsBento({
             borderRadius: "4px",
             boxShadow: "4px 4px 0 rgba(0,0,0,0.25)",
             transform: "rotate(0.5deg)",
+            overflow: "hidden",
           }}
         >
-          <div className="absolute -top-2 -right-2 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider rotate-[2deg] border-2 border-white">
-            GOLD
+          <div className="absolute -top-2 -right-2 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider rotate-[2deg] border-2 border-white z-10">
+            REWARDS
           </div>
-          <div className="p-2 md:p-4 pt-5 md:pt-7">
-            <div className="space-y-1.5 md:space-y-2.5">
-              {gold.map((s, i) => (
-                <div
-                  key={i}
-                  className="h-10 md:h-12 flex items-center justify-center bg-white border-2 md:border-3 border-black rounded p-2"
-                  style={{ boxShadow: "2px 2px 0 rgba(0,0,0,0.2)" }}
-                >
-                  {s.logo ? (
-                    <img
-                      src={s.logo}
-                      className="max-h-6 md:max-h-7 object-contain"
-                      alt={s.name}
-                    />
-                  ) : (
-                    <span className="text-black font-bold text-xs uppercase tracking-wide text-center">
-                      {s.name}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+          {/* Starburst */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              left: "-30px",
+              bottom: "-30px",
+              width: "140px",
+              height: "140px",
+              background: "rgba(255,255,255,0.1)",
+              clipPath:
+                "polygon(0% 0%, 27% 24%, 28% 0%, 46% 24%, 60% 0%, 71% 28%, 99% 1%, 83% 30%, 99% 28%, 84% 40%, 100% 51%, 82% 60%, 100% 69%, 78% 73%, 100% 100%, 66% 79%, 61% 100%, 45% 78%, 33% 100%, 28% 81%, 0% 85%, 21% 65%, 0% 61%, 24% 47%, 0% 32%, 15% 28%)",
+            }}
+          />
+          <div className="p-3 md:p-4 pt-6 md:pt-8 flex flex-col items-center justify-center text-center gap-1.5">
+            <span
+              className="font-black text-white leading-none"
+              style={{
+                fontFamily: '"Bangers", "Impact", sans-serif',
+                fontSize: "clamp(0.7rem, 1.8vw, 1rem)",
+                textShadow: "1px 1px 0 rgba(0,0,0,0.3)",
+                letterSpacing: "0.1em",
+              }}
+            >
+              🏆
+            </span>
+            <span
+              className="font-black text-white leading-tight"
+              style={{
+                fontFamily: '"Bangers", "Impact", sans-serif',
+                fontSize: "clamp(0.85rem, 2.5vw, 1.4rem)",
+                textShadow:
+                  "2px 2px 0 rgba(0,0,0,0.4), -1px -1px 0 rgba(0,0,0,0.2)",
+                letterSpacing: "0.05em",
+              }}
+            >
+              EXCITING
+              <br />
+              GOODIES &<br />
+              SWAG KITS
+            </span>
+            <span
+              className="font-bold uppercase text-white/70 tracking-wider"
+              style={{
+                fontFamily: '"Bangers", "Impact", sans-serif',
+                fontSize: "clamp(0.45rem, 1vw, 0.6rem)",
+                letterSpacing: "0.15em",
+              }}
+            >
+              FOR ALL WINNERS
+            </span>
           </div>
           <div
             className="absolute inset-0 opacity-5 pointer-events-none"
