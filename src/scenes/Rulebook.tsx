@@ -14,10 +14,10 @@ const handleDownload = (e: any) => {
 };
 
 type ComicProps = {
-  tlRef: React.RefObject<gsap.core.Timeline | null>;
+  timeline: gsap.core.Timeline | null;
 };
 
-function Comic({ tlRef }: ComicProps) {
+function Comic({ timeline }: ComicProps) {
   const group = useRef<THREE.Group>(null);
   const { scene, animations } = useGLTF("/book.glb");
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
@@ -33,13 +33,11 @@ function Comic({ tlRef }: ComicProps) {
   }, [actions]);
 
   useEffect(() => {
-    if (!actions) return;
-    if (!tlRef?.current) return;
+    if (!actions || !timeline) return;
 
-    const tl = tlRef.current;
     const state = { progress: 0 };
 
-    tl.to(
+    timeline.to(
       state,
       {
         progress: 1,
@@ -54,7 +52,7 @@ function Comic({ tlRef }: ComicProps) {
       },
       1.3
     );
-  }, [actions, tlRef?.current]);
+  }, [actions, timeline]);
 
   return (
     <group
