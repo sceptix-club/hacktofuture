@@ -9,10 +9,6 @@ const handleThemeNavigate = (slug: string) => {
   window.location.href = `/theme/${slug}`;
 };
 
-const handleRuleBook = () => {
-  window.open(`${ruleBookLink}rulebook.pdf`, "_blank", "noopener,noreferrer");
-};
-
 import TimerTimeline from "../components/TimerTimeline";
 import { ruleBookLink } from "../lib/utils";
 

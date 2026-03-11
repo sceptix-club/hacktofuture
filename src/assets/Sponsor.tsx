@@ -244,20 +244,6 @@ export function SponsorsBento({
             minHeight: "5.5rem",
           }}
         >
-          <div
-            className="absolute bg-black text-white font-bold tracking-wider"
-            style={{
-              top: "-0.5rem",
-              left: "-0.5rem",
-              padding: "0.25rem 0.75rem",
-              fontSize: "0.75rem",
-              transform: "rotate(-2deg)",
-              border: "0.125rem solid white",
-              zIndex: 10,
-            }}
-          >
-            PRIZE POOL
-          </div>
           {/* Starburst right */}
           <div
             className="absolute pointer-events-none"

@@ -76,7 +76,7 @@ export function Overlay() {
         />
         <div style={{ width: "1rem" }} />
         <img
-          src="/logo_white.png"
+          src="/sjec-gold.png"
           alt="logo"
           style={{
             height: "clamp(20px, 3vw, 30px)",
@@ -114,7 +114,6 @@ export function Overlay() {
           <br />
           St Joseph Engineering College
           <br />
-          <b>—</b>
         </p>
         <div style={{ width: 10 }} />
         <p
