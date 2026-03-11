@@ -337,7 +337,7 @@ const TextContent = ({
 
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
-      <Footer ref={footerRef} />
+      {/* <Footer ref={footerRef} /> */}
     </>
   );
 };

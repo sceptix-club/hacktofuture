@@ -10,7 +10,7 @@ function Timer() {
     days: 0,
   });
 
-  const HtfDate = Date.parse("2026-04-15T18:36:20+05:30"); // ✅ CHANGED: consistent date
+  const HtfDate = Date.parse("2026-04-15T18:36:20+05:30");
 
   function setTimeLeft() {
     const difference = HtfDate - Date.now();
@@ -25,7 +25,6 @@ function Timer() {
     });
   }
 
-  // ✅ CHANGED: added dependency array [] and immediate first tick
   useEffect(() => {
     setTimeLeft();
     const id = setInterval(setTimeLeft, 1000);
@@ -39,7 +38,6 @@ function Timer() {
     { value: timer.seconds, label: "Sec" },
   ];
 
-  // ✅ CHANGED: entire return block
   return (
     <div
       className="relative flex items-center justify-center w-full mx-auto"
@@ -50,7 +48,7 @@ function Timer() {
       }}
     >
       <img
-        src="/comic-dialog.png"
+        src="/comi.png"
         alt=""
         className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
         draggable={false}
@@ -60,7 +58,7 @@ function Timer() {
       />
 
       <div
-        className="relative z-10 grid grid-cols-4 place-items-center"
+        className="relative mr-7 mt-4 z-10 grid grid-cols-4 place-items-center"
         style={{
           width: "65%",
           gap: "3%",
@@ -70,13 +68,13 @@ function Timer() {
         {blocks.map(({ value, label }) => (
           <div
             key={label}
-            className="flex flex-col items-center"
+            className="flex  flex-col items-center"
             style={{ gap: "0.6cqi" }}
           >
             <span
-              className="comic-sans text-white leading-none tabular-nums"
+              className="comic-sans  text-white  leading-none tabular-nums"
               style={{
-                fontSize: "10cqi",
+                fontSize: "9cqi",
                 textShadow:
                   "2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000, " +
                   "1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000",
@@ -86,7 +84,7 @@ function Timer() {
             </span>
 
             <span
-              className="comic-sans text-black uppercase tracking-wider font-bold"
+              className="comic-sans text-[#DA100C] uppercase tracking-wider font-bold"
               style={{ fontSize: "2.8cqi" }}
             >
               {label}
@@ -98,8 +96,8 @@ function Timer() {
   );
 }
 
-// ⬇️ Timeline stays exactly the same — no changes needed
-function Timeline() {
+// ✅ CHANGED: Timeline now accepts `interactive` prop
+function Timeline({ interactive }: { interactive: boolean }) {
   const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
@@ -157,6 +155,9 @@ function Timeline() {
   };
 
   const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+    // ✅ CHANGED: block clicks when not interactive
+    if (!interactive) return;
+
     const nextCard = Number(event.currentTarget.id);
     let difference = currentCard - nextCard;
     let animateCards: Function;
@@ -276,6 +277,9 @@ function Timeline() {
   const [rendered, setRendered] = useState(false);
 
   const cardClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+    // ✅ CHANGED: block clicks when not interactive
+    if (!interactive) return;
+
     const currentEl = cardRefs.current[currentCard];
     if (!currentEl) return;
     const rect = currentEl.getBoundingClientRect();
@@ -321,7 +325,12 @@ function Timeline() {
   return (
     <div
       className="flex flex-col items-center justify-center w-full px-2 sm:px-4"
-      style={{ paddingBottom: "clamp(3rem, 6vh, 4.5rem)" }}
+      style={{
+        paddingBottom: "clamp(3rem, 6vh, 4.5rem)",
+        // ✅ CHANGED: visual feedback when locked
+        opacity: interactive ? 1 : 0.5,
+        transition: "opacity 0.4s ease",
+      }}
       ref={timelineRef}
     >
       <div className="flex gap-2 sm:gap-4 mb-2 sm:mb-3">
@@ -330,7 +339,10 @@ function Timeline() {
             <button
               id={String(i)}
               onClick={buttonClicked}
-              className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm border-2 transition-all cursor-pointer comic-sans flex items-center gap-1
+              // ✅ CHANGED: disable button when not interactive
+              disabled={!interactive}
+              className={`px-2 py-1 sm:px-3 sm:py-1 text-xs sm:text-sm border-2 transition-all comic-sans flex items-center gap-1
+                ${!interactive ? "cursor-not-allowed" : "cursor-pointer"}
                 ${
                   i === currentButton
                     ? "scale-110"
@@ -369,6 +381,8 @@ function Timeline() {
               width: "clamp(280px, 60vw, 620px)",
               border: "0.35rem solid #000",
               boxShadow: "6px 6px 0 #000",
+              // ✅ CHANGED: block card clicks when not interactive
+              pointerEvents: interactive ? "auto" : "none",
             }}
           >
             <div
@@ -405,9 +419,7 @@ function Timeline() {
               ))}
             </div>
 
-            <div className="bg-black text-white/50 text-[10px] text-center py-0.5 select-none comic-sans">
-              tap left / right to switch day
-            </div>
+  
           </div>
         ))}
       </div>
@@ -415,10 +427,57 @@ function Timeline() {
   );
 }
 
-// ✅ UPDATED TimerTimeline layout
+// ✅ UPDATED TimerTimeline with scroll-based unlock
 export default function TimerTimeline() {
+  const [isSettled, setIsSettled] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    // Use IntersectionObserver to detect when section is fully in view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          // ✅ Section is mostly visible — wait a beat for scroll animation to finish
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+          }
+          scrollTimeoutRef.current = setTimeout(() => {
+            setIsSettled(true);
+          }, 600); // 600ms after intersection to let scroll-snap / GSAP settle
+        } else {
+          // ✅ Section scrled away — lock again
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = null;
+          }
+          setIsSettled(false);
+        }
+      },
+      {
+        threshold: [0, 0.3, 0.6, 1.0],
+      }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="flex flex-col items-center justify-center gap-4 lg:gap-6 w-full px-4 select-none">
+    <div
+      ref={sectionRef}
+      className="flex flex-col items-center justify-center gap-4 lg:gap-6 w-full px-4 select-none"
+    >
       {/* Heading */}
       <div className="htf-panel w-full flex justify-center">
         <h2
@@ -436,13 +495,13 @@ export default function TimerTimeline() {
         </h2>
       </div>
 
-      {/* ✅ CHANGED: w-full + max-w + min-w-0 so both halves resize properly */}
       <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-10 w-full max-w-[1300px] mx-auto">
         <div className="htf-panel w-full lg:w-1/2 max-w-[620px] min-w-0">
           <Timer />
         </div>
         <div className="w-full lg:w-1/2 max-w-[620px] min-w-0">
-          <Timeline />
+          {/* ✅ CHANGED: pass interactive prop */}
+          <Timeline interactive={isSettled} />
         </div>
       </div>
     </div>
