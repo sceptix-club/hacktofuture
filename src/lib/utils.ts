@@ -13,3 +13,9 @@ export const coreTeamPrefix =
 
 export const wallImagesPrefix =
   "https://raw.githubusercontent.com/sceptix-club/htf-4-assets/main/wall_images/";
+
+export const rootPrefix =
+  "https://raw.githubusercontent.com/sceptix-club/htf-4-assets/main/";
+
+export const ruleBookLink =
+  "https://drive.google.com/file/d/1hb88dgXwVBIDdJfp8OVY1d6Mi_e5tBFx/view";

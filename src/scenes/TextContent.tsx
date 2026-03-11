@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import CTA from "./CTA";
 import FAQ from "./FAQ";
+import Footer from "./Footer";
 
 const handleThemeNavigate = (slug: string) => {
   window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer");
@@ -191,7 +192,7 @@ const TextContent = ({
       tl.to(
         card4TextRef.current,
         { opacity: 0, duration: 0.15, pointerEvents: "none" },
-        7.05
+        8.1
       );
     }
 
@@ -231,11 +232,8 @@ const TextContent = ({
       tl.to(
         footerRef.current,
         { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
-        10.2
+        10.7
       );
-
-      // ❌ REMOVED: the htfLetters scroll animation was here
-      // Letters now animate themselves inside Footer.tsx on visibility
     }
 
     tl.set({}, {}, 12.2);
@@ -339,7 +337,7 @@ const TextContent = ({
 
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
-      {/* <Footer ref={footerRef} /> */}
+      <Footer ref={footerRef} />
     </>
   );
 };

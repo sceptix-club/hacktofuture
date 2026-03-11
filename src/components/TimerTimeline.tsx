@@ -55,10 +55,7 @@ function Timer() {
         className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
         draggable={false}
         onLoad={(e) => {
-          const img = e.currentTarget;
-          console.log(
-            `Width: ${img.naturalWidth}, Height: ${img.naturalHeight}`,
-          );
+          console.log(e);
         }}
       />
 
@@ -106,7 +103,7 @@ function Timeline() {
   const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
-	const timelineRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
 
   const originalPos = [
     { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -173,21 +170,20 @@ function Timeline() {
     }
 
     difference = Math.abs(difference);
-		let i = 0;
+    let i = 0;
     for (; i < difference; i++) {
       setTimeout(animateCards, 700 * i);
     }
 
-		if (timelineRef.current) {
-			timelineRef.current.style.pointerEvents = 'none';
-		}
+    if (timelineRef.current) {
+      timelineRef.current.style.pointerEvents = "none";
+    }
 
-		setTimeout(()=>{
-			if (timelineRef.current) {
-				timelineRef.current.style.pointerEvents = 'auto';
-			}
-		}, 700*i)
-		
+    setTimeout(() => {
+      if (timelineRef.current) {
+        timelineRef.current.style.pointerEvents = "auto";
+      }
+    }, 700 * i);
   };
 
   const flipForward = (updateButton: Boolean | undefined) => {
@@ -285,14 +281,14 @@ function Timeline() {
     const rect = currentEl.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const midpoint = rect.width / 2;
-		if (timelineRef.current) {
-				timelineRef.current.style.pointerEvents = 'none';
-			}
-		setTimeout(()=>{
-			if (timelineRef.current) {
-				timelineRef.current.style.pointerEvents = 'auto';
-			}
-		}, 700)
+    if (timelineRef.current) {
+      timelineRef.current.style.pointerEvents = "none";
+    }
+    setTimeout(() => {
+      if (timelineRef.current) {
+        timelineRef.current.style.pointerEvents = "auto";
+      }
+    }, 700);
     if (x > midpoint) {
       flipForward(true);
     } else {
@@ -326,7 +322,7 @@ function Timeline() {
     <div
       className="flex flex-col items-center justify-center w-full px-2 sm:px-4"
       style={{ paddingBottom: "clamp(3rem, 6vh, 4.5rem)" }}
-			ref={timelineRef}
+      ref={timelineRef}
     >
       <div className="flex gap-2 sm:gap-4 mb-2 sm:mb-3">
         {dayLabels.map((label, i) => (
