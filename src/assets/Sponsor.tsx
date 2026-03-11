@@ -298,7 +298,7 @@ export function SponsorsBento({
                 textShadow: "0.0625rem 0.0625rem 0 rgba(0,0,0,0.5)",
               }}
             >
-              PRIZES WORTH
+              GOODIES WORTH
             </span>
             <span
               className="font-black text-white leading-none"
@@ -310,7 +310,7 @@ export function SponsorsBento({
                 letterSpacing: "-0.01em",
               }}
             >
-              ₹2,60,000
+              ₹1,30,000
             </span>
           </div>
         </div>
