@@ -232,7 +232,7 @@ const TextContent = ({
       tl.to(
         footerRef.current,
         { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
-        10.2
+        10.7
       );
 
       // ❌ REMOVED: the htfLetters scroll animation was here
@@ -340,7 +340,7 @@ const TextContent = ({
 
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
-      {/* <Footer ref={footerRef} /> */}
+      <Footer ref={footerRef} />
     </>
   );
 };
