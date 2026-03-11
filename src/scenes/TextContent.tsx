@@ -3,6 +3,7 @@ import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
 import CTA from "./CTA";
 import FAQ from "./FAQ";
+import Footer from "./Footer";
 
 const handleThemeNavigate = (slug: string) => {
   window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer");
@@ -233,7 +234,6 @@ const TextContent = ({
         { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
         10.7
       );
-
     }
 
     tl.set({}, {}, 12.2);
