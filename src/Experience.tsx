@@ -20,18 +20,14 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
   const pointerRef = useRef<THREE.PointLight | null>(null);
   const scene6Ref = useRef<THREE.Group | null>(null);
   const cardsGroupRef = useRef<THREE.Group | null>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
 
-  // Track if component is mounted and ready
-  const [isReady, setIsReady] = useState(false);
+  const [timeline, setTimeline] = useState<gsap.core.Timeline | null>(null);
 
-  // Capture initial viewport width with fallback
-  const initialViewportWidth = useRef(viewport.width || 10);
+  const initialViewportWidth = useRef(viewport.width);
   const [stableViewportWidth, setStableViewportWidth] = useState(
     viewport.width || 10 // Fallback to prevent issues
   );
 
-  // Update viewport width on actual window resize
   useEffect(() => {
     const handleResize = () => {
       setTimeout(() => {
@@ -47,7 +43,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
   useEffect(() => {
     const tl = gsap.timeline({ paused: true });
-    tlRef.current = tl;
 
     const isMobile = stableViewportWidth < 20;
     const base = isMobile ? 0.6 : 1.0;
@@ -63,7 +58,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
         posY: 0,
         posZ: 14,
         rotZ: Math.PI / 6,
-        duration: 1,
+        duration: 0.88,
         onUpdate: () => {
           if (!camera) return;
           camera.position.set(
@@ -83,7 +78,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       {
         scale: 2 * base,
         rotY: Math.PI / 3,
-        duration: 1,
+        duration: 0.88,
         onUpdate: () => {
           if (!tvRef.current) return;
           tvRef.current.scale.setScalar(scene1TV.scale);
@@ -220,7 +215,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       onUpdate: updateCardCamera,
     });
 
-    // Scene6: CTA + FAQ section
+    // Scene6: CTA + FAQ
     const scene6State = { progress: 0 };
     tl.to(
       scene6State,
@@ -241,7 +236,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       7.8
     );
 
-    // Fade 3D cards out
     const cardFade = { opacity: 1 };
     tl.to(
       cardFade,
@@ -267,24 +261,21 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
     tl.set({}, {}, 12.2);
 
-    // Mark as ready after timeline is created
-    setIsReady(true);
+    setTimeline(tl);
 
     return () => {
       tl.kill();
-      setIsReady(false);
+      setTimeline(null);
     };
   }, [scenes, camera, stableViewportWidth]);
 
   useFrame((state) => {
-    // Guard: Check all refs before using
-    if (!tlRef.current) return;
-    
-    const scrollProgress = scrollProgressRef.current ?? 0;
-    tlRef.current.progress(scrollProgress);
+    const scrollProgress = scrollProgressRef.current || 0;
+    if (timeline) {
+      timeline.progress(scrollProgress);
+    }
 
-    // Pointer light - with full null checks
-    if (pointerRef.current && state.camera) {
+    if (pointerRef.current) {
       const p = state.pointer;
       if (p) {
         const worldPoint = new THREE.Vector3(p.x, p.y, 0.5).unproject(
@@ -321,15 +312,14 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       </Clouds>
 
       {/* Scene 1 */}
-      <MarqueeGrid viewportWidth={stableViewportWidth} />
+ <MarqueeGrid 
+  viewportWidth={stableViewportWidth} 
+  scrollProgressRef={scrollProgressRef}
+/>
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
-      
-      {/* Only render HackToFuture when ready */}
-      {isReady && stableViewportWidth > 0 && (
-        <HackToFuture viewportWidth={stableViewportWidth} tlRef={tlRef} />
-      )}
+      <HackToFuture viewportWidth={stableViewportWidth} timeline={timeline} />
 
       {/* Scene 2 */}
       <group position={[0, -30, 0]}>
@@ -341,7 +331,8 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-        <Comic tlRef={tlRef} />
+
+        <Comic timeline={timeline} />
       </group>
 
       {/* Scene 3: Blank space for Sponsors */}
