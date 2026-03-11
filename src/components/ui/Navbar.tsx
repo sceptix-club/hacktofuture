@@ -25,7 +25,7 @@ const Navbar = ({ className }: NavbarProps) => {
     },
     {
       icon: UnstopIcon,
-      href: "https://unstop.com/",
+      href: "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
       label: "UnStop",
       route: null,
     },
