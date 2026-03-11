@@ -235,8 +235,6 @@ const TextContent = ({
         10.7
       );
 
-      // ❌ REMOVED: the htfLetters scroll animation was here
-      // Letters now animate themselves inside Footer.tsx on visibility
     }
 
     tl.set({}, {}, 12.2);
