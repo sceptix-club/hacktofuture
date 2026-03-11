@@ -1,13 +1,7 @@
 import { forwardRef } from "react";
-import {
-  Instagram,
-  Linkedin,
-  Github,
-  Youtube,
-} from "lucide-react";
+import { Instagram, Linkedin, Github, Youtube } from "lucide-react";
 
-
-// Discord icon 
+// Discord icon
 const DiscordIcon = ({ size = 18 }: { size?: number }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -23,12 +17,28 @@ const DiscordIcon = ({ size = 18 }: { size?: number }) => (
 const DOT_BG = `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.12' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23000'><circle cx='25' cy='25' r='7'/><circle cx='75' cy='75' r='7'/><circle cx='75' cy='25' r='7'/><circle cx='25' cy='75' r='7'/></g></svg>"), #fff`;
 
 const socialLinks = [
-  { href: "#", label: "Instagram", icon: Instagram },
- 
-  { href: "#", label: "Discord", icon: DiscordIcon },
-  { href: "#", label: "LinkedIn", icon: Linkedin },
-  { href: "#", label: "GitHub", icon: Github },
-  { href: "#", label: "YouTube", icon: Youtube },
+  {
+    href: "https://www.instagram.com/hack_to_future?igsh=anhuZzR0N2Z1dHVv",
+    label: "Instagram",
+    icon: Instagram,
+  },
+
+  {
+    href: "https://discord.gg/NBF5uF9jDz",
+    label: "Discord",
+    icon: DiscordIcon,
+  },
+  {
+    href: "https://www.linkedin.com/company/hack-to-future/",
+    label: "LinkedIn",
+    icon: Linkedin,
+  },
+  { href: "https://github.com/sceptix-club", label: "GitHub", icon: Github },
+  {
+    href: "https://youtube.com/@hack_to_future?si=PBM78Nwirkfpe0mN",
+    label: "YouTube",
+    icon: Youtube,
+  },
 ];
 
 const contactLinks = [
@@ -85,7 +95,6 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* pb-20 on mobile clears the floating navbar */}
       <div className="relative z-10 flex flex-col min-h-full overflow-y-auto justify-center px-4 md:px-12 lg:px-20 pt-4 pb-20 md:py-8">
-
         {/* Main comic card */}
         <div
           className="w-full relative"
@@ -106,10 +115,8 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
           {/* Card body */}
           <div className="p-4 sm:p-6 md:p-10 lg:p-12">
             <div className="flex flex-col gap-4 sm:gap-6 md:gap-8">
-
               {/* Top: Branding + Link columns — equal 3 cols on md+ */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-
                 {/* Branding */}
                 <div className="flex flex-col gap-2 sm:gap-3">
                   <h2
@@ -129,9 +136,9 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                       color: "#444",
                     }}
                   >
-                    A national-level hackathon hosted by The Sceptix Club at
-                    St Joseph Engineering College — building tomorrow's
-                    solutions, today.
+                    A national-level hackathon hosted by The Sceptix Club at St
+                    Joseph Engineering College — building tomorrow's solutions,
+                    today.
                   </p>
                   {/* Social icons */}
                   <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-0.5">
@@ -139,14 +146,18 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                       <a
                         key={label}
                         href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         aria-label={label}
                         className="transition-colors"
                         style={{ color: "#555" }}
                         onMouseEnter={(e) =>
-                          ((e.currentTarget as HTMLElement).style.color = "#000")
+                          ((e.currentTarget as HTMLElement).style.color =
+                            "#000")
                         }
                         onMouseLeave={(e) =>
-                          ((e.currentTarget as HTMLElement).style.color = "#555")
+                          ((e.currentTarget as HTMLElement).style.color =
+                            "#555")
                         }
                       >
                         <Icon size={20} />
@@ -156,86 +167,85 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                 </div>
 
                 {/* Queries & Contact */}
-                  <div className="flex flex-col gap-1.5 sm:gap-2">
-                    <h3
-                      className="hero-title font-bold"
-                      style={{
-                        fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
-                        color: "#111",
-                        letterSpacing: "0.04em",
-                      }}
-                    >
-                      QUERIES & CONTACT
-                    </h3>
-                    <div className="flex flex-col gap-1 sm:gap-1.5 comic-sans">
-                      {contactLinks.map(({ href, label }) => (
-                        <a
-                          key={href}
-                          href={href}
-                          className="transition-colors break-all"
-                          style={{
-                            fontSize: "clamp(0.65rem, 1.3vw, 0.82rem)",
-                            color: "#555",
-                          }}
-                          onMouseEnter={(e) =>
-                            ((e.currentTarget as HTMLElement).style.color =
-                              "#000")
-                          }
-                          onMouseLeave={(e) =>
-                            ((e.currentTarget as HTMLElement).style.color =
-                              "#555")
-                          }
-                        >
-                          {label}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Venue — full-width on mobile */}
-                  <div className="flex flex-col gap-1.5 sm:gap-2">
-                    <h3
-                      className="hero-title font-bold"
-                      style={{
-                        fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
-                        color: "#111",
-                        letterSpacing: "0.04em",
-                      }}
-                    >
-                      VENUE
-                    </h3>
-                    <div className="flex flex-col gap-1 sm:gap-1.5 comic-sans">
-                      <span
-                        style={{
-                          fontSize: "clamp(0.65rem, 1.3vw, 0.82rem)",
-                          color: "#555",
-                          lineHeight: 1.5,
-                        }}
-                      >
-                        St Joseph Engineering College, Vamanjoor, Mangaluru,
-                        Karnataka 575028
-                      </span>
+                <div className="flex flex-col gap-1.5 sm:gap-2">
+                  <h3
+                    className="hero-title font-bold"
+                    style={{
+                      fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
+                      color: "#111",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    QUERIES & CONTACT
+                  </h3>
+                  <div className="flex flex-col gap-1 sm:gap-1.5 comic-sans">
+                    {contactLinks.map(({ href, label }) => (
                       <a
-                        href="https://maps.google.com/?q=St+Joseph+Engineering+College+Mangaluru"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="transition-colors underline underline-offset-2"
+                        key={href}
+                        href={href}
+                        className="transition-colors break-all"
                         style={{
                           fontSize: "clamp(0.65rem, 1.3vw, 0.82rem)",
                           color: "#555",
                         }}
                         onMouseEnter={(e) =>
-                          ((e.currentTarget as HTMLElement).style.color = "#000")
+                          ((e.currentTarget as HTMLElement).style.color =
+                            "#000")
                         }
                         onMouseLeave={(e) =>
-                          ((e.currentTarget as HTMLElement).style.color = "#555")
+                          ((e.currentTarget as HTMLElement).style.color =
+                            "#555")
                         }
                       >
-                        View on Maps
+                        {label}
                       </a>
-                    </div>
+                    ))}
                   </div>
+                </div>
 
+                {/* Venue — full-width on mobile */}
+                <div className="flex flex-col gap-1.5 sm:gap-2">
+                  <h3
+                    className="hero-title font-bold"
+                    style={{
+                      fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
+                      color: "#111",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    VENUE
+                  </h3>
+                  <div className="flex flex-col gap-1 sm:gap-1.5 comic-sans">
+                    <span
+                      style={{
+                        fontSize: "clamp(0.65rem, 1.3vw, 0.82rem)",
+                        color: "#555",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      St Joseph Engineering College, Vamanjoor, Mangaluru,
+                      Karnataka 575028
+                    </span>
+                    <a
+                      href="https://maps.google.com/?q=St+Joseph+Engineering+College+Mangaluru"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-colors underline underline-offset-2"
+                      style={{
+                        fontSize: "clamp(0.65rem, 1.3vw, 0.82rem)",
+                        color: "#555",
+                      }}
+                      onMouseEnter={(e) =>
+                        ((e.currentTarget as HTMLElement).style.color = "#000")
+                      }
+                      onMouseLeave={(e) =>
+                        ((e.currentTarget as HTMLElement).style.color = "#555")
+                      }
+                    >
+                      View on Maps
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -247,25 +257,31 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
           >
             <span
               className="comic-sans text-white/70 text-center sm:text-left"
-              style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)", letterSpacing: "0.05em" }}
+              style={{
+                fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
+                letterSpacing: "0.05em",
+              }}
             >
               © 2026 HACK TO FUTURE. ALL RIGHTS RESERVED.
             </span>
             <span
               className="comic-sans text-white/70 text-center sm:text-right"
-              style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)", letterSpacing: "0.05em" }}
+              style={{
+                fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
+                letterSpacing: "0.05em",
+              }}
             >
               BUILT BY{" "}
               <a
-                href="#"
+                href="https://sceptix.in"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-white hover:text-[#FFE105] transition-colors underline underline-offset-2"
               >
                 THE SCEPTIX CLUB
               </a>
             </span>
           </div>
-
-
         </div>
       </div>
     </div>
