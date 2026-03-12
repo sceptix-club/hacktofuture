@@ -34,79 +34,79 @@ const TITLE_SPONSORS: Sponsor[] = [
 ];
 
 const GOLD_SPONSORS: Sponsor[] = [
-  {
-    name: "Amazon",
-    logo: "/sponsors/amazon.png",
-    url: "https://amazon.com",
-    description:
-      "Amazon is guided by four principles: customer obsession, passion for invention, commitment to operational excellence, and long-term thinking.",
-    founded: "1994",
-    headquarters: "Seattle, USA",
-    industry: "E-Commerce / Cloud",
-  },
-  {
-    name: "Google",
-    logo: "/sponsors/google.png",
-    url: "https://google.com",
-    description:
-      "Google's mission is to organize the world's information and make it universally accessible and useful.",
-    founded: "1998",
-    headquarters: "Mountain View, USA",
-    industry: "Internet / AI",
-  },
-  {
-    name: "Microsoft",
-    logo: "/sponsors/microsoft.png",
-    url: "https://microsoft.com",
-    description:
-      "Microsoft enables digital transformation for the era of an intelligent cloud and an intelligent edge.",
-    founded: "1975",
-    headquarters: "Redmond, USA",
-    industry: "Software / Cloud",
-  },
+  // {
+  //   name: "Amazon",
+  //   logo: "/sponsors/amazon.png",
+  //   url: "https://amazon.com",
+  //   description:
+  //     "Amazon is guided by four principles: customer obsession, passion for invention, commitment to operational excellence, and long-term thinking.",
+  //   founded: "1994",
+  //   headquarters: "Seattle, USA",
+  //   industry: "E-Commerce / Cloud",
+  // },
+  // {
+  //   name: "Google",
+  //   logo: "/sponsors/google.png",
+  //   url: "https://google.com",
+  //   description:
+  //     "Google's mission is to organize the world's information and make it universally accessible and useful.",
+  //   founded: "1998",
+  //   headquarters: "Mountain View, USA",
+  //   industry: "Internet / AI",
+  // },
+  // {
+  //   name: "Microsoft",
+  //   logo: "/sponsors/microsoft.png",
+  //   url: "https://microsoft.com",
+  //   description:
+  //     "Microsoft enables digital transformation for the era of an intelligent cloud and an intelligent edge.",
+  //   founded: "1975",
+  //   headquarters: "Redmond, USA",
+  //   industry: "Software / Cloud",
+  // },
 ];
 
 const SILVER_SPONSORS: Sponsor[] = [
-  {
-    name: "IBM",
-    logo: "/sponsors/ibm.png",
-    url: "https://ibm.com",
-    description:
-      "IBM is a global technology and consulting company helping clients build smarter businesses.",
-    founded: "1911",
-    headquarters: "Armonk, USA",
-    industry: "Enterprise Tech",
-  },
-  {
-    name: "Intel",
-    logo: "/sponsors/intel.png",
-    url: "https://intel.com",
-    description:
-      "Intel delivers world-changing technology that enriches the lives of every person on earth.",
-    founded: "1968",
-    headquarters: "Santa Clara, USA",
-    industry: "Semiconductors",
-  },
-  {
-    name: "Evernote",
-    logo: "/sponsors/evernote.png",
-    url: "https://evernote.com",
-    description:
-      "Evernote helps individuals and teams capture ideas, manage tasks, and stay organized.",
-    founded: "2004",
-    headquarters: "Redwood City, USA",
-    industry: "Productivity",
-  },
-  {
-    name: "Oracle",
-    logo: "/sponsors/oracle.png",
-    url: "https://oracle.com",
-    description:
-      "Oracle offers integrated suites of applications plus secure, autonomous infrastructure in the Oracle Cloud.",
-    founded: "1977",
-    headquarters: "Austin, USA",
-    industry: "Enterprise Software",
-  },
+  // {
+  //   name: "IBM",
+  //   logo: "/sponsors/ibm.png",
+  //   url: "https://ibm.com",
+  //   description:
+  //     "IBM is a global technology and consulting company helping clients build smarter businesses.",
+  //   founded: "1911",
+  //   headquarters: "Armonk, USA",
+  //   industry: "Enterprise Tech",
+  // },
+  // {
+  //   name: "Intel",
+  //   logo: "/sponsors/intel.png",
+  //   url: "https://intel.com",
+  //   description:
+  //     "Intel delivers world-changing technology that enriches the lives of every person on earth.",
+  //   founded: "1968",
+  //   headquarters: "Santa Clara, USA",
+  //   industry: "Semiconductors",
+  // },
+  // {
+  //   name: "Evernote",
+  //   logo: "/sponsors/evernote.png",
+  //   url: "https://evernote.com",
+  //   description:
+  //     "Evernote helps individuals and teams capture ideas, manage tasks, and stay organized.",
+  //   founded: "2004",
+  //   headquarters: "Redwood City, USA",
+  //   industry: "Productivity",
+  // },
+  // {
+  //   name: "Oracle",
+  //   logo: "/sponsors/oracle.png",
+  //   url: "https://oracle.com",
+  //   description:
+  //     "Oracle offers integrated suites of applications plus secure, autonomous infrastructure in the Oracle Cloud.",
+  //   founded: "1977",
+  //   headquarters: "Austin, USA",
+  //   industry: "Enterprise Software",
+  // },
 ];
 
 const BRONZE_SPONSORS: Sponsor[] = [];

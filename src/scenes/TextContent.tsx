@@ -13,7 +13,6 @@ import TimerTimeline from "../components/TimerTimeline";
 
 import { ruleBookLink } from "../lib/utils";
 
-
 type TextContentProps = {
   currentScene: number;
   scenes: number;
@@ -25,7 +24,7 @@ const TextContent = ({
   getTimelineRef,
 }: TextContentProps) => {
   const timerSettledRef = useRef<((settled: boolean) => void) | null>(null);
-  
+
   const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
@@ -132,7 +131,7 @@ const TextContent = ({
           duration: 0.4,
           stagger: 0.06,
           ease: "back.out(0.8)",
-          onComplete: () => timerSettledRef.current?.(true), 
+          onComplete: () => timerSettledRef.current?.(true),
         },
         3.2
       );
@@ -145,7 +144,7 @@ const TextContent = ({
           duration: 0.3,
           stagger: 0.04,
           ease: "back.in(0.8)",
-          onStart: () => timerSettledRef.current?.(false), 
+          onStart: () => timerSettledRef.current?.(false),
         },
         4.2
       );
@@ -318,21 +317,31 @@ const TextContent = ({
         ref={scene4TextRef}
         className="fixed left-0 right-0 top-[50%] -translate-y-1/2 z-20 flex items-center justify-center px-4"
       >
-        <TimerTimeline onSettledChange={(cb) => { timerSettledRef.current = cb; }} />
+        <TimerTimeline
+          onSettledChange={(cb) => {
+            timerSettledRef.current = cb;
+          }}
+        />
       </div>
 
       {[1, 2, 3, 4].map((n, i) => {
         const themeData = [
           {
-            slug: "healthcare-and-citizen-welfare",
-            title: "Healthcare & Citizen Welfare",
+            slug: "agentic-devops",
+            title: "Agentic DevOps",
           },
-          { slug: "industry-and-trade", title: "Industry & Trade" },
           {
-            slug: "infrastructure-and-smart-cities",
-            title: "Infrastructure & Smart Cities",
+            slug: "agentic-cybersecurity",
+            title: "Agentic Cybersecurity",
           },
-          { slug: "open-innovation", title: "Open Innovation" },
+          {
+            slug: "agentic-cloud-architecture",
+            title: "Agentic Cloud Architecture",
+          },
+          {
+            slug: "open-innovation",
+            title: "Open Innovation",
+          },
         ];
         const { slug, title } = themeData[i];
 
