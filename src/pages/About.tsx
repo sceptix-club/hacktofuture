@@ -78,7 +78,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
   }, [loaderDone]);
 
   const stats = [
-    { label: "PRIZE POOL", value: "₹3,80,000", color: "#E8003D" },
+    { label: "PRIZES WORTH", value: "₹4,00,000", color: "#E8003D" },
     { label: "TEAMS", value: "40", color: "#00C6FF" },
     { label: "DATES", value: "15-17 APR", color: "#FFE105" },
     { label: "THEMES", value: "3", color: "#A855F7" },
@@ -371,9 +371,9 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                         lineHeight: 1.2,
                       }}
                     >
-                      NO TUTORIALS.
+                      EMPOWERING
                       <br />
-                      <span style={{ color: "#FFE105" }}>JUST EXECUTION.</span>
+                      <span style={{ color: "#FFE105" }}>TOMORROW'S WORLD!</span>
                     </h3>
                   </div>
                 </div>

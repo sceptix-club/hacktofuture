@@ -41,59 +41,41 @@ function Timer() {
 
   return (
     <div
+      className="relative flex items-center justify-center w-full mx-auto"
       style={{
-        position: "relative",
-        width: "100%",
-        maxWidth: "38rem",
+        maxWidth: "38.75rem",
         aspectRatio: "612 / 408",
-        margin: "0 auto",
+        containerType: "inline-size",
       }}
     >
       <img
         src="/comi.png"
         alt=""
+        className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
         draggable={false}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "contain",
-          pointerEvents: "none",
-          userSelect: "none",
-        }}
+        style={{ maxWidth: "100%", height: "auto" }}
       />
 
       <div
+        className="relative z-10 grid grid-cols-4 place-items-center"
         style={{
-          position: "relative",
-          zIndex: 10,
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          placeItems: "center",
           width: "65%",
-          margin: "0 auto",
-          paddingTop: "22%",
-          gap: "0.5rem",
+          gap: "3%",
+          paddingBottom: "5%",
+          marginRight: "1.75rem",
+          marginTop: "1rem",
         }}
       >
         {blocks.map(({ value, label }) => (
           <div
             key={label}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "0.125rem",
-            }}
+            className="flex flex-col items-center"
+            style={{ gap: "0.6cqi" }}
           >
             <span
-              className="comic-sans"
+              className="comic-sans text-white leading-none tabular-nums"
               style={{
-                fontSize: "clamp(1.75rem, 5vw, 3.5rem)",
-                lineHeight: 1,
-                color: "#fff",
-                fontVariantNumeric: "tabular-nums",
+                fontSize: "9cqi",
                 textShadow:
                   "0.125rem 0 #000, -0.125rem 0 #000, 0 0.125rem #000, 0 -0.125rem #000, " +
                   "0.0625rem 0.0625rem #000, -0.0625rem -0.0625rem #000, 0.0625rem -0.0625rem #000, -0.0625rem 0.0625rem #000",
@@ -103,14 +85,8 @@ function Timer() {
             </span>
 
             <span
-              className="comic-sans"
-              style={{
-                fontSize: "clamp(0.5rem, 1.5vw, 0.875rem)",
-                color: "#000",
-                textTransform: "uppercase",
-                letterSpacing: "0.1em",
-                fontWeight: 700,
-              }}
+              className="comic-sans text-[#DA100C] uppercase tracking-wider font-bold"
+              style={{ fontSize: "2.8cqi" }}
             >
               {label}
             </span>
@@ -122,267 +98,290 @@ function Timer() {
 }
 
 /* ───────────────────────── Timeline ───────────────────────── */
-function Timeline() {
-  const totalCards = 3;
-  const peek = 32;
+const cards = [
+  [
+    { time: "3:00PM", event: "Start Registrations" },
+    { time: "4:00PM", event: "Snacks" },
+    { time: "5:00PM", event: "Event inauguration" },
+    { time: "6:00PM", event: "Hackathon Officially Begins" },
+    { time: "7:00PM", event: "Dinner" },
+  ],
+  [
+    { time: "1:00AM", event: "Refreshments" },
+    { time: "8:00AM", event: "Breakfast" },
+    { time: "10:00AM", event: "Lunch" },
+    { time: "4:00PM", event: "Snacks" },
+    { time: "4:30PM", event: "Mentoring session" },
+    { time: "7:30PM", event: "Cultural Program" },
+    { time: "7:00PM", event: "Dinner" },
+  ],
+  [
+    { time: "1:00AM", event: "Refreshments" },
+    { time: "5:00AM", event: "Participation certificate" },
+    { time: "6:00AM", event: "Hackathon ends" },
+    { time: "8:00AM", event: "Breakfast" },
+    { time: "9:30AM", event: "Team presentation" },
+    { time: "12:00PM", event: "Valedictory ceremony" },
+    { time: "1:00PM", event: "Lunch and networking" },
+  ],
+];
+
+const totalCards = cards.length;
+const Header = ["15th April", "16th April", "17th April"];
+const dayLabels = ["Day 1", "Day 2", "Day 3"];
+const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
+
+function Timeline({ interactive }: { interactive: boolean }) {
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
   const timelineRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [rendered, setRendered] = useState(false);
+  const currentCardRef = useRef(0);
+  const isAnimating = useRef(false);
+  const initialized = useRef(false);
 
-  const originalPos = [
-    { x: 0, y: 0, rotation: 0, scale: 1 },
-    { x: -peek, y: 4, rotation: -2, scale: 0.97 },
-    { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
-  ];
+  // Keep ref in sync with state
+  useEffect(() => {
+    currentCardRef.current = currentCard;
+  }, [currentCard]);
 
-  const fannedForward = { x: "90%", y: 100, rotation: 5, scale: 1 };
-  const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 };
+  const getOriginalPos = useCallback(() => {
+    const peek = Math.min(32, window.innerWidth * 0.04);
+    return [
+      { x: 0, y: 0, rotation: 0, scale: 1 },
+      { x: -peek, y: 4, rotation: -2, scale: 0.97 },
+      { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
+    ];
+  }, []);
 
-  const cards = [
-    [
-      { time: "3:00PM", event: "Start Registrations" },
-      { time: "4:00PM", event: "Snacks" },
-      { time: "5:00PM", event: "Event Inauguration" },
-      { time: "6:00PM", event: "Hackathon Officially Begins" },
-      { time: "7:00PM", event: "Dinner" },
-    ],
-    [
-      { time: "1:00AM", event: "Refreshments" },
-      { time: "8:00AM", event: "Breakfast" },
-      { time: "10:00AM", event: "Lunch" },
-      { time: "4:00PM", event: "Snacks" },
-      { time: "4:30PM", event: "Mentoring Session" },
-      { time: "7:30PM", event: "Cultural Program" },
-      { time: "7:00PM", event: "Dinner" },
-    ],
-    [
-      { time: "1:00AM", event: "Refreshments" },
-      { time: "5:00AM", event: "Participation Certificate" },
-      { time: "6:00AM", event: "Hackathon Ends" },
-      { time: "8:00AM", event: "Breakfast" },
-      { time: "9:30AM", event: "Team Presentation" },
-      { time: "12:00PM", event: "Valedictory Ceremony" },
-      { time: "1:00PM", event: "Lunch & Networking" },
-    ],
-  ];
+  const setZIndex = useCallback((curr: number) => {
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      if (i < curr) {
+        card.style.zIndex = String(totalCards + 1 - (curr - i));
+      } else if (i === curr) {
+        card.style.zIndex = String(totalCards + 1);
+      } else {
+        card.style.zIndex = String(totalCards - (i - curr));
+      }
+    });
+  }, []);
 
-  const Header = ["15th April", "16th April", "17th April"];
-  const dayLabels = ["Day 1", "Day 2", "Day 3"];
-  const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
-
-  const setZIndex = useCallback(
-    (curr: number) => {
-      cardRefs.current.forEach((card, i) => {
-        if (!card) return;
-        if (i < curr) {
-          card.style.zIndex = String(curr - i);
-        } else {
-          card.style.zIndex = String(totalCards - Math.abs(curr - i));
-        }
-      });
-    },
-    [totalCards]
-  );
+  // Initialize card positions — run once
+  useEffect(() => {
+    if (initialized.current) return;
+    const positions = getOriginalPos();
+    cardRefs.current.forEach((card, i) => {
+      if (card) {
+        gsap.set(card, positions[i]);
+      }
+    });
+    setZIndex(0);
+    initialized.current = true;
+  }, [getOriginalPos, setZIndex]);
 
   const flipForward = useCallback(
-    (updateButton?: boolean) => {
-      setCurrentCard((prev) => {
-        const next = prev === totalCards - 1 ? 0 : prev + 1;
-        const prevCard = cardRefs.current[prev];
+    (updateBtn: boolean) => {
+      if (isAnimating.current) return;
+      isAnimating.current = true;
 
-        if (prevCard) {
-          const finalPosIdx = (prev - next + totalCards) % totalCards;
-          const tl1 = gsap.timeline();
-          tl1
-            .to(prevCard, {
-              ...fannedForward,
-              duration: 0.5,
-              ease: "back.in(1.4)",
-              rotationY: 60,
-              delay: 0.05,
-            })
-            .to(prevCard, {
-              ...originalPos[finalPosIdx],
-              rotationY: 0,
-              duration: 0.5,
-              ease: "back.in(1.4)",
-            });
-        }
+      const prev = currentCardRef.current;
+      const next = (prev + 1) % totalCards;
+      const positions = getOriginalPos();
+      const prevCard = cardRefs.current[prev];
 
-        setTimeout(() => setZIndex(next), 500);
-
-        if (updateButton) setCurrentButton(next);
-
-        cardRefs.current.forEach((card, i) => {
-          if (i === prev) return;
-          const finalPosIdx = (i - next + totalCards) % totalCards;
-          gsap.to(card, {
-            ...originalPos[finalPosIdx],
-            duration: 1.0,
-            ease: "back.out(1.2)",
-          });
+      if (prevCard) {
+        const finalPosIdx = (prev - next + totalCards) % totalCards;
+        const tl = gsap.timeline({
+          onComplete: () => {
+            isAnimating.current = false;
+          },
         });
+        tl.to(prevCard, {
+          x: "60%",
+          y: 60,
+          rotation: 5,
+          scale: 1,
+          rotationY: 60,
+          duration: 0.4,
+          ease: "back.in(1.4)",
+        }).to(prevCard, {
+          ...positions[finalPosIdx],
+          rotationY: 0,
+          duration: 0.4,
+          ease: "back.out(1.2)",
+        });
+      }
 
-        return next;
+      // Move other cards
+      cardRefs.current.forEach((card, i) => {
+        if (i === prev || !card) return;
+        const finalPosIdx = (i - next + totalCards) % totalCards;
+        gsap.to(card, {
+          ...positions[finalPosIdx],
+          duration: 0.6,
+          ease: "back.out(1.2)",
+        });
       });
+
+      setTimeout(() => setZIndex(next), 400);
+
+      setCurrentCard(next);
+      currentCardRef.current = next;
+      if (updateBtn) setCurrentButton(next);
     },
-    [totalCards, setZIndex, fannedForward, originalPos]
+    [getOriginalPos, setZIndex]
   );
 
   const flipBackward = useCallback(
-    (updateButton?: boolean) => {
-      setCurrentCard((next) => {
-        const prev = next === 0 ? totalCards - 1 : next - 1;
-        const prevCard = cardRefs.current[prev];
-        if (prevCard) {
-          const tl = gsap.timeline();
-          tl.to(prevCard, {
-            ...fannedBack,
-            duration: 0.5,
-            ease: "back.in(1.4)",
-            rotationY: 60,
-            delay: 0.05,
-          }).to(prevCard, {
-            ...originalPos[0],
-            rotationY: 0,
-            duration: 0.5,
-            ease: "back.in(1.4)",
-            delay: 0.05,
-          });
-        }
+    (updateBtn: boolean) => {
+      if (isAnimating.current) return;
+      isAnimating.current = true;
 
-        cardRefs.current.forEach((card, i) => {
-          if (i === prev) return;
-          const finalPosIdx = (i - prev + totalCards) % totalCards;
-          gsap.to(card, {
-            ...originalPos[finalPosIdx],
-            duration: 1.0,
-            ease: "back.out(1.2)",
-          });
+      const curr = currentCardRef.current;
+      const prev = (curr - 1 + totalCards) % totalCards;
+      const positions = getOriginalPos();
+      const prevCard = cardRefs.current[prev];
+
+      if (prevCard) {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            isAnimating.current = false;
+          },
         });
+        tl.to(prevCard, {
+          x: "60%",
+          y: 60,
+          rotation: 5,
+          scale: 1,
+          rotationY: 60,
+          duration: 0.4,
+          ease: "back.in(1.4)",
+        }).to(prevCard, {
+          ...positions[0],
+          rotationY: 0,
+          duration: 0.4,
+          ease: "back.out(1.2)",
+        });
+      }
 
-        setTimeout(() => setZIndex(prev), 800);
-        if (updateButton) setCurrentButton(prev);
-        return prev;
+      cardRefs.current.forEach((card, i) => {
+        if (i === prev || !card) return;
+        const finalPosIdx = (i - prev + totalCards) % totalCards;
+        gsap.to(card, {
+          ...positions[finalPosIdx],
+          duration: 0.6,
+          ease: "back.out(1.2)",
+        });
       });
+
+      setTimeout(() => setZIndex(prev), 400);
+
+      setCurrentCard(prev);
+      currentCardRef.current = prev;
+      if (updateBtn) setCurrentButton(prev);
     },
-    [totalCards, setZIndex, fannedBack, originalPos]
+    [getOriginalPos, setZIndex]
   );
 
-  const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
-   
+  const buttonClicked = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (!interactive || isAnimating.current) return;
 
-    const nextCard = Number(event.currentTarget.id);
-    const difference = currentCard - nextCard;
-    const animateCards = difference > 0 ? flipBackward : flipForward;
+      const nextCard = Number(event.currentTarget.id);
+      const curr = currentCardRef.current;
+      if (nextCard === curr) return;
 
-    setCurrentButton(nextCard);
-
-    const absDiff = Math.abs(difference);
-    for (let i = 0; i < absDiff; i++) {
-      setTimeout(() => animateCards(), 700 * i);
-    }
-
-    if (timelineRef.current) {
-      timelineRef.current.style.pointerEvents = "none";
-    }
-    setTimeout(() => {
-      if (timelineRef.current) {
-        timelineRef.current.style.pointerEvents = "auto";
+      let diff = nextCard - curr;
+      // Normalize: positive = forward, negative = backward
+      if (diff > 0) {
+        // forward diff times
+        const step = (i: number) => {
+          setTimeout(() => flipForward(false), i * 700);
+        };
+        for (let i = 0; i < diff; i++) step(i);
+      } else {
+        const absDiff = Math.abs(diff);
+        const step = (i: number) => {
+          setTimeout(() => flipBackward(false), i * 700);
+        };
+        for (let i = 0; i < absDiff; i++) step(i);
       }
-    }, 700 * absDiff);
-  };
 
-  const cardClicked = (event: React.MouseEvent<HTMLDivElement>) => {
-    // ✅ CHANGED: block clicks when not interactive
-  
+      setCurrentButton(nextCard);
+    },
+    [interactive, flipForward, flipBackward]
+  );
 
-    const currentEl = cardRefs.current[currentCard];
-    if (!currentEl) return;
-    const rect = currentEl.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const midpoint = rect.width / 2;
+  const cardClicked = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (!interactive || isAnimating.current) return;
 
-    if (timelineRef.current) {
-      timelineRef.current.style.pointerEvents = "none";
-    }
-    setTimeout(() => {
-      if (timelineRef.current) {
-        timelineRef.current.style.pointerEvents = "auto";
+      const currentEl = cardRefs.current[currentCardRef.current];
+      if (!currentEl) return;
+      const rect = currentEl.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const midpoint = rect.width / 2;
+
+      if (x > midpoint) {
+        flipForward(true);
+      } else {
+        flipBackward(true);
       }
-    }, 700);
-
-    if (x > midpoint) {
-      flipForward(true);
-    } else {
-      flipBackward(true);
-    }
-  };
-
-  useEffect(() => {
-    if (!rendered) {
-      cardRefs.current.forEach((card, i) => {
-        if (card) gsap.set(card, originalPos[i]);
-      });
-      setZIndex(currentCard);
-      setRendered(true);
-    }
-  }, [rendered, currentCard, setZIndex, originalPos]);
+    },
+    [interactive, flipForward, flipBackward]
+  );
 
   return (
     <div
-      ref={timelineRef}
+      className="flex flex-col items-center justify-center w-full"
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
         paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
+        opacity: interactive ? 1 : 0.5,
+        transition: "opacity 0.4s ease",
       }}
+      ref={timelineRef}
     >
       {/* Day buttons */}
       <div
-        style={{
-          display: "flex",
-          gap: "0.75rem",
-          marginBottom: "0.75rem",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
+        className="flex flex-wrap items-center justify-center"
+        style={{ gap: "0.75rem", marginBottom: "0.75rem" }}
       >
         {dayLabels.map((label, i) => (
           <div key={i} className="htf-panel">
             <button
               id={String(i)}
               onClick={buttonClicked}
-              className="comic-sans"
+              disabled={!interactive}
+              className={`comic-sans flex items-center transition-all
+                ${!interactive ? "cursor-not-allowed" : "cursor-pointer"}
+                ${
+                  i !== currentButton
+                    ? "border-[#fece00] bg-black/60 text-white/70"
+                    : ""
+                }`}
               style={{
                 padding: "0.375rem 0.75rem",
-                fontSize: "clamp(0.7rem, 1.2vw, 0.875rem)",
-                border:
-                  i === currentButton
-                    ? "0.125rem solid #000"
-                    : "0.125rem solid #fece00",
-                background:
-                  i === currentButton ? cardColors[i] : "rgba(0,0,0,0.6)",
-                color: i === currentButton ? "#000" : "rgba(255,255,255,0.7)",
-                boxShadow:
-                  i === currentButton ? "0.1875rem 0.1875rem 0 #000" : "none",
-                transform: i === currentButton ? "scale(1.1)" : "scale(1)",
-                transition: "all 0.2s ease",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
+                fontSize: "clamp(0.75rem, 1.2vw, 0.9rem)",
+                borderWidth: "0.125rem",
+                borderStyle: "solid",
                 gap: "0.25rem",
                 borderRadius: "0.125rem",
-                fontWeight: 700,
+                ...(i === currentButton
+                  ? {
+                      background: cardColors[i],
+                      color: "#000",
+                      borderColor: "#000",
+                      boxShadow: "0.1875rem 0.1875rem 0 #000",
+                      transform: "scale(1.1)",
+                    }
+                  : {
+                      borderColor: "#fece00",
+                    }),
               }}
             >
               {i === currentButton && (
-                <span style={{ fontSize: "0.5rem" }}>▶</span>
+                <span style={{ fontSize: "0.6rem" }}>▶</span>
               )}
               {label}
             </button>
@@ -390,32 +389,34 @@ function Timeline() {
         ))}
       </div>
 
-      {/* Card stack */}
+      {/* Card stack container */}
       <div
+        className="relative"
         style={{
-          position: "relative",
           width: "min(90%, 38rem)",
-          minHeight: "14rem",
+          /* Reserve height for the tallest card + peek offset */
+          minHeight: "clamp(14rem, 30vw, 22rem)",
         }}
       >
         {cards.map((card, i) => (
           <div
-            className="htf-panel"
+            className="htf-panel cursor-pointer overflow-hidden"
             ref={(el) => {
               cardRefs.current[i] = el;
             }}
             key={i}
             style={{
-              position: i === 0 ? "relative" : "absolute",
-              top: i === 0 ? undefined : 0,
-              left: i === 0 ? undefined : 0,
+              position: "absolute",
+              top: 0,
+              left: 0,
               width: "100%",
+              display: "grid",
+              gridTemplateRows: "auto 1fr",
               border: "0.25rem solid #000",
               boxShadow: "0.375rem 0.375rem 0 #000",
-              cursor: "pointer",
-              overflow: "hidden",
-              borderRadius: "0.25rem",
-              transformOrigin: "center center",
+              borderRadius: "0.375rem",
+              pointerEvents: interactive ? "auto" : "none",
+              willChange: "transform",
             }}
           >
             {/* Card header */}
@@ -432,37 +433,34 @@ function Timeline() {
               {Header[i]}
             </div>
 
-            {/* Card body — event grid */}
+            {/* Card body */}
             <div
+              className="comic-sans select-none"
               onClick={cardClicked}
-              className="comic-sans"
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))",
-                gap: "0.5rem 1rem",
-                padding: "0.75rem 1rem",
+                gridTemplateColumns:
+                  "repeat(auto-fill, minmax(min(100%, 12rem), 1fr))",
+                gap: "0.375rem 1rem",
+                padding: "clamp(0.625rem, 2vw, 1.25rem)",
                 background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
                 backgroundSize: "1rem 1rem, 100% 100%",
-                userSelect: "none",
               }}
             >
               {card.map((info, j) => (
                 <div
                   key={j}
+                  className="flex items-baseline"
                   style={{
-                    display: "flex",
-                    alignItems: "baseline",
                     gap: "0.5rem",
                     borderBottom: "0.0625rem solid rgba(0,0,0,0.1)",
-                    paddingBottom: "0.375rem",
+                    paddingBottom: "0.25rem",
                   }}
                 >
                   <span
-                    className="hero-title"
+                    className="font-extrabold hero-title whitespace-nowrap"
                     style={{
-                      fontWeight: 800,
-                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
-                      whiteSpace: "nowrap",
+                      fontSize: "clamp(0.7rem, 1.4vw, 0.9rem)",
                       color: "rgba(0,0,0,0.8)",
                     }}
                   >
@@ -470,8 +468,8 @@ function Timeline() {
                   </span>
                   <span
                     style={{
+                      fontSize: "clamp(0.7rem, 1.4vw, 0.9rem)",
                       color: "#000",
-                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
                       lineHeight: 1.4,
                     }}
                   >
@@ -480,21 +478,6 @@ function Timeline() {
                 </div>
               ))}
             </div>
-
-            {/* Card footer */}
-            <div
-              className="comic-sans"
-              style={{
-                background: "#000",
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "0.625rem",
-                textAlign: "center",
-                padding: "0.25rem 0",
-                userSelect: "none",
-              }}
-            >
-              tap left / right to switch day
-            </div>
           </div>
         ))}
       </div>
@@ -502,75 +485,115 @@ function Timeline() {
   );
 }
 
-/* ───────────────────────── Combined ───────────────────────── */
+/* ───────────────────── TimerTimeline ───────────────────── */
 export default function TimerTimeline() {
+  const [isSettled, setIsSettled] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+          }
+          scrollTimeoutRef.current = setTimeout(() => {
+            setIsSettled(true);
+          }, 600);
+        } else {
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = null;
+          }
+          setIsSettled(false);
+        }
+      },
+      { threshold: [0, 0.3, 0.6, 1.0] }
+    );
+
+    observer.observe(section);
+
+    return () => {
+      observer.disconnect();
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div
+      ref={sectionRef}
+      className="flex flex-col items-center justify-center w-full select-none"
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "1.5rem",
-        width: "100%",
-        padding: "0 1rem",
-        userSelect: "none",
+        gap: "clamp(1rem, 2vw, 1.5rem)",
+        padding: "0 clamp(0.5rem, 2vw, 1.5rem)",
       }}
     >
       {/* Heading */}
-      {!isMobile && (
-        <div
-          className="htf-panel"
-          style={{ width: "100%", textAlign: "center" }}
-        >
+      <div className="htf-panel w-full flex justify-center">
+        {!isMobile && (
           <h2
+            className="text-white"
             style={{
               fontFamily: "Dela Gothic One",
-              fontSize: "clamp(1.5rem, 4vw, 4rem)",
+              fontSize: "clamp(1.5rem, 4vw + 0.5rem, 4rem)",
               letterSpacing: "0.05em",
-              color: "#fff",
               WebkitTextStroke: "0.09375rem black",
               textShadow:
                 "0.1875rem 0.1875rem 0 #000, -0.125rem 0.125rem 0 #000, -0.125rem -0.125rem 0 #000, 0.125rem -0.125rem 0 #000",
-              margin: 0,
             }}
           >
             TIMELINE
           </h2>
-        </div>
-      )}
+        )}
+      </div>
 
-      {/* Timer + Timeline side-by-side on large screens, stacked on small */}
+      {/* Timer + Timeline row */}
       <div
+        className="flex items-center justify-center w-full"
         style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "2rem",
-          width: "min(100%, 82rem)",
+          flexDirection: "column",
+          gap: "clamp(1.5rem, 3vw, 2.5rem)",
+          maxWidth: "80rem",
           margin: "0 auto",
         }}
       >
+        {/* Use a media-query-like approach via CSS container */}
+        <style>{`
+          @media (min-width: 64rem) {
+            .timer-timeline-row {
+              flex-direction: row !important;
+            }
+            .timer-timeline-row > * {
+              flex: 1 1 0%;
+              max-width: 38.75rem;
+            }
+          }
+        `}</style>
         <div
-          className="htf-panel"
+          className="timer-timeline-row flex items-center justify-center w-full"
           style={{
-            flex: "1 1 20rem",
-            maxWidth: "38rem",
-            minWidth: 0,
+            flexDirection: "column",
+            gap: "clamp(1.5rem, 3vw, 2.5rem)",
+            maxWidth: "80rem",
           }}
         >
-          <Timer />
-        </div>
-        <div
-          style={{
-            flex: "1 1 20rem",
-            maxWidth: "38rem",
-            minWidth: 0,
-          }}
-        >
-          <Timeline />
+          <div
+            className="htf-panel w-full"
+            style={{ maxWidth: "38.75rem", minWidth: 0 }}
+          >
+            <Timer />
+          </div>
+          <div className="w-full" style={{ maxWidth: "38.75rem", minWidth: 0 }}>
+            <Timeline interactive={isSettled} />
+          </div>
         </div>
       </div>
     </div>

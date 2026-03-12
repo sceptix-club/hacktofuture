@@ -271,8 +271,7 @@ const TextContent = ({
         }}
       >
         <a
-          href={`${ruleBookLink}rulebook.pdf`}
-          className="text-[#FFF] "
+          href={`${ruleBookLink}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
