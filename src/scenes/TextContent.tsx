@@ -213,7 +213,7 @@ const TextContent = ({
       tl.to(
         ctaRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        8.8
+        9.2
       );
     }
 
@@ -223,7 +223,7 @@ const TextContent = ({
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        8.9
+        9.3
       );
       tl.to(
         faqRef.current,
@@ -237,7 +237,13 @@ const TextContent = ({
       gsap.set(footerRef.current, { y: "100%", opacity: 0 });
       tl.to(
         footerRef.current,
-        { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out", force3D: true },
+        {
+          y: "0%",
+          opacity: 1,
+          duration: 0.4,
+          ease: "power2.out",
+          force3D: true,
+        },
         10.5
       );
     }
