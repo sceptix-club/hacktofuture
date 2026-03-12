@@ -44,15 +44,15 @@ function Timer() {
     <div
       className="relative overflow-hidden w-full"
       style={{
-        border: "0.25rem solid #000",
-        boxShadow: "0.375rem 0.375rem 0 #000",
+        border: "0.175rem solid #000",
+        boxShadow: "0.25rem 0.25rem 0 #000",
         borderRadius: "0.25rem",
       }}
     >
       {/* Thin tri-color accent bar */}
       <div
         style={{
-          height: 6,
+          height: 4,
           background:
             "linear-gradient(to right, #DA100C 33.33%, #FFE105 33.33%, #FFE105 66.66%, #50BAEA 66.66%)",
         }}
@@ -60,9 +60,9 @@ function Timer() {
 
       {/* Card body */}
       <div
-        className="relative"
+        className="relative timer-card-body"
         style={{
-          padding: "clamp(1rem, 2.5vw, 1.5rem)",
+          padding: "clamp(0.6rem, 2.5vw, 1.5rem)",
           background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
           backgroundSize: "1rem 1rem, 100% 100%",
         }}
@@ -85,11 +85,14 @@ function Timer() {
         />
 
         {/* // accent */}
-        <div className="flex items-start justify-between mb-3">
+        <div
+          className="flex items-start justify-between timer-accent-row"
+          style={{ marginBottom: "clamp(0.25rem, 1vw, 0.75rem)" }}
+        >
           <span
             className="hero-title font-black"
             style={{
-              fontSize: "clamp(2rem, 4.5vw, 3rem)",
+              fontSize: "clamp(1.4rem, 4.5vw, 3rem)",
               color: "#DA100C",
               lineHeight: 1,
               userSelect: "none",
@@ -100,11 +103,12 @@ function Timer() {
         </div>
 
         <h3
-          className="hero-title font-black uppercase mb-2"
+          className="hero-title font-black uppercase"
           style={{
-            fontSize: "clamp(0.9rem, 1.8vw, 1.25rem)",
+            fontSize: "clamp(0.7rem, 1.8vw, 1.25rem)",
             color: "#111",
             lineHeight: 1.15,
+            marginBottom: "clamp(0.125rem, 0.5vw, 0.5rem)",
           }}
         >
           Event Starts In
@@ -112,17 +116,17 @@ function Timer() {
 
         <div
           style={{
-            width: "clamp(28px, 5vw, 44px)",
-            height: 3,
+            width: "clamp(20px, 5vw, 44px)",
+            height: 2,
             background: "#DA100C",
-            marginBottom: "clamp(1rem, 2.5vw, 1.5rem)",
+            marginBottom: "clamp(0.5rem, 2vw, 1.5rem)",
           }}
         />
 
         {/* Timer digit blocks */}
         <div
           className="relative grid grid-cols-4"
-          style={{ gap: "clamp(0.5rem, 1.5vw, 0.875rem)" }}
+          style={{ gap: "clamp(0.3rem, 1.5vw, 0.875rem)" }}
         >
           {blocks.map(({ value, label }, i) => (
             <div
@@ -131,14 +135,14 @@ function Timer() {
               style={{
                 background: "#fff",
                 border: "2px solid #000",
-                boxShadow: `3px 3px 0 ${blockColors[i]}`,
-                padding: "clamp(0.6rem, 1.5vw, 1rem) 0.375rem",
+                boxShadow: `2px 2px 0 ${blockColors[i]}`,
+                padding: "clamp(0.35rem, 1.2vw, 1rem) 0.25rem",
               }}
             >
               <span
                 className="hero-title font-black tabular-nums leading-none"
                 style={{
-                  fontSize: "clamp(1.75rem, 4.5vw, 3rem)",
+                  fontSize: "clamp(1.3rem, 4.5vw, 3rem)",
                   color: "#111",
                 }}
               >
@@ -149,13 +153,13 @@ function Timer() {
                   width: "55%",
                   height: 2,
                   background: blockColors[i],
-                  margin: "0.3rem 0 0.25rem",
+                  margin: "0.2rem 0 0.15rem",
                 }}
               />
               <span
                 className="comic-sans uppercase tracking-wider font-bold"
                 style={{
-                  fontSize: "clamp(0.5rem, 1vw, 0.65rem)",
+                  fontSize: "clamp(0.4rem, 1vw, 0.65rem)",
                   color: "rgba(0,0,0,0.5)",
                 }}
               >
@@ -167,15 +171,19 @@ function Timer() {
 
         {/* Date & location row */}
         <div
-          className="flex items-center justify-between mt-4 pt-3"
-          style={{ borderTop: "0.0625rem solid rgba(0,0,0,0.1)" }}
+          className="flex items-center justify-between"
+          style={{
+            borderTop: "0.0625rem solid rgba(0,0,0,0.1)",
+            marginTop: "clamp(0.5rem, 1.5vw, 1rem)",
+            paddingTop: "clamp(0.35rem, 1vw, 0.75rem)",
+          }}
         >
           <div className="flex items-baseline" style={{ gap: "0.5rem" }}>
             <span
               className="hero-title"
               style={{
                 fontWeight: 800,
-                fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
+                fontSize: "clamp(0.55rem, 1.2vw, 0.875rem)",
                 whiteSpace: "nowrap",
                 color: "rgba(0,0,0,0.8)",
               }}
@@ -405,16 +413,16 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
-        paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
-        pointerEvents: interactive ? "auto" : "none", 
+        paddingBottom: "clamp(0.75rem, 4vh, 3rem)",
+        pointerEvents: interactive ? "auto" : "none",
       }}
     >
       {/* Day buttons */}
       <div
         style={{
           display: "flex",
-          gap: "0.75rem",
-          marginBottom: "0.75rem",
+          gap: "clamp(0.35rem, 1vw, 0.75rem)",
+          marginBottom: "clamp(0.4rem, 1vw, 0.75rem)",
           flexWrap: "wrap",
           justifyContent: "center",
         }}
@@ -426,8 +434,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               onClick={buttonClicked}
               className="comic-sans"
               style={{
-                padding: "0.375rem 0.75rem",
-                fontSize: "clamp(0.7rem, 1.2vw, 0.875rem)",
+                padding:
+                  "clamp(0.2rem, 0.5vw, 0.375rem) clamp(0.4rem, 1vw, 0.75rem)",
+                fontSize: "clamp(0.6rem, 1.2vw, 0.875rem)",
                 border:
                   i === currentButton
                     ? "0.125rem solid #000"
@@ -439,7 +448,7 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                   i === currentButton ? "0.1875rem 0.1875rem 0 #000" : "none",
                 transform: i === currentButton ? "scale(1.1)" : "scale(1)",
                 transition: "all 0.2s ease",
-                cursor: interactive ? "pointer" : "default", 
+                cursor: interactive ? "pointer" : "default",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.25rem",
@@ -460,8 +469,8 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
       <div
         style={{
           position: "relative",
-          width: "min(90%, 38rem)",
-          minHeight: "14rem",
+          width: "min(92%, 38rem)",
+          minHeight: "clamp(10rem, 30vw, 14rem)",
         }}
       >
         {cards.map((card, i) => (
@@ -476,9 +485,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               top: i === 0 ? undefined : 0,
               left: i === 0 ? undefined : 0,
               width: "100%",
-              border: "0.25rem solid #000",
-              boxShadow: "0.375rem 0.375rem 0 #000",
-              cursor: interactive ? "pointer" : "default", 
+              border: "0.175rem solid #000",
+              boxShadow: "0.25rem 0.25rem 0 #000",
+              cursor: interactive ? "pointer" : "default",
               overflow: "hidden",
               borderRadius: "0.25rem",
               transformOrigin: "center center",
@@ -488,11 +497,12 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
             <div
               className="hero-title"
               style={{
-                padding: "0.5rem 0.75rem",
-                fontSize: "clamp(1rem, 2.5vw, 1.75rem)",
+                padding:
+                  "clamp(0.3rem, 0.8vw, 0.5rem) clamp(0.5rem, 1vw, 0.75rem)",
+                fontSize: "clamp(0.8rem, 2.5vw, 1.75rem)",
                 background: cardColors[i],
                 color: "#111",
-                borderBottom: "0.1875rem solid #000",
+                borderBottom: "0.125rem solid #000",
               }}
             >
               {Header[i]}
@@ -504,9 +514,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               className="comic-sans"
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))",
-                gap: "0.5rem 1rem",
-                padding: "0.75rem 1rem",
+                gridTemplateColumns: "repeat(auto-fill, minmax(10rem, 1fr))",
+                gap: "clamp(0.2rem, 0.5vw, 0.5rem) clamp(0.5rem, 1vw, 1rem)",
+                padding: "clamp(0.4rem, 1vw, 0.75rem) clamp(0.5rem, 1vw, 1rem)",
                 background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
                 backgroundSize: "1rem 1rem, 100% 100%",
                 userSelect: "none",
@@ -518,16 +528,16 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                   style={{
                     display: "flex",
                     alignItems: "baseline",
-                    gap: "0.5rem",
+                    gap: "clamp(0.25rem, 0.5vw, 0.5rem)",
                     borderBottom: "0.0625rem solid rgba(0,0,0,0.1)",
-                    paddingBottom: "0.375rem",
+                    paddingBottom: "clamp(0.2rem, 0.4vw, 0.375rem)",
                   }}
                 >
                   <span
                     className="hero-title"
                     style={{
                       fontWeight: 800,
-                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
+                      fontSize: "clamp(0.55rem, 1.2vw, 0.875rem)",
                       whiteSpace: "nowrap",
                       color: "rgba(0,0,0,0.8)",
                     }}
@@ -537,8 +547,8 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                   <span
                     style={{
                       color: "#000",
-                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
-                      lineHeight: 1.4,
+                      fontSize: "clamp(0.55rem, 1.2vw, 0.875rem)",
+                      lineHeight: 1.3,
                     }}
                   >
                     {info.event}
@@ -553,9 +563,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               style={{
                 background: "#000",
                 color: "rgba(255,255,255,0.5)",
-                fontSize: "0.625rem",
+                fontSize: "clamp(0.45rem, 0.8vw, 0.625rem)",
                 textAlign: "center",
-                padding: "0.25rem 0",
+                padding: "clamp(0.125rem, 0.3vw, 0.25rem) 0",
                 userSelect: "none",
               }}
             >
@@ -577,7 +587,6 @@ export default function TimerTimeline({
   const [isSettled, setIsSettled] = useState(!onSettledChange);
   const isMobile = useIsMobile();
 
-
   useEffect(() => {
     onSettledChange?.((settled) => setIsSettled(settled));
   }, [onSettledChange]);
@@ -586,8 +595,8 @@ export default function TimerTimeline({
     <div
       className="flex flex-col items-center justify-center w-full select-none"
       style={{
-        gap: "clamp(1rem, 2vw, 1.5rem)",
-        padding: "0 clamp(0.5rem, 2vw, 1.5rem)",
+        gap: "clamp(0.5rem, 2vw, 1.5rem)",
+        padding: "0 clamp(0.25rem, 2vw, 1.5rem)",
       }}
     >
       {/* Heading */}
@@ -614,7 +623,7 @@ export default function TimerTimeline({
         className="flex items-center justify-center w-full"
         style={{
           flexDirection: "column",
-          gap: "clamp(1.5rem, 3vw, 2.5rem)",
+          gap: "clamp(0.75rem, 3vw, 2.5rem)",
           maxWidth: "80rem",
           margin: "0 auto",
         }}
@@ -634,7 +643,7 @@ export default function TimerTimeline({
           className="timer-timeline-row flex items-center justify-center w-full"
           style={{
             flexDirection: "column",
-            gap: "clamp(1.5rem, 3vw, 2.5rem)",
+            gap: "clamp(0.75rem, 3vw, 2.5rem)",
             maxWidth: "80rem",
           }}
         >
