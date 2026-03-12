@@ -232,13 +232,13 @@ const TextContent = ({
       );
     }
 
-    // Footer: ONLY slide in — NO letter animation here
+    // Footer: fade in from bottom, matching CTA/FAQ pattern
     if (footerRef.current) {
-      gsap.set(footerRef.current, { y: "100%" });
+      gsap.set(footerRef.current, { y: "100%", opacity: 0 });
       tl.to(
         footerRef.current,
-        { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
-        10.7
+        { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out", force3D: true },
+        10.5
       );
     }
 
@@ -275,7 +275,6 @@ const TextContent = ({
           target="_blank"
           rel="noopener noreferrer"
           style={{
-          
             textDecoration: "none",
             pointerEvents: "inherit",
           }}
@@ -283,7 +282,7 @@ const TextContent = ({
             e.stopPropagation();
           }}
         >
-       DOWNLOAD RULEBOOK
+          DOWNLOAD RULEBOOK
         </a>
       </div>
 
