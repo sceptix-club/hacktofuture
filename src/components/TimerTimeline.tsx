@@ -49,7 +49,6 @@ function Timer() {
         borderRadius: "0.25rem",
       }}
     >
-      {/* Thin tri-color accent bar */}
       <div
         style={{
           height: 4,
@@ -58,7 +57,6 @@ function Timer() {
         }}
       />
 
-      {/* Card body */}
       <div
         className="relative timer-card-body"
         style={{
@@ -67,7 +65,6 @@ function Timer() {
           backgroundSize: "1rem 1rem, 100% 100%",
         }}
       >
-        {/* Dot-grid overlay — top-right */}
         <div
           className="absolute pointer-events-none"
           style={{
@@ -84,7 +81,6 @@ function Timer() {
           }}
         />
 
-        {/* // accent */}
         <div
           className="flex items-start justify-between timer-accent-row"
           style={{ marginBottom: "clamp(0.25rem, 1vw, 0.75rem)" }}
@@ -123,7 +119,6 @@ function Timer() {
           }}
         />
 
-        {/* Timer digit blocks */}
         <div
           className="relative grid grid-cols-4"
           style={{ gap: "clamp(0.3rem, 1.5vw, 0.875rem)" }}
@@ -169,7 +164,6 @@ function Timer() {
           ))}
         </div>
 
-        {/* Date & location row */}
         <div
           className="flex items-center justify-between"
           style={{
@@ -200,21 +194,11 @@ function Timer() {
 // ─── Timeline ────────────────────────────────────────────
 function Timeline({ interactive = false }: { interactive?: boolean }) {
   const totalCards = 3;
-  const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
   const timelineRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [rendered, setRendered] = useState(false);
-
-  const originalPos = [
-    { x: 0, y: 0, rotation: 0, scale: 1 },
-    { x: -peek, y: 4, rotation: -2, scale: 0.97 },
-    { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
-  ];
-
-  const fannedForward = { x: "90%", y: 100, rotation: 5, scale: 1 };
-  const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 };
 
   const cards = [
     [
@@ -248,103 +232,109 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
   const dayLabels = ["Day 1", "Day 2", "Day 3"];
   const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
 
-  const setZIndex = useCallback(
-    (curr: number) => {
-      cardRefs.current.forEach((card, i) => {
-        if (!card) return;
-        if (i < curr) {
-          card.style.zIndex = String(curr - i);
-        } else {
-          card.style.zIndex = String(totalCards - Math.abs(curr - i));
-        }
+  // Helper: hide non-current cards behind the active one (same position, invisible)
+  const showCard = useCallback((idx: number) => {
+    cardRefs.current.forEach((card, i) => {
+      if (!card) return;
+      if (i === idx) {
+        card.style.zIndex = "3";
+        card.style.visibility = "visible";
+        card.style.pointerEvents = "auto";
+        gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 });
+      } else {
+        card.style.zIndex = "1";
+        card.style.visibility = "hidden";
+        card.style.pointerEvents = "none";
+        gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
+      }
+    });
+  }, []);
+
+  const animateTo = useCallback(
+    (from: number, to: number, direction: "forward" | "backward") => {
+      const fromCard = cardRefs.current[from];
+      const toCard = cardRefs.current[to];
+      if (!fromCard || !toCard) return;
+
+      // Make the departing card visible for animation
+      fromCard.style.zIndex = "3";
+      fromCard.style.visibility = "visible";
+      fromCard.style.pointerEvents = "none";
+
+      // Prepare incoming card off-screen on the opposite side
+      toCard.style.zIndex = "2";
+      toCard.style.visibility = "visible";
+      toCard.style.pointerEvents = "none";
+
+      const exitX = direction === "forward" ? "-110%" : "110%";
+      const enterX = direction === "forward" ? "110%" : "-110%";
+
+      gsap.set(toCard, { x: enterX, y: 0, rotation: 0, scale: 1, opacity: 1 });
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // After animation, clean up
+          fromCard.style.visibility = "hidden";
+          fromCard.style.pointerEvents = "none";
+          gsap.set(fromCard, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
+
+          toCard.style.zIndex = "3";
+          toCard.style.pointerEvents = "auto";
+        },
       });
+
+      tl.to(fromCard, {
+        x: exitX,
+        duration: 0.4,
+        ease: "power2.in",
+      }).to(
+        toCard,
+        {
+          x: 0,
+          duration: 0.4,
+          ease: "power2.out",
+        },
+        0.15
+      );
     },
-    [totalCards]
+    []
   );
+
+  // const goToCard = useCallback(
+  //   (nextIdx: number, updateButton?: boolean) => {
+  //     setCurrentCard((prev) => {
+  //       if (prev === nextIdx) return prev;
+  //       const direction = nextIdx > prev ? "forward" : "backward";
+  //       animateTo(prev, nextIdx, direction);
+  //       if (updateButton) setCurrentButton(nextIdx);
+  //       return nextIdx;
+  //     });
+  //   },
+  //   [animateTo]
+  // );
 
   const flipForward = useCallback(
     (updateButton?: boolean) => {
       setCurrentCard((prev) => {
         const next = prev === totalCards - 1 ? 0 : prev + 1;
-        const prevCard = cardRefs.current[prev];
-
-        if (prevCard) {
-          const finalPosIdx = (prev - next + totalCards) % totalCards;
-          const tl1 = gsap.timeline();
-          tl1
-            .to(prevCard, {
-              ...fannedForward,
-              duration: 0.5,
-              ease: "back.in(1.4)",
-              rotationY: 60,
-              delay: 0.05,
-            })
-            .to(prevCard, {
-              ...originalPos[finalPosIdx],
-              rotationY: 0,
-              duration: 0.5,
-              ease: "back.in(1.4)",
-            });
-        }
-
-        setTimeout(() => setZIndex(next), 500);
-
+        animateTo(prev, next, "forward");
         if (updateButton) setCurrentButton(next);
-
-        cardRefs.current.forEach((card, i) => {
-          if (i === prev) return;
-          const finalPosIdx = (i - next + totalCards) % totalCards;
-          gsap.to(card, {
-            ...originalPos[finalPosIdx],
-            duration: 1.0,
-            ease: "back.out(1.2)",
-          });
-        });
-
         return next;
       });
     },
-    [totalCards, setZIndex, fannedForward, originalPos]
+    [totalCards, animateTo]
   );
 
   const flipBackward = useCallback(
     (updateButton?: boolean) => {
-      setCurrentCard((next) => {
-        const prev = next === 0 ? totalCards - 1 : next - 1;
-        const prevCard = cardRefs.current[prev];
-        if (prevCard) {
-          const tl = gsap.timeline();
-          tl.to(prevCard, {
-            ...fannedBack,
-            duration: 0.5,
-            ease: "back.in(1.4)",
-            rotationY: 60,
-            delay: 0.05,
-          }).to(prevCard, {
-            ...originalPos[0],
-            rotationY: 0,
-            duration: 0.5,
-            ease: "back.in(1.4)",
-            delay: 0.05,
-          });
-        }
-
-        cardRefs.current.forEach((card, i) => {
-          if (i === prev) return;
-          const finalPosIdx = (i - prev + totalCards) % totalCards;
-          gsap.to(card, {
-            ...originalPos[finalPosIdx],
-            duration: 1.0,
-            ease: "back.out(1.2)",
-          });
-        });
-
-        setTimeout(() => setZIndex(prev), 800);
-        if (updateButton) setCurrentButton(prev);
-        return prev;
+      setCurrentCard((prev) => {
+        const next = prev === 0 ? totalCards - 1 : prev - 1;
+        animateTo(prev, next, "backward");
+        if (updateButton) setCurrentButton(next);
+        return next;
       });
     },
-    [totalCards, setZIndex, fannedBack, originalPos]
+    [totalCards, animateTo]
   );
 
   const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -385,7 +375,7 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
       if (timelineRef.current) {
         timelineRef.current.style.pointerEvents = "auto";
       }
-    }, 700);
+    }, 600);
 
     if (x > midpoint) {
       flipForward(true);
@@ -396,13 +386,10 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
 
   useEffect(() => {
     if (!rendered) {
-      cardRefs.current.forEach((card, i) => {
-        if (card) gsap.set(card, originalPos[i]);
-      });
-      setZIndex(currentCard);
+      showCard(currentCard);
       setRendered(true);
     }
-  }, [rendered, currentCard, setZIndex, originalPos]);
+  }, [rendered, currentCard, showCard]);
 
   return (
     <div
@@ -414,17 +401,19 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         justifyContent: "center",
         width: "100%",
         paddingBottom: "clamp(0.75rem, 4vh, 3rem)",
-        pointerEvents: interactive ? "auto" : "none",
       }}
     >
-      {/* Day buttons */}
+      {/* Day buttons — always interactive, pulled out of pointer-events blocking */}
       <div
         style={{
           display: "flex",
           gap: "clamp(0.35rem, 1vw, 0.75rem)",
-          marginBottom: "clamp(0.4rem, 1vw, 0.75rem)",
+          marginBottom: "clamp(1rem, 2vw, 2rem)",
           flexWrap: "wrap",
           justifyContent: "center",
+          position: "relative",
+          zIndex: 10,
+          pointerEvents: interactive ? "auto" : "none",
         }}
       >
         {dayLabels.map((label, i) => (
@@ -465,12 +454,13 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         ))}
       </div>
 
-      {/* Card stack */}
+      {/* Card stack — overflow hidden to clip sliding cards */}
       <div
         style={{
           position: "relative",
           width: "min(92%, 38rem)",
-          minHeight: "clamp(10rem, 30vw, 14rem)",
+          overflow: "hidden",
+          borderRadius: "0.25rem",
         }}
       >
         {cards.map((card, i) => (
@@ -491,6 +481,7 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               overflow: "hidden",
               borderRadius: "0.25rem",
               transformOrigin: "center center",
+              visibility: i === 0 ? "visible" : "hidden",
             }}
           >
             {/* Card header */}
@@ -653,7 +644,14 @@ export default function TimerTimeline({
           >
             <Timer />
           </div>
-          <div className="w-full" style={{ maxWidth: "38.75rem", minWidth: 0 }}>
+          <div
+            className="w-full"
+            style={{
+              maxWidth: "38.75rem",
+              minWidth: 0,
+              marginTop: "clamp(1.5rem, 3vw, 2.5rem)",
+            }}
+          >
             <Timeline interactive={isSettled} />
           </div>
         </div>
