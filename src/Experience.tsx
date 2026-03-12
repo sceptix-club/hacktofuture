@@ -25,7 +25,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
   const initialViewportWidth = useRef(viewport.width);
   const [stableViewportWidth, setStableViewportWidth] = useState(
-    viewport.width || 10 // Fallback to prevent issues
+    viewport.width || 10
   );
 
   useEffect(() => {
@@ -47,7 +47,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
     const isMobile = stableViewportWidth < 20;
     const base = isMobile ? 0.6 : 1.0;
 
-    // Scene 1: TV zoom (0.0 - 1.0)
     const scene1Camera = { posX: 0, posY: 0, posZ: 20, rotZ: 0 };
     const scene1TV = { scale: 1, rotY: 0 };
 
@@ -88,7 +87,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       0
     );
 
-    // Scene 2: Circular camera around Rulebook
     const cam2 = { x: 0, y: -28, z: 10 };
 
     tl.to(
@@ -115,7 +113,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       },
     });
 
-    // Scene 3: Blank space for Sponsors (2.0 - 3.0)
     const scene3State = { progress: 0 };
     tl.to(
       scene3State,
@@ -131,7 +128,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       2.0
     );
 
-    // Scene 4: Still camera (3.0 - 4.55)
     const scene4State = { progress: 0 };
     tl.to(
       scene4State,
@@ -147,7 +143,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       3.0
     );
 
-    // Scene 5: Cards with pauses
     const scene5State = { angle: Math.PI * 1.5 };
     const pivot = { x: 0, y: -124, z: 0 };
     const radius = 10;
@@ -215,7 +210,6 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       onUpdate: updateCardCamera,
     });
 
-    // Scene6: CTA + FAQ
     const scene6State = { progress: 0 };
     tl.to(
       scene6State,
@@ -297,25 +291,11 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
 
   return (
     <>
-      <Clouds>
-        <Cloud
-          concentrate="outside"
-          seed={2}
-          bounds={15}
-          volume={4}
-          segments={5}
-          growth={20}
-          opacity={0.2}
-          position={[-10, -28, 5]}
-          speed={0.4}
-        />
-      </Clouds>
-
       {/* Scene 1 */}
- <MarqueeGrid 
-  viewportWidth={stableViewportWidth} 
-  scrollProgressRef={scrollProgressRef}
-/>
+      <MarqueeGrid
+        viewportWidth={stableViewportWidth}
+        scrollProgressRef={scrollProgressRef}
+      />
       <group ref={tvRef}>
         <TV position={[0, 0, 0]} size={stableViewportWidth} />
       </group>
@@ -331,6 +311,70 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
+
+        {/* Scene 2 Clouds - inside the group so they move with it */}
+        <Clouds material={THREE.MeshBasicMaterial}>
+          <Cloud
+            concentrate="outside"
+            seed={5}
+            bounds={8}
+            volume={3}
+            segments={5}
+            growth={8}
+            opacity={0.4}
+            position={[-6, -2, -2]}
+            speed={0.3}
+            color="#ffffff"
+          />
+          <Cloud
+            concentrate="inside"
+            seed={8}
+            bounds={6}
+            volume={2}
+            segments={4}
+            growth={6}
+            opacity={0.35}
+            position={[6, -2, -2]}
+            speed={0.35}
+            color="#ffffff"
+          />
+          <Cloud
+            concentrate="outside"
+            seed={12}
+            bounds={5}
+            volume={2}
+            segments={4}
+            growth={5}
+            opacity={0.3}
+            position={[0, -4, -3]}
+            speed={0.25}
+            color="#ffffff"
+          />
+          <Cloud
+            concentrate="inside"
+            seed={15}
+            bounds={6}
+            volume={2}
+            segments={3}
+            growth={4}
+            opacity={0.25}
+            position={[-4, 2, -2]}
+            speed={0.3}
+            color="#ffffff"
+          />
+          <Cloud
+            concentrate="outside"
+            seed={20}
+            bounds={5}
+            volume={2}
+            segments={4}
+            growth={5}
+            opacity={0.3}
+            position={[4, 2, -2]}
+            speed={0.28}
+            color="#ffffff"
+          />
+        </Clouds>
 
         <Comic timeline={timeline} />
       </group>
