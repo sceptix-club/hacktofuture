@@ -202,6 +202,7 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
   const [rendered, setRendered] = useState(false);
   const animatingRef = useRef(false);
 
+  console.log(currentCard);
   const originalPos = [
     { x: 0, y: 0, rotation: 0, scale: 1 },
     { x: -peek, y: 4, rotation: -2, scale: 0.97 },
