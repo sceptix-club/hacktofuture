@@ -188,7 +188,7 @@ export function SponsorsBento({
                   textShadow: "0.05rem 0.05rem 0 rgba(255,255,255,0.5)",
                 }}
               >
-                TOTAL PRIZE POOL
+                TOTAL PRIZES WORTH
               </span>
               <span
                 className="font-black text-black leading-none"
@@ -228,7 +228,7 @@ export function SponsorsBento({
               zIndex: 20,
             }}
           >
-            PRIZE POOL
+            PRIZES
           </div>
         </div>
 
