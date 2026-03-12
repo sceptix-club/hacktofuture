@@ -259,7 +259,7 @@ const TextContent = ({
 
       <div
         ref={scene2TextRef}
-        className="hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-30 flex justify-center"
+        className="hero-title fixed left-0 right-0 top-1/2  -translate-y-1/2 z-30 flex justify-center"
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
           opacity: 0,
@@ -275,7 +275,7 @@ const TextContent = ({
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            color: "inherit",
+          
             textDecoration: "none",
             pointerEvents: "inherit",
           }}
@@ -283,7 +283,7 @@ const TextContent = ({
             e.stopPropagation();
           }}
         >
-          CLICK TO DOWNLOAD RULEBOOK
+       DOWNLOAD RULEBOOK
         </a>
       </div>
 

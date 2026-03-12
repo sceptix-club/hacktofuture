@@ -95,7 +95,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       cam2,
       {
         z: 1,
-        duration: 0.8,
+        duration: 1.1,
         ease: "power2.inOut",
         onUpdate: () => {
           if (!camera) return;
