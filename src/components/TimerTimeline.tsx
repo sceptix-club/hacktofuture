@@ -215,26 +215,28 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
       { time: "3:00PM", event: "Start Registrations" },
       { time: "4:00PM", event: "Snacks" },
       { time: "5:00PM", event: "Event Inauguration" },
-      { time: "6:00PM", event: "Hackathon Officially Begins" },
-      { time: "7:00PM", event: "Dinner" },
+      {
+        time: "6:00PM",
+        event: "Hackathon Officially Begins",
+      },
+      { time: "9:00PM", event: "Dinner" },
     ],
     [
       { time: "1:00AM", event: "Refreshments" },
       { time: "8:00AM", event: "Breakfast" },
-      { time: "10:00AM", event: "Lunch" },
+      { time: "1:00PM", event: "Lunch" },
       { time: "4:00PM", event: "Snacks" },
       { time: "4:30PM", event: "Mentoring Session" },
       { time: "7:30PM", event: "Cultural Program" },
-      { time: "7:00PM", event: "Dinner" },
+      { time: "9:00PM", event: "Dinner" },
     ],
     [
       { time: "1:00AM", event: "Refreshments" },
-      { time: "5:00AM", event: "Participation Certificate" },
       { time: "6:00AM", event: "Hackathon Ends" },
       { time: "8:00AM", event: "Breakfast" },
-      { time: "9:30AM", event: "Team Presentation" },
+      { time: "9:00AM", event: "Team Presentations to Judges" },
       { time: "12:00PM", event: "Valedictory Ceremony" },
-      { time: "1:00PM", event: "Lunch & Networking" },
+      { time: "1:00PM", event: "Lunch & Networking Session" },
     ],
   ];
 
@@ -447,6 +449,8 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                 gap: "0.25rem",
                 borderRadius: "0.125rem",
                 fontWeight: 700,
+                zIndex: 999,
+                pointerEvents: "auto",
               }}
             >
               {i === currentButton && (
