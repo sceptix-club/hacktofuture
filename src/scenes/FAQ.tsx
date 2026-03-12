@@ -49,10 +49,8 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="absolute inset-0 pointer-events-none" />
 
       {/* ── Corner panel frames ── */}
-      <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="absolute bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="absolute bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none z-10" />
+      <div className="absolute top-4 left-4 w-40 h-24 md:w-68 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
+      <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none" />
 
       {/* ── Dot cluster accents ── */}
       <div

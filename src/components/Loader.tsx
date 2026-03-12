@@ -33,6 +33,116 @@ export default function Loader({
     minDisplayMsRef.current = minDisplayMs;
   }, [minDisplayMs]);
 
+  // Lock ALL scrolling while loader is active (visible or fading)
+  useEffect(() => {
+    if (phase === "done") return;
+
+    const scrollY = window.scrollY;
+
+    // Lock body
+    const origOverflow = document.body.style.overflow;
+    const origPosition = document.body.style.position;
+    const origWidth = document.body.style.width;
+    const origTop = document.body.style.top;
+    const origTouchAction = document.body.style.touchAction;
+    const origOverscroll = document.body.style.overscrollBehavior;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.touchAction = "none";
+    document.body.style.overscrollBehavior = "none";
+
+    // Also lock <html>
+    const htmlEl = document.documentElement;
+    const origHtmlOverflow = htmlEl.style.overflow;
+    const origHtmlOverscroll = htmlEl.style.overscrollBehavior;
+    htmlEl.style.overflow = "hidden";
+    htmlEl.style.overscrollBehavior = "none";
+
+    // Block all scroll-causing events at the window/document level
+    const prevent = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const preventKeyScroll = (e: KeyboardEvent) => {
+      const keys = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Space",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        "Tab",
+      ];
+      if (keys.includes(e.code)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Use capture phase to intercept before anything else
+    window.addEventListener("wheel", prevent, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("touchmove", prevent, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("touchstart", prevent, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("keydown", preventKeyScroll, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("scroll", prevent, {
+      capture: true,
+      passive: false,
+    });
+
+    return () => {
+      // Restore body
+      document.body.style.overflow = origOverflow;
+      document.body.style.position = origPosition;
+      document.body.style.width = origWidth;
+      document.body.style.top = origTop;
+      document.body.style.touchAction = origTouchAction;
+      document.body.style.overscrollBehavior = origOverscroll;
+
+      // Restore html
+      htmlEl.style.overflow = origHtmlOverflow;
+      htmlEl.style.overscrollBehavior = origHtmlOverscroll;
+
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+
+      // Remove listeners
+      window.removeEventListener("wheel", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("touchmove", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("touchstart", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("keydown", preventKeyScroll, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("scroll", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+    };
+  }, [phase]);
+
   // Use requestAnimationFrame for smooth 60fps progress
   const tick = useCallback(() => {
     const elapsed = Date.now() - startTimeRef.current;
@@ -43,17 +153,14 @@ export default function Loader({
     let target: number;
 
     if (canFinish && minTimeReached) {
-      // Both conditions met — race to 100%
       target = 100;
       const next = progressRef.current + (target - progressRef.current) * 0.08;
       progressRef.current = next >= 99.5 ? 100 : next;
     } else if (canFinish && !minTimeReached) {
-      // Content loaded but we're still within min display time
       const ratio = Math.min(elapsed / min, 1);
-      target = 10 + ratio * 80; // 10% → 90% over minDisplayMs
+      target = 10 + ratio * 80;
       progressRef.current = Math.max(progressRef.current, target);
     } else {
-      // Still loading — ease toward 70% based on elapsed time
       const ratio = Math.min(elapsed / (min * 2), 1);
       target = 70 * (1 - Math.pow(1 - ratio, 3));
       progressRef.current = Math.max(progressRef.current, target);
@@ -122,11 +229,17 @@ export default function Loader({
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 40px;
+          gap: 2.5rem;
           opacity: 1;
           transition: opacity ${FADE_OUT_MS}ms ease-out;
           overflow: hidden;
           will-change: opacity;
+          touch-action: none;
+          user-select: none;
+          -webkit-user-select: none;
+          overscroll-behavior: none;
+          -webkit-overflow-scrolling: auto;
+          pointer-events: all;
         }
 
         .htf-loader.fading {
@@ -141,12 +254,12 @@ export default function Loader({
 
         .htf-loader-bg {
           position: absolute;
-          inset: -20px;
+          inset: -1.25rem;
           background-image: url('/textures/background.jpg');
           background-size: cover;
           background-position: center center;
           background-repeat: no-repeat;
-          filter: blur(8px);
+          filter: blur(0.5rem);
           z-index: 0;
         }
 
@@ -160,7 +273,7 @@ export default function Loader({
         .htf-loader-logo {
           position: relative;
           z-index: 2;
-          width: min(280px, 60vw);
+          width: min(17.5rem, 60vw);
           height: auto;
           object-fit: contain;
           user-select: none;
@@ -168,24 +281,23 @@ export default function Loader({
           animation: loaderPulse 2s ease-in-out infinite;
         }
 
-        /* Progress container */
         .htf-progress-wrapper {
           position: relative;
           z-index: 2;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 14px;
-          width: min(360px, 75vw);
+          gap: 0.875rem;
+          width: min(22.5rem, 75vw);
         }
 
         .htf-progress-track {
           width: 100%;
-          height: 4px;
+          height: 0.25rem;
           background: rgba(255, 255, 255, 0.12);
           border-radius: 99px;
           overflow: hidden;
-          backdrop-filter: blur(4px);
+          backdrop-filter: blur(0.25rem);
         }
 
         .htf-progress-fill {
@@ -200,7 +312,7 @@ export default function Loader({
           background-size: 200% 100%;
           animation: shimmer 2s linear infinite;
           will-change: width;
-          box-shadow: 0 0 12px rgba(168, 130, 255, 0.4);
+          box-shadow: 0 0 0.75rem rgba(168, 130, 255, 0.4);
         }
 
         .htf-progress-info {
@@ -212,19 +324,19 @@ export default function Loader({
 
         .htf-progress-text {
           font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-          font-size: 12px;
+          font-size: 0.75rem;
           font-weight: 500;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.03rem;
           color: rgba(255, 255, 255, 0.5);
           text-transform: uppercase;
         }
 
         .htf-progress-percent {
           font-family: 'JetBrains Mono', 'Fira Code', monospace;
-          font-size: 12px;
+          font-size: 0.75rem;
           font-weight: 600;
           color: rgba(255, 255, 255, 0.6);
-          min-width: 36px;
+          min-width: 2.25rem;
           text-align: right;
           font-variant-numeric: tabular-nums;
         }

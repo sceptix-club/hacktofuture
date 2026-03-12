@@ -232,7 +232,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
     {
       title = "READY TO BUILD THE FUTURE?",
       body = "Join HackToFuture 4.0 and turn your wildest ideas into real products. Limited seats. Big energy.",
-      buttonText = "Register Now @ ",
+      buttonText = "Register Now",
     },
     ref
   ) => {
@@ -306,10 +306,8 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         )} */}
 
         {/* ── Corner panel frames ── */}
-        <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
+        <div className="absolute top-4 left-4 w-40 h-24 md:w-68 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
         <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none" />
-        <div className="absolute bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none" />
-        <div className="absolute bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none" />
 
         {/* ── MAIN CONTENT ── */}
         <div className="relative z-10 max-w-[85vw] text-center">
@@ -380,15 +378,6 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                 onClick={handleRedirect}
               >
                 {buttonText}
-                <UnstopIcon
-                  style={{
-                    width: "clamp(1rem, 2vw, 1.5rem)",
-                    height: "clamp(1rem, 2vw, 1.5rem)",
-                    objectFit: "contain",
-                    flexShrink: 0,
-                    filter: "invert(100%)"
-                  }}
-                />
               </Button>
 
               <div

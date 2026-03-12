@@ -1,8 +1,31 @@
 import { forwardRef } from "react";
 import { Instagram, Linkedin, Github, Youtube } from "lucide-react";
 
+const sponsorLogos = [
+  {
+    label: "St Joseph Engineering College",
+    logoName: "/sjec-gold.png",
+    website: "https://www.sjec.ac.in/",
+  },
+  {
+    label: "The Sceptix Club",
+    logoName: "/sceptix-logo.png",
+    website: "https://sceptix.in/",
+  },
+  {
+    label: "EGDK India",
+    logoName: "/sponsors/egdk.png",
+    website: "https://egsoftware.com/",
+  },
+];
 // Discord icon
-const DiscordIcon = ({ size = 32, strokeWidth = 1.75 }: { size?: number; strokeWidth?: number }) => (
+const DiscordIcon = ({
+  size = 32,
+  strokeWidth = 1.75,
+}: {
+  size?: number;
+  strokeWidth?: number;
+}) => (
   <svg
     width={size}
     height={size}
@@ -80,8 +103,20 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
       <div
         className="absolute pointer-events-none"
         style={{
-          bottom: "8%",
+          bottom: "10%",
           left: "4%",
+          width: 90,
+          height: 90,
+          backgroundImage:
+            "radial-gradient(circle, rgba(255,225,5,0.35) 2px, transparent 2px)",
+          backgroundSize: "8px 8px",
+        }}
+      />
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          bottom: "10%",
+          right: "4%",
           width: 90,
           height: 90,
           backgroundImage:
@@ -91,13 +126,11 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
       />
 
       {/* Corner panel frames — same as CTA */}
-      <div className="absolute top-4 left-4 w-20 h-20 md:w-28 md:h-28 comic-panel-border rounded-sm pointer-events-none" />
-      <div className="absolute top-4 right-4 w-16 h-24 md:w-24 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
-      <div className="absolute bottom-4 left-4 w-24 h-16 md:w-36 md:h-24 comic-panel-border rounded-sm pointer-events-none" />
-      <div className="absolute bottom-4 right-4 w-20 h-20 md:w-28 md:h-28 comic-panel-border rounded-sm pointer-events-none" />
+      <div className="absolute top-4 left-4 w-40 h-24 md:w-68 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
+      <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none" />
 
       {/* pb-20 on mobile clears the floating navbar */}
-      <div className="relative z-10 flex flex-col min-h-full overflow-y-auto justify-center px-4 md:px-12 lg:px-20 pt-4 pb-20 md:py-8">
+      <div className="relative z-10 flex flex-col min-h-full overflow-y-auto justify-center px-4 md:px-12 lg:px-20 pt-4 pb-5 md:py-8">
         {/* Main comic card */}
         <div
           className="w-full relative"
@@ -203,6 +236,40 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                         {label}
                       </a>
                     ))}
+                  </div>
+
+                  {/* Supported by section */}
+                  <div className="flex flex-col gap-2 mt-2">
+                    <h4
+                      className="hero-title font-bold"
+                      style={{
+                        fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
+                        color: "#111",
+                        letterSpacing: "0.04em",
+                      }}
+                    >
+                      SUPPORTED BY
+                    </h4>
+                    <div className="flex flex-row gap-2 sm:gap-3 flex-wrap items-center">
+                      {sponsorLogos.map(({ label, logoName, website }) => (
+                        <a
+                          key={label}
+                          href={website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={label}
+                          className="transition-opacity hover:opacity-75 text-black/80"
+                        >
+                          <img
+                            src={`${logoName}`}
+                            style={{
+                              height: "clamp(1.5rem, 3vw, 2.5rem)",
+                              objectFit: "contain",
+                            }}
+                          />
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
