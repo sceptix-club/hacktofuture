@@ -2,28 +2,21 @@ import { useState, forwardRef } from "react";
 
 const faqs = [
   {
-    question: "WHO GETS INTERNSHIPS?",
+    question: "WHO CAN PARTICIPATE?",
     answer:
-      "The top 15 best participants win an opportunity for a paid internship.",
+      "The hackathon is open to all BE, B.Tech, BCA, MCA and MBA students.",
   },
   {
-    question: "WHAT IS THE TEAM SIZE?",
-    answer:
-      "Teams can consist of 2 to 4 members. Solo participation is not allowed.",
+    question: "DO I HAVE TO PAY TO PARTICIPATE?",
+    answer: "No, participation is completely free.",
   },
   {
-    question: "IS THERE A REGISTRATION FEE?",
-    answer: "No, participation in HackToFuture is completely free of charge.",
+    question: "WHAT IS THE TEAM SIZE FOR PARTICIPATION?",
+    answer: "Teams should consist of 3 to 4 members.",
   },
   {
-    question: "DO I NEED TO BE AN AI EXPERT?",
-    answer:
-      "Not at all! We welcome participants of all skill levels. Curiosity and creativity matter more than expertise.",
-  },
-  {
-    question: "WHAT SHOULD I BRING?",
-    answer:
-      "Bring your laptop, charger, student ID, and your hacker spirit. Everything else will be provided.",
+    question: "ARE INTER-COLLEGE TEAMS ALLOWED?",
+    answer: "No, teams must be formed within the same college.",
   },
 ];
 
@@ -50,16 +43,10 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
       }}
     >
       {/* ── LAYER 2: Radial gradient vignette ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-       
-      />
+      <div className="absolute inset-0 pointer-events-none" />
 
       {/* ── LAYER 3: Top-to-bottom colour gradient overlay ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-       
-      />
+      <div className="absolute inset-0 pointer-events-none" />
 
       {/* ── Corner panel frames ── */}
       <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none z-10" />
