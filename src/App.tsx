@@ -17,8 +17,19 @@ import Themes from "./pages/Themes";
 import About from "./pages/About";
 import { Overlay } from "./scenes/Overlay";
 import PSPage from "./pages/ps";
+import { pageview } from "./utils/analytics";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+
+export function AnalyticsTracker() {
+  const location = useLocation();
+
+  useEffect(() => {
+    pageview(location.pathname);
+  }, [location]);
+
+  return null;
+}
 
 function FrameSignal({ onReady }: { onReady: () => void }) {
   const fired = useRef(false);
@@ -286,6 +297,7 @@ function PageLayout({ children }: { children: React.ReactNode }) {
 function App() {
   return (
     <BrowserRouter>
+      <AnalyticsTracker />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route

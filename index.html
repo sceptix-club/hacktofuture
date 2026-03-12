@@ -24,7 +24,6 @@
     <span style="position:absolute;opacity:0;font-family:'Comic Relief';font-size:1px;pointer-events:none;">.</span>
   </div>
   <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5JWHN2VLN"></script>
   <script>
@@ -32,8 +31,11 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', 'G-R5JWHN2VLN');
+  gtag('config', 'G-R5JWHN2VLN', {
+    send_page_view: false
+  });
   </script>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 
 </html>
