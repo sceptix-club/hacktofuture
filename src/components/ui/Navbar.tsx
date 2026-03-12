@@ -1,6 +1,7 @@
-import { Info, Users, Lightbulb, Heart, LogIn, BookText } from "lucide-react";
+import { Info, Users, Lightbulb, Heart, BookText } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ruleBookLink } from "../../lib/utils";
+import { UnstopIcon } from "./Unstop";
 
 interface NavbarProps {
   className?: string;
@@ -22,7 +23,12 @@ const Navbar = ({ className }: NavbarProps) => {
       label: "Rulebook",
       route: null,
     },
-    { icon: LogIn, href: "https://unstop.com/", label: "UnStop", route: null },
+    {
+      icon: UnstopIcon,
+      href: "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
+      label: "UnStop",
+      route: null,
+    },
   ];
 
   return (

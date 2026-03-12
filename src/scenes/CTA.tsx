@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import Button from "../components/ui/Button";
+import { UnstopIcon } from "../components/ui/Unstop";
 
 type CTAProps = {
   title?: string;
@@ -8,7 +9,10 @@ type CTAProps = {
 };
 
 const handleRedirect = () => {
-  window.open("https://www.unstop.com", "_blank");
+  window.open(
+    "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
+    "_blank"
+  );
 };
 
 // const Starburst = ({
@@ -228,7 +232,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
     {
       title = "READY TO BUILD THE FUTURE?",
       body = "Join HackToFuture 4.0 and turn your wildest ideas into real products. Limited seats. Big energy.",
-      buttonText = "Register Now",
+      buttonText = "Register Now @ ",
     },
     ref
   ) => {
@@ -346,7 +350,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
 
             <div className="mt-7 flex flex-col items-center gap-3">
               <Button
-                className="hover:cursor-pointer font-bold tracking-wide"
+                className="hover:cursor-pointer font-bold tracking-wide comic-sans"
                 style={{
                   background: "#FFE105",
                   color: "#000",
@@ -354,10 +358,12 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   boxShadow: "4px 4px 0 #000",
                   fontSize: "clamp(0.9rem, 1.8vw, 1.1rem)",
                   padding: "12px 32px",
-                  fontFamily: '"Dekko", cursive',
                   letterSpacing: "0.15em",
                   textTransform: "uppercase",
                   transition: "transform 0.15s, box-shadow 0.15s",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
                 }}
                 onMouseEnter={(e) => {
                   (e.currentTarget as HTMLElement).style.transform =
@@ -374,6 +380,14 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                 onClick={handleRedirect}
               >
                 {buttonText}
+                <UnstopIcon
+                  style={{
+                    width: "clamp(1rem, 2vw, 1.5rem)",
+                    height: "clamp(1rem, 2vw, 1.5rem)",
+                    objectFit: "contain",
+                    flexShrink: 0,
+                  }}
+                />
               </Button>
 
               <div
@@ -387,7 +401,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   whiteSpace: "nowrap",
                 }}
               >
-                ▸ 36 HOURS ▸ LIMITED SEATS ▸ INFINITE CHAOS ▸
+                ▸ FREE REGISTRATION ▸ 36 HOURS ▸ INFINITE CHAOS ▸
               </div>
             </div>
           </div>

@@ -6,9 +6,11 @@ import FAQ from "./FAQ";
 import Footer from "./Footer";
 
 const handleThemeNavigate = (slug: string) => {
-  window.open(`/theme/${slug}`, "_blank", "noopener,noreferrer");
+  window.location.href = `/theme/${slug}`;
 };
+
 import TimerTimeline from "../components/TimerTimeline";
+import { ruleBookLink } from "../lib/utils";
 
 type TextContentProps = {
   currentScene: number;
@@ -49,11 +51,15 @@ const TextContent = ({
     if (scene2TextRef.current) {
       tl.fromTo(
         scene2TextRef.current,
-        { y: "100vh", opacity: 0 },
-        { y: "20vh", opacity: 1, duration: 0.4 },
+        { y: "100vh", opacity: 0, pointerEvents: "none" },
+        { y: "20vh", opacity: 1, duration: 0.4, pointerEvents: "auto" },
         1.0
       );
-      tl.to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
+      tl.to(
+        scene2TextRef.current,
+        { opacity: 0, duration: 0.2, pointerEvents: "none" },
+        2.0
+      );
     }
 
     // Scene 3
@@ -253,16 +259,33 @@ const TextContent = ({
 
       <div
         ref={scene2TextRef}
-        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${
-          _currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-        }`}
+        className="hero-title fixed left-0 right-0 top-1/2  -translate-y-1/2 z-30 flex justify-center"
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
           opacity: 0,
+          color: "white",
+          cursor: "pointer",
+          textShadow:
+            "0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black",
+          pointerEvents: "none",
         }}
-        aria-hidden={_currentScene !== 1}
       >
-        CLICK TO DOWNLOAD RULEBOOK
+        <a
+          href={`${ruleBookLink}rulebook.pdf`}
+          className="text-[#FFF] "
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+          
+            textDecoration: "none",
+            pointerEvents: "inherit",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+       DOWNLOAD RULEBOOK
+        </a>
       </div>
 
       <div
@@ -270,7 +293,7 @@ const TextContent = ({
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
       >
         <SponsorsBento
-          title={{ name: "EGDK" }}
+          title={{ name: "EGDK", logo: "/sponsors/egdk.png" }}
           platinum={[{ name: "Company A" }, { name: "Company B" }]}
           gold={[{ name: "Company C" }, { name: "Company D" }]}
           silver={[
@@ -337,7 +360,7 @@ const TextContent = ({
 
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
-      {/* <Footer ref={footerRef} /> */}
+      <Footer ref={footerRef} />
     </>
   );
 };
