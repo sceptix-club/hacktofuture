@@ -11,7 +11,6 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Faculty Convenor",
     photo: "/diana.webp",
     links: [
-      { label: "Instagram", url: "#" },
       {
         label: "LinkedIn",
         url: "https://www.linkedin.com/in/diana-maria-monteiro/",
@@ -23,12 +22,11 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Faculty Convenor",
     photo: "/shirsha.webp",
     links: [
-      { label: "Instagram", url: "#" },
       { label: "LinkedIn", url: "https://www.linkedin.com/in/shrishahs/" },
     ],
   },
   {
-    name: "Ashley Cleon Pinto",
+    name: "Ashley Pinto",
     role: "Lead Organizer",
     photo: "/ashley.webp",
     links: [
@@ -43,7 +41,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     ],
   },
   {
-    name: "Shovin Jeson Dsouza",
+    name: "Shovin Dsouza",
     role: "Lead Organizer",
     photo: "/shovin.webp",
     links: [
@@ -127,6 +125,18 @@ export const TEAM_MEMBERS: TeamMember[] = [
     ],
   },
   {
+    name: "Jeethan Roche",
+    role: "Technical Lead",
+    photo: "/jeethan.webp",
+    links: [
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/roche-jeethan/" },
+      {
+        label: "Instagram",
+        url: "https://www.instagram.com/roche_jeethan?igsh=azk4dTIwM3NxcWNs",
+      },
+    ],
+  },
+  {
     name: "Chirag Shriyan",
     role: "Press & Media Lead",
     photo: "/chirag.webp",
@@ -205,18 +215,6 @@ export const TEAM_MEMBERS: TeamMember[] = [
     links: [
       { label: "LinkedIn", url: "#" },
       { label: "Instagram", url: "#" },
-    ],
-  },
-  {
-    name: "Jeethan Roche",
-    role: "Technical Lead",
-    photo: "/jeethan.webp",
-    links: [
-      { label: "LinkedIn", url: "https://www.linkedin.com/in/roche-jeethan/" },
-      {
-        label: "Instagram",
-        url: "https://www.instagram.com/roche_jeethan?igsh=azk4dTIwM3NxcWNs",
-      },
     ],
   },
   {

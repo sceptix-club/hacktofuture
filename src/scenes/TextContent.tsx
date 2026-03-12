@@ -271,7 +271,7 @@ const TextContent = ({
         }}
       >
         <a
-          href={`${ruleBookLink}rulebook.pdf`}
+          href={`${ruleBookLink}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
@@ -359,7 +359,7 @@ const TextContent = ({
 
       <CTA ref={ctaRef} />
       <FAQ ref={faqRef} />
-      {/* <Footer ref={footerRef} /> */}
+      <Footer ref={footerRef} />
     </>
   );
 };

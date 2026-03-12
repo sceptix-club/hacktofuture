@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 /* ───────────────────────── Timer ───────────────────────── */
 function Timer() {
@@ -438,7 +439,8 @@ function Timeline({ interactive }: { interactive: boolean }) {
               onClick={cardClicked}
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 12rem), 1fr))",
+                gridTemplateColumns:
+                  "repeat(auto-fill, minmax(min(100%, 12rem), 1fr))",
                 gap: "0.375rem 1rem",
                 padding: "clamp(0.625rem, 2vw, 1.25rem)",
                 background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
@@ -488,6 +490,7 @@ export default function TimerTimeline() {
   const [isSettled, setIsSettled] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -535,19 +538,21 @@ export default function TimerTimeline() {
     >
       {/* Heading */}
       <div className="htf-panel w-full flex justify-center">
-        <h2
-          className="text-white"
-          style={{
-            fontFamily: "Dela Gothic One",
-            fontSize: "clamp(1.5rem, 4vw + 0.5rem, 4rem)",
-            letterSpacing: "0.05em",
-            WebkitTextStroke: "0.09375rem black",
-            textShadow:
-              "0.1875rem 0.1875rem 0 #000, -0.125rem 0.125rem 0 #000, -0.125rem -0.125rem 0 #000, 0.125rem -0.125rem 0 #000",
-          }}
-        >
-          TIMELINE
-        </h2>
+        {!isMobile && (
+          <h2
+            className="text-white"
+            style={{
+              fontFamily: "Dela Gothic One",
+              fontSize: "clamp(1.5rem, 4vw + 0.5rem, 4rem)",
+              letterSpacing: "0.05em",
+              WebkitTextStroke: "0.09375rem black",
+              textShadow:
+                "0.1875rem 0.1875rem 0 #000, -0.125rem 0.125rem 0 #000, -0.125rem -0.125rem 0 #000, 0.125rem -0.125rem 0 #000",
+            }}
+          >
+            TIMELINE
+          </h2>
+        )}
       </div>
 
       {/* Timer + Timeline row */}
@@ -580,7 +585,10 @@ export default function TimerTimeline() {
             maxWidth: "80rem",
           }}
         >
-          <div className="htf-panel w-full" style={{ maxWidth: "38.75rem", minWidth: 0 }}>
+          <div
+            className="htf-panel w-full"
+            style={{ maxWidth: "38.75rem", minWidth: 0 }}
+          >
             <Timer />
           </div>
           <div className="w-full" style={{ maxWidth: "38.75rem", minWidth: 0 }}>
