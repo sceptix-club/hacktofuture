@@ -2,7 +2,6 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { useIsMobile } from "../hooks/useIsMobile";
 
-/* ───────────────────────── Timer ───────────────────────── */
 function Timer() {
   const [timer, setTimer] = useState({
     seconds: 0,
@@ -11,7 +10,7 @@ function Timer() {
     days: 0,
   });
 
-  const HtfDate = Date.parse("2026-04-15T18:36:20+05:30");
+  const HtfDate = Date.parse("2026-04-15T18:30:00+05:30");
 
   const setTimeLeft = useCallback(() => {
     const difference = HtfDate - Date.now();
@@ -39,349 +38,417 @@ function Timer() {
     { value: timer.seconds, label: "Sec" },
   ];
 
+  const blockColors = ["#DA100C", "#FFE105", "#50BAEA", "#DA100C"];
+
   return (
     <div
-      className="relative flex items-center justify-center w-full mx-auto"
+      className="relative overflow-hidden w-full"
       style={{
-        maxWidth: "38.75rem",
-        aspectRatio: "612 / 408",
-        containerType: "inline-size",
+        border: "0.25rem solid #000",
+        boxShadow: "0.375rem 0.375rem 0 #000",
+        borderRadius: "0.25rem",
       }}
     >
-      <img
-        src="/comi.png"
-        alt=""
-        className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
-        draggable={false}
-        style={{ maxWidth: "100%", height: "auto" }}
+      {/* Thin tri-color accent bar */}
+      <div
+        style={{
+          height: 6,
+          background:
+            "linear-gradient(to right, #DA100C 33.33%, #FFE105 33.33%, #FFE105 66.66%, #50BAEA 66.66%)",
+        }}
       />
 
+      {/* Card body */}
       <div
-        className="relative z-10 grid grid-cols-4 place-items-center"
+        className="relative"
         style={{
-          width: "65%",
-          gap: "3%",
-          paddingBottom: "5%",
-          marginRight: "1.75rem",
-          marginTop: "1rem",
+          padding: "clamp(1rem, 2.5vw, 1.5rem)",
+          background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
+          backgroundSize: "1rem 1rem, 100% 100%",
         }}
       >
-        {blocks.map(({ value, label }) => (
-          <div
-            key={label}
-            className="flex flex-col items-center"
-            style={{ gap: "0.6cqi" }}
+        {/* Dot-grid overlay — top-right */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: 0,
+            right: 0,
+            width: "65%",
+            height: "65%",
+            backgroundImage: `radial-gradient(circle, rgba(6,0,0,0.1) 1.5px, transparent 1.5px)`,
+            backgroundSize: "8px 8px",
+            maskImage:
+              "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
+          }}
+        />
+
+        {/* // accent */}
+        <div className="flex items-start justify-between mb-3">
+          <span
+            className="hero-title font-black"
+            style={{
+              fontSize: "clamp(2rem, 4.5vw, 3rem)",
+              color: "#DA100C",
+              lineHeight: 1,
+              userSelect: "none",
+            }}
           >
-            <span
-              className="comic-sans text-white leading-none tabular-nums"
+            //
+          </span>
+        </div>
+
+        <h3
+          className="hero-title font-black uppercase mb-2"
+          style={{
+            fontSize: "clamp(0.9rem, 1.8vw, 1.25rem)",
+            color: "#111",
+            lineHeight: 1.15,
+          }}
+        >
+          Event Starts In
+        </h3>
+
+        <div
+          style={{
+            width: "clamp(28px, 5vw, 44px)",
+            height: 3,
+            background: "#DA100C",
+            marginBottom: "clamp(1rem, 2.5vw, 1.5rem)",
+          }}
+        />
+
+        {/* Timer digit blocks */}
+        <div
+          className="relative grid grid-cols-4"
+          style={{ gap: "clamp(0.5rem, 1.5vw, 0.875rem)" }}
+        >
+          {blocks.map(({ value, label }, i) => (
+            <div
+              key={label}
+              className="flex flex-col items-center justify-center"
               style={{
-                fontSize: "9cqi",
-                textShadow:
-                  "0.125rem 0 #000, -0.125rem 0 #000, 0 0.125rem #000, 0 -0.125rem #000, " +
-                  "0.0625rem 0.0625rem #000, -0.0625rem -0.0625rem #000, 0.0625rem -0.0625rem #000, -0.0625rem 0.0625rem #000",
+                background: "#fff",
+                border: "2px solid #000",
+                boxShadow: `3px 3px 0 ${blockColors[i]}`,
+                padding: "clamp(0.6rem, 1.5vw, 1rem) 0.375rem",
               }}
             >
-              {String(value).padStart(2, "0")}
-            </span>
+              <span
+                className="hero-title font-black tabular-nums leading-none"
+                style={{
+                  fontSize: "clamp(1.75rem, 4.5vw, 3rem)",
+                  color: "#111",
+                }}
+              >
+                {String(value).padStart(2, "0")}
+              </span>
+              <div
+                style={{
+                  width: "55%",
+                  height: 2,
+                  background: blockColors[i],
+                  margin: "0.3rem 0 0.25rem",
+                }}
+              />
+              <span
+                className="comic-sans uppercase tracking-wider font-bold"
+                style={{
+                  fontSize: "clamp(0.5rem, 1vw, 0.65rem)",
+                  color: "rgba(0,0,0,0.5)",
+                }}
+              >
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
 
+        {/* Date & location row */}
+        <div
+          className="flex items-center justify-between mt-4 pt-3"
+          style={{ borderTop: "0.0625rem solid rgba(0,0,0,0.1)" }}
+        >
+          <div className="flex items-baseline" style={{ gap: "0.5rem" }}>
             <span
-              className="comic-sans text-[#DA100C] uppercase tracking-wider font-bold"
-              style={{ fontSize: "2.8cqi" }}
+              className="hero-title"
+              style={{
+                fontWeight: 800,
+                fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
+                whiteSpace: "nowrap",
+                color: "rgba(0,0,0,0.8)",
+              }}
             >
-              {label}
+              15th April, 2026
             </span>
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
 }
 
-/* ───────────────────────── Timeline ───────────────────────── */
-const cards = [
-  [
-    { time: "3:00PM", event: "Start Registrations" },
-    { time: "4:00PM", event: "Snacks" },
-    { time: "5:00PM", event: "Event inauguration" },
-    { time: "6:00PM", event: "Hackathon Officially Begins" },
-    { time: "7:00PM", event: "Dinner" },
-  ],
-  [
-    { time: "1:00AM", event: "Refreshments" },
-    { time: "8:00AM", event: "Breakfast" },
-    { time: "10:00AM", event: "Lunch" },
-    { time: "4:00PM", event: "Snacks" },
-    { time: "4:30PM", event: "Mentoring session" },
-    { time: "7:30PM", event: "Cultural Program" },
-    { time: "7:00PM", event: "Dinner" },
-  ],
-  [
-    { time: "1:00AM", event: "Refreshments" },
-    { time: "5:00AM", event: "Participation certificate" },
-    { time: "6:00AM", event: "Hackathon ends" },
-    { time: "8:00AM", event: "Breakfast" },
-    { time: "9:30AM", event: "Team presentation" },
-    { time: "12:00PM", event: "Valedictory ceremony" },
-    { time: "1:00PM", event: "Lunch and networking" },
-  ],
-];
-
-const totalCards = cards.length;
-const Header = ["15th April", "16th April", "17th April"];
-const dayLabels = ["Day 1", "Day 2", "Day 3"];
-const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
-
-function Timeline({ interactive }: { interactive: boolean }) {
+// ─── Timeline ────────────────────────────────────────────
+function Timeline({ interactive = false }: { interactive?: boolean }) {
+  const totalCards = 3;
+  const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
   const timelineRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const currentCardRef = useRef(0);
-  const isAnimating = useRef(false);
-  const initialized = useRef(false);
+  const [rendered, setRendered] = useState(false);
 
-  // Keep ref in sync with state
-  useEffect(() => {
-    currentCardRef.current = currentCard;
-  }, [currentCard]);
+  const originalPos = [
+    { x: 0, y: 0, rotation: 0, scale: 1 },
+    { x: -peek, y: 4, rotation: -2, scale: 0.97 },
+    { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
+  ];
 
-  const getOriginalPos = useCallback(() => {
-    const peek = Math.min(32, window.innerWidth * 0.04);
-    return [
-      { x: 0, y: 0, rotation: 0, scale: 1 },
-      { x: -peek, y: 4, rotation: -2, scale: 0.97 },
-      { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
-    ];
-  }, []);
+  const fannedForward = { x: "90%", y: 100, rotation: 5, scale: 1 };
+  const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 };
 
-  const setZIndex = useCallback((curr: number) => {
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return;
-      if (i < curr) {
-        card.style.zIndex = String(totalCards + 1 - (curr - i));
-      } else if (i === curr) {
-        card.style.zIndex = String(totalCards + 1);
-      } else {
-        card.style.zIndex = String(totalCards - (i - curr));
-      }
-    });
-  }, []);
+  const cards = [
+    [
+      { time: "3:00PM", event: "Start Registrations" },
+      { time: "4:00PM", event: "Snacks" },
+      { time: "5:00PM", event: "Event Inauguration" },
+      { time: "6:00PM", event: "Hackathon Officially Begins" },
+      { time: "7:00PM", event: "Dinner" },
+    ],
+    [
+      { time: "1:00AM", event: "Refreshments" },
+      { time: "8:00AM", event: "Breakfast" },
+      { time: "10:00AM", event: "Lunch" },
+      { time: "4:00PM", event: "Snacks" },
+      { time: "4:30PM", event: "Mentoring Session" },
+      { time: "7:30PM", event: "Cultural Program" },
+      { time: "7:00PM", event: "Dinner" },
+    ],
+    [
+      { time: "1:00AM", event: "Refreshments" },
+      { time: "5:00AM", event: "Participation Certificate" },
+      { time: "6:00AM", event: "Hackathon Ends" },
+      { time: "8:00AM", event: "Breakfast" },
+      { time: "9:30AM", event: "Team Presentation" },
+      { time: "12:00PM", event: "Valedictory Ceremony" },
+      { time: "1:00PM", event: "Lunch & Networking" },
+    ],
+  ];
 
-  // Initialize card positions — run once
-  useEffect(() => {
-    if (initialized.current) return;
-    const positions = getOriginalPos();
-    cardRefs.current.forEach((card, i) => {
-      if (card) {
-        gsap.set(card, positions[i]);
-      }
-    });
-    setZIndex(0);
-    initialized.current = true;
-  }, [getOriginalPos, setZIndex]);
+  const Header = ["15th April", "16th April", "17th April"];
+  const dayLabels = ["Day 1", "Day 2", "Day 3"];
+  const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
+
+  const setZIndex = useCallback(
+    (curr: number) => {
+      cardRefs.current.forEach((card, i) => {
+        if (!card) return;
+        if (i < curr) {
+          card.style.zIndex = String(curr - i);
+        } else {
+          card.style.zIndex = String(totalCards - Math.abs(curr - i));
+        }
+      });
+    },
+    [totalCards]
+  );
 
   const flipForward = useCallback(
-    (updateBtn: boolean) => {
-      if (isAnimating.current) return;
-      isAnimating.current = true;
+    (updateButton?: boolean) => {
+      setCurrentCard((prev) => {
+        const next = prev === totalCards - 1 ? 0 : prev + 1;
+        const prevCard = cardRefs.current[prev];
 
-      const prev = currentCardRef.current;
-      const next = (prev + 1) % totalCards;
-      const positions = getOriginalPos();
-      const prevCard = cardRefs.current[prev];
+        if (prevCard) {
+          const finalPosIdx = (prev - next + totalCards) % totalCards;
+          const tl1 = gsap.timeline();
+          tl1
+            .to(prevCard, {
+              ...fannedForward,
+              duration: 0.5,
+              ease: "back.in(1.4)",
+              rotationY: 60,
+              delay: 0.05,
+            })
+            .to(prevCard, {
+              ...originalPos[finalPosIdx],
+              rotationY: 0,
+              duration: 0.5,
+              ease: "back.in(1.4)",
+            });
+        }
 
-      if (prevCard) {
-        const finalPosIdx = (prev - next + totalCards) % totalCards;
-        const tl = gsap.timeline({
-          onComplete: () => {
-            isAnimating.current = false;
-          },
-        });
-        tl.to(prevCard, {
-          x: "60%",
-          y: 60,
-          rotation: 5,
-          scale: 1,
-          rotationY: 60,
-          duration: 0.4,
-          ease: "back.in(1.4)",
-        }).to(prevCard, {
-          ...positions[finalPosIdx],
-          rotationY: 0,
-          duration: 0.4,
-          ease: "back.out(1.2)",
-        });
-      }
+        setTimeout(() => setZIndex(next), 500);
 
-      // Move other cards
-      cardRefs.current.forEach((card, i) => {
-        if (i === prev || !card) return;
-        const finalPosIdx = (i - next + totalCards) % totalCards;
-        gsap.to(card, {
-          ...positions[finalPosIdx],
-          duration: 0.6,
-          ease: "back.out(1.2)",
+        if (updateButton) setCurrentButton(next);
+
+        cardRefs.current.forEach((card, i) => {
+          if (i === prev) return;
+          const finalPosIdx = (i - next + totalCards) % totalCards;
+          gsap.to(card, {
+            ...originalPos[finalPosIdx],
+            duration: 1.0,
+            ease: "back.out(1.2)",
+          });
         });
+
+        return next;
       });
-
-      setTimeout(() => setZIndex(next), 400);
-
-      setCurrentCard(next);
-      currentCardRef.current = next;
-      if (updateBtn) setCurrentButton(next);
     },
-    [getOriginalPos, setZIndex]
+    [totalCards, setZIndex, fannedForward, originalPos]
   );
 
   const flipBackward = useCallback(
-    (updateBtn: boolean) => {
-      if (isAnimating.current) return;
-      isAnimating.current = true;
+    (updateButton?: boolean) => {
+      setCurrentCard((next) => {
+        const prev = next === 0 ? totalCards - 1 : next - 1;
+        const prevCard = cardRefs.current[prev];
+        if (prevCard) {
+          const tl = gsap.timeline();
+          tl.to(prevCard, {
+            ...fannedBack,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+            rotationY: 60,
+            delay: 0.05,
+          }).to(prevCard, {
+            ...originalPos[0],
+            rotationY: 0,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+            delay: 0.05,
+          });
+        }
 
-      const curr = currentCardRef.current;
-      const prev = (curr - 1 + totalCards) % totalCards;
-      const positions = getOriginalPos();
-      const prevCard = cardRefs.current[prev];
+        cardRefs.current.forEach((card, i) => {
+          if (i === prev) return;
+          const finalPosIdx = (i - prev + totalCards) % totalCards;
+          gsap.to(card, {
+            ...originalPos[finalPosIdx],
+            duration: 1.0,
+            ease: "back.out(1.2)",
+          });
+        });
 
-      if (prevCard) {
-        const tl = gsap.timeline({
-          onComplete: () => {
-            isAnimating.current = false;
-          },
-        });
-        tl.to(prevCard, {
-          x: "60%",
-          y: 60,
-          rotation: 5,
-          scale: 1,
-          rotationY: 60,
-          duration: 0.4,
-          ease: "back.in(1.4)",
-        }).to(prevCard, {
-          ...positions[0],
-          rotationY: 0,
-          duration: 0.4,
-          ease: "back.out(1.2)",
-        });
-      }
-
-      cardRefs.current.forEach((card, i) => {
-        if (i === prev || !card) return;
-        const finalPosIdx = (i - prev + totalCards) % totalCards;
-        gsap.to(card, {
-          ...positions[finalPosIdx],
-          duration: 0.6,
-          ease: "back.out(1.2)",
-        });
+        setTimeout(() => setZIndex(prev), 800);
+        if (updateButton) setCurrentButton(prev);
+        return prev;
       });
-
-      setTimeout(() => setZIndex(prev), 400);
-
-      setCurrentCard(prev);
-      currentCardRef.current = prev;
-      if (updateBtn) setCurrentButton(prev);
     },
-    [getOriginalPos, setZIndex]
+    [totalCards, setZIndex, fannedBack, originalPos]
   );
 
-  const buttonClicked = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (!interactive || isAnimating.current) return;
+  const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!interactive) return;
+    const nextCard = Number(event.currentTarget.id);
+    const difference = currentCard - nextCard;
+    const animateCards = difference > 0 ? flipBackward : flipForward;
 
-      const nextCard = Number(event.currentTarget.id);
-      const curr = currentCardRef.current;
-      if (nextCard === curr) return;
+    setCurrentButton(nextCard);
 
-      let diff = nextCard - curr;
-      // Normalize: positive = forward, negative = backward
-      if (diff > 0) {
-        // forward diff times
-        const step = (i: number) => {
-          setTimeout(() => flipForward(false), i * 700);
-        };
-        for (let i = 0; i < diff; i++) step(i);
-      } else {
-        const absDiff = Math.abs(diff);
-        const step = (i: number) => {
-          setTimeout(() => flipBackward(false), i * 700);
-        };
-        for (let i = 0; i < absDiff; i++) step(i);
+    const absDiff = Math.abs(difference);
+    for (let i = 0; i < absDiff; i++) {
+      setTimeout(() => animateCards(), 700 * i);
+    }
+
+    if (timelineRef.current) {
+      timelineRef.current.style.pointerEvents = "none";
+    }
+    setTimeout(() => {
+      if (timelineRef.current) {
+        timelineRef.current.style.pointerEvents = "auto";
       }
+    }, 700 * absDiff);
+  };
 
-      setCurrentButton(nextCard);
-    },
-    [interactive, flipForward, flipBackward]
-  );
+  const cardClicked = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (!interactive) return;
+    const currentEl = cardRefs.current[currentCard];
+    if (!currentEl) return;
+    const rect = currentEl.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const midpoint = rect.width / 2;
 
-  const cardClicked = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      if (!interactive || isAnimating.current) return;
-
-      const currentEl = cardRefs.current[currentCardRef.current];
-      if (!currentEl) return;
-      const rect = currentEl.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const midpoint = rect.width / 2;
-
-      if (x > midpoint) {
-        flipForward(true);
-      } else {
-        flipBackward(true);
+    if (timelineRef.current) {
+      timelineRef.current.style.pointerEvents = "none";
+    }
+    setTimeout(() => {
+      if (timelineRef.current) {
+        timelineRef.current.style.pointerEvents = "auto";
       }
-    },
-    [interactive, flipForward, flipBackward]
-  );
+    }, 700);
+
+    if (x > midpoint) {
+      flipForward(true);
+    } else {
+      flipBackward(true);
+    }
+  };
+
+  useEffect(() => {
+    if (!rendered) {
+      cardRefs.current.forEach((card, i) => {
+        if (card) gsap.set(card, originalPos[i]);
+      });
+      setZIndex(currentCard);
+      setRendered(true);
+    }
+  }, [rendered, currentCard, setZIndex, originalPos]);
 
   return (
     <div
-      className="flex flex-col items-center justify-center w-full"
-      style={{
-        paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
-        opacity: interactive ? 1 : 0.5,
-        transition: "opacity 0.4s ease",
-      }}
       ref={timelineRef}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
+        pointerEvents: interactive ? "auto" : "none", 
+      }}
     >
       {/* Day buttons */}
       <div
-        className="flex flex-wrap items-center justify-center"
-        style={{ gap: "0.75rem", marginBottom: "0.75rem" }}
+        style={{
+          display: "flex",
+          gap: "0.75rem",
+          marginBottom: "0.75rem",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
       >
         {dayLabels.map((label, i) => (
           <div key={i} className="htf-panel">
             <button
               id={String(i)}
               onClick={buttonClicked}
-              disabled={!interactive}
-              className={`comic-sans flex items-center transition-all
-                ${!interactive ? "cursor-not-allowed" : "cursor-pointer"}
-                ${
-                  i !== currentButton
-                    ? "border-[#fece00] bg-black/60 text-white/70"
-                    : ""
-                }`}
+              className="comic-sans"
               style={{
                 padding: "0.375rem 0.75rem",
-                fontSize: "clamp(0.75rem, 1.2vw, 0.9rem)",
-                borderWidth: "0.125rem",
-                borderStyle: "solid",
+                fontSize: "clamp(0.7rem, 1.2vw, 0.875rem)",
+                border:
+                  i === currentButton
+                    ? "0.125rem solid #000"
+                    : "0.125rem solid #fece00",
+                background:
+                  i === currentButton ? cardColors[i] : "rgba(0,0,0,0.6)",
+                color: i === currentButton ? "#000" : "rgba(255,255,255,0.7)",
+                boxShadow:
+                  i === currentButton ? "0.1875rem 0.1875rem 0 #000" : "none",
+                transform: i === currentButton ? "scale(1.1)" : "scale(1)",
+                transition: "all 0.2s ease",
+                cursor: interactive ? "pointer" : "default", 
+                display: "flex",
+                alignItems: "center",
                 gap: "0.25rem",
                 borderRadius: "0.125rem",
-                ...(i === currentButton
-                  ? {
-                      background: cardColors[i],
-                      color: "#000",
-                      borderColor: "#000",
-                      boxShadow: "0.1875rem 0.1875rem 0 #000",
-                      transform: "scale(1.1)",
-                    }
-                  : {
-                      borderColor: "#fece00",
-                    }),
+                fontWeight: 700,
               }}
             >
               {i === currentButton && (
-                <span style={{ fontSize: "0.6rem" }}>▶</span>
+                <span style={{ fontSize: "0.5rem" }}>▶</span>
               )}
               {label}
             </button>
@@ -389,34 +456,32 @@ function Timeline({ interactive }: { interactive: boolean }) {
         ))}
       </div>
 
-      {/* Card stack container */}
+      {/* Card stack */}
       <div
-        className="relative"
         style={{
+          position: "relative",
           width: "min(90%, 38rem)",
-          /* Reserve height for the tallest card + peek offset */
-          minHeight: "clamp(14rem, 30vw, 22rem)",
+          minHeight: "14rem",
         }}
       >
         {cards.map((card, i) => (
           <div
-            className="htf-panel cursor-pointer overflow-hidden"
+            className="htf-panel"
             ref={(el) => {
               cardRefs.current[i] = el;
             }}
             key={i}
             style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
+              position: i === 0 ? "relative" : "absolute",
+              top: i === 0 ? undefined : 0,
+              left: i === 0 ? undefined : 0,
               width: "100%",
-              display: "grid",
-              gridTemplateRows: "auto 1fr",
               border: "0.25rem solid #000",
               boxShadow: "0.375rem 0.375rem 0 #000",
-              borderRadius: "0.375rem",
-              pointerEvents: interactive ? "auto" : "none",
-              willChange: "transform",
+              cursor: interactive ? "pointer" : "default", 
+              overflow: "hidden",
+              borderRadius: "0.25rem",
+              transformOrigin: "center center",
             }}
           >
             {/* Card header */}
@@ -433,34 +498,37 @@ function Timeline({ interactive }: { interactive: boolean }) {
               {Header[i]}
             </div>
 
-            {/* Card body */}
+            {/* Card body — event grid */}
             <div
-              className="comic-sans select-none"
               onClick={cardClicked}
+              className="comic-sans"
               style={{
                 display: "grid",
-                gridTemplateColumns:
-                  "repeat(auto-fill, minmax(min(100%, 12rem), 1fr))",
-                gap: "0.375rem 1rem",
-                padding: "clamp(0.625rem, 2vw, 1.25rem)",
+                gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))",
+                gap: "0.5rem 1rem",
+                padding: "0.75rem 1rem",
                 background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
                 backgroundSize: "1rem 1rem, 100% 100%",
+                userSelect: "none",
               }}
             >
               {card.map((info, j) => (
                 <div
                   key={j}
-                  className="flex items-baseline"
                   style={{
+                    display: "flex",
+                    alignItems: "baseline",
                     gap: "0.5rem",
                     borderBottom: "0.0625rem solid rgba(0,0,0,0.1)",
-                    paddingBottom: "0.25rem",
+                    paddingBottom: "0.375rem",
                   }}
                 >
                   <span
-                    className="font-extrabold hero-title whitespace-nowrap"
+                    className="hero-title"
                     style={{
-                      fontSize: "clamp(0.7rem, 1.4vw, 0.9rem)",
+                      fontWeight: 800,
+                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
+                      whiteSpace: "nowrap",
                       color: "rgba(0,0,0,0.8)",
                     }}
                   >
@@ -468,8 +536,8 @@ function Timeline({ interactive }: { interactive: boolean }) {
                   </span>
                   <span
                     style={{
-                      fontSize: "clamp(0.7rem, 1.4vw, 0.9rem)",
                       color: "#000",
+                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
                       lineHeight: 1.4,
                     }}
                   >
@@ -477,6 +545,21 @@ function Timeline({ interactive }: { interactive: boolean }) {
                   </span>
                 </div>
               ))}
+            </div>
+
+            {/* Card footer */}
+            <div
+              className="comic-sans"
+              style={{
+                background: "#000",
+                color: "rgba(255,255,255,0.5)",
+                fontSize: "0.625rem",
+                textAlign: "center",
+                padding: "0.25rem 0",
+                userSelect: "none",
+              }}
+            >
+              tap left / right to switch day
             </div>
           </div>
         ))}
@@ -486,50 +569,21 @@ function Timeline({ interactive }: { interactive: boolean }) {
 }
 
 /* ───────────────────── TimerTimeline ───────────────────── */
-export default function TimerTimeline() {
-  const [isSettled, setIsSettled] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+export default function TimerTimeline({
+  onSettledChange,
+}: {
+  onSettledChange?: (cb: (settled: boolean) => void) => void;
+}) {
+  const [isSettled, setIsSettled] = useState(!onSettledChange);
   const isMobile = useIsMobile();
 
+
   useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const entry = entries[0];
-        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
-          if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current);
-          }
-          scrollTimeoutRef.current = setTimeout(() => {
-            setIsSettled(true);
-          }, 600);
-        } else {
-          if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current);
-            scrollTimeoutRef.current = null;
-          }
-          setIsSettled(false);
-        }
-      },
-      { threshold: [0, 0.3, 0.6, 1.0] }
-    );
-
-    observer.observe(section);
-
-    return () => {
-      observer.disconnect();
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, []);
+    onSettledChange?.((settled) => setIsSettled(settled));
+  }, [onSettledChange]);
 
   return (
     <div
-      ref={sectionRef}
       className="flex flex-col items-center justify-center w-full select-none"
       style={{
         gap: "clamp(1rem, 2vw, 1.5rem)",
@@ -565,7 +619,6 @@ export default function TimerTimeline() {
           margin: "0 auto",
         }}
       >
-        {/* Use a media-query-like approach via CSS container */}
         <style>{`
           @media (min-width: 64rem) {
             .timer-timeline-row {
