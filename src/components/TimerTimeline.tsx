@@ -194,11 +194,21 @@ function Timer() {
 // ─── Timeline ────────────────────────────────────────────
 function Timeline({ interactive = false }: { interactive?: boolean }) {
   const totalCards = 3;
+  const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
   const timelineRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [rendered, setRendered] = useState(false);
+
+  const originalPos = [
+    { x: 0, y: 0, rotation: 0, scale: 1 },
+    { x: -peek, y: 4, rotation: -2, scale: 0.97 },
+    { x: peek / 3, y: 4 + peek, rotation: 3, scale: 0.97 },
+  ];
+
+  const fannedForward = { x: "90%", y: 100, rotation: 5, scale: 1 };
+  const fannedBack = { x: "90%", y: 100, rotation: 5, scale: 1 };
 
   const cards = [
     [
@@ -232,109 +242,103 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
   const dayLabels = ["Day 1", "Day 2", "Day 3"];
   const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
 
-  // Helper: hide non-current cards behind the active one (same position, invisible)
-  const showCard = useCallback((idx: number) => {
-    cardRefs.current.forEach((card, i) => {
-      if (!card) return;
-      if (i === idx) {
-        card.style.zIndex = "3";
-        card.style.visibility = "visible";
-        card.style.pointerEvents = "auto";
-        gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1 });
-      } else {
-        card.style.zIndex = "1";
-        card.style.visibility = "hidden";
-        card.style.pointerEvents = "none";
-        gsap.set(card, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
-      }
-    });
-  }, []);
-
-  const animateTo = useCallback(
-    (from: number, to: number, direction: "forward" | "backward") => {
-      const fromCard = cardRefs.current[from];
-      const toCard = cardRefs.current[to];
-      if (!fromCard || !toCard) return;
-
-      // Make the departing card visible for animation
-      fromCard.style.zIndex = "3";
-      fromCard.style.visibility = "visible";
-      fromCard.style.pointerEvents = "none";
-
-      // Prepare incoming card off-screen on the opposite side
-      toCard.style.zIndex = "2";
-      toCard.style.visibility = "visible";
-      toCard.style.pointerEvents = "none";
-
-      const exitX = direction === "forward" ? "-110%" : "110%";
-      const enterX = direction === "forward" ? "110%" : "-110%";
-
-      gsap.set(toCard, { x: enterX, y: 0, rotation: 0, scale: 1, opacity: 1 });
-
-      const tl = gsap.timeline({
-        onComplete: () => {
-          // After animation, clean up
-          fromCard.style.visibility = "hidden";
-          fromCard.style.pointerEvents = "none";
-          gsap.set(fromCard, { x: 0, y: 0, rotation: 0, scale: 1, opacity: 0 });
-
-          toCard.style.zIndex = "3";
-          toCard.style.pointerEvents = "auto";
-        },
+  const setZIndex = useCallback(
+    (curr: number) => {
+      cardRefs.current.forEach((card, i) => {
+        if (!card) return;
+        if (i < curr) {
+          card.style.zIndex = String(curr - i);
+        } else {
+          card.style.zIndex = String(totalCards - Math.abs(curr - i));
+        }
       });
-
-      tl.to(fromCard, {
-        x: exitX,
-        duration: 0.4,
-        ease: "power2.in",
-      }).to(
-        toCard,
-        {
-          x: 0,
-          duration: 0.4,
-          ease: "power2.out",
-        },
-        0.15
-      );
     },
-    []
+    [totalCards]
   );
-
-  // const goToCard = useCallback(
-  //   (nextIdx: number, updateButton?: boolean) => {
-  //     setCurrentCard((prev) => {
-  //       if (prev === nextIdx) return prev;
-  //       const direction = nextIdx > prev ? "forward" : "backward";
-  //       animateTo(prev, nextIdx, direction);
-  //       if (updateButton) setCurrentButton(nextIdx);
-  //       return nextIdx;
-  //     });
-  //   },
-  //   [animateTo]
-  // );
 
   const flipForward = useCallback(
     (updateButton?: boolean) => {
       setCurrentCard((prev) => {
         const next = prev === totalCards - 1 ? 0 : prev + 1;
-        animateTo(prev, next, "forward");
+        const prevCard = cardRefs.current[prev];
+
+        if (prevCard) {
+          const finalPosIdx = (prev - next + totalCards) % totalCards;
+          const tl1 = gsap.timeline();
+          tl1
+            .to(prevCard, {
+              ...fannedForward,
+              duration: 0.5,
+              ease: "back.in(1.4)",
+              rotationY: 60,
+              delay: 0.05,
+            })
+            .to(prevCard, {
+              ...originalPos[finalPosIdx],
+              rotationY: 0,
+              duration: 0.5,
+              ease: "back.in(1.4)",
+            });
+        }
+
+        setTimeout(() => setZIndex(next), 500);
+
         if (updateButton) setCurrentButton(next);
+
+        cardRefs.current.forEach((card, i) => {
+          if (i === prev) return;
+          const finalPosIdx = (i - next + totalCards) % totalCards;
+          gsap.to(card, {
+            ...originalPos[finalPosIdx],
+            duration: 1.0,
+            ease: "back.out(1.2)",
+          });
+        });
+
         return next;
       });
     },
-    [totalCards, animateTo]
+    [totalCards, setZIndex, fannedForward, originalPos]
   );
 
   const flipBackward = useCallback(
     (updateButton?: boolean) => {
-      setCurrentCard((prev) => {
-        const next = prev === 0 ? totalCards - 1 : prev - 1;
-        animateTo(prev, next, "backward");
-        if (updateButton) setCurrentButton(next);
-        return next;
+      setCurrentCard((next) => {
+        const prev = next === 0 ? totalCards - 1 : next - 1;
+        const prevCard = cardRefs.current[prev];
+        if (prevCard) {
+          const tl = gsap.timeline();
+          tl.to(prevCard, {
+            ...fannedBack,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+            rotationY: 60,
+            delay: 0.05,
+          }).to(prevCard, {
+            ...originalPos[0],
+            rotationY: 0,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+            delay: 0.05,
+          });
+        }
+
+        cardRefs.current.forEach((card, i) => {
+          if (i === prev) return;
+          const finalPosIdx = (i - prev + totalCards) % totalCards;
+          gsap.to(card, {
+            ...originalPos[finalPosIdx],
+            duration: 1.0,
+            ease: "back.out(1.2)",
+          });
+        });
+
+        setTimeout(() => setZIndex(prev), 800);
+        if (updateButton) setCurrentButton(prev);
+        return prev;
       });
     },
-    [totalCards, animateTo]
+    [totalCards, setZIndex, fannedBack, originalPos]
   );
 
   const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -375,7 +379,7 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
       if (timelineRef.current) {
         timelineRef.current.style.pointerEvents = "auto";
       }
-    }, 600);
+    }, 700);
 
     if (x > midpoint) {
       flipForward(true);
@@ -386,10 +390,13 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
 
   useEffect(() => {
     if (!rendered) {
-      showCard(currentCard);
+      cardRefs.current.forEach((card, i) => {
+        if (card) gsap.set(card, originalPos[i]);
+      });
+      setZIndex(currentCard);
       setRendered(true);
     }
-  }, [rendered, currentCard, showCard]);
+  }, [rendered, currentCard, setZIndex, originalPos]);
 
   return (
     <div
@@ -400,20 +407,18 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         alignItems: "center",
         justifyContent: "center",
         width: "100%",
-        paddingBottom: "clamp(0.75rem, 4vh, 3rem)",
+        paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
+        pointerEvents: interactive ? "auto" : "none",
       }}
     >
-      {/* Day buttons — always interactive, pulled out of pointer-events blocking */}
+      {/* Day buttons */}
       <div
         style={{
           display: "flex",
-          gap: "clamp(0.35rem, 1vw, 0.75rem)",
-          marginBottom: "clamp(1rem, 2vw, 2rem)",
+          gap: "0.75rem",
+          marginBottom: "0.75rem",
           flexWrap: "wrap",
           justifyContent: "center",
-          position: "relative",
-          zIndex: 10,
-          pointerEvents: interactive ? "auto" : "none",
         }}
       >
         {dayLabels.map((label, i) => (
@@ -423,9 +428,8 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               onClick={buttonClicked}
               className="comic-sans"
               style={{
-                padding:
-                  "clamp(0.2rem, 0.5vw, 0.375rem) clamp(0.4rem, 1vw, 0.75rem)",
-                fontSize: "clamp(0.6rem, 1.2vw, 0.875rem)",
+                padding: "0.375rem 0.75rem",
+                fontSize: "clamp(0.7rem, 1.2vw, 0.875rem)",
                 border:
                   i === currentButton
                     ? "0.125rem solid #000"
@@ -454,13 +458,12 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         ))}
       </div>
 
-      {/* Card stack — overflow hidden to clip sliding cards */}
+      {/* Card stack */}
       <div
         style={{
           position: "relative",
-          width: "min(92%, 38rem)",
-          overflow: "hidden",
-          borderRadius: "0.25rem",
+          width: "min(90%, 38rem)",
+          minHeight: "14rem",
         }}
       >
         {cards.map((card, i) => (
@@ -475,25 +478,23 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               top: i === 0 ? undefined : 0,
               left: i === 0 ? undefined : 0,
               width: "100%",
-              border: "0.175rem solid #000",
-              boxShadow: "0.25rem 0.25rem 0 #000",
+              border: "0.25rem solid #000",
+              boxShadow: "0.375rem 0.375rem 0 #000",
               cursor: interactive ? "pointer" : "default",
               overflow: "hidden",
               borderRadius: "0.25rem",
               transformOrigin: "center center",
-              visibility: i === 0 ? "visible" : "hidden",
             }}
           >
             {/* Card header */}
             <div
               className="hero-title"
               style={{
-                padding:
-                  "clamp(0.3rem, 0.8vw, 0.5rem) clamp(0.5rem, 1vw, 0.75rem)",
-                fontSize: "clamp(0.8rem, 2.5vw, 1.75rem)",
+                padding: "0.5rem 0.75rem",
+                fontSize: "clamp(1rem, 2.5vw, 1.75rem)",
                 background: cardColors[i],
                 color: "#111",
-                borderBottom: "0.125rem solid #000",
+                borderBottom: "0.1875rem solid #000",
               }}
             >
               {Header[i]}
@@ -505,9 +506,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               className="comic-sans"
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(10rem, 1fr))",
-                gap: "clamp(0.2rem, 0.5vw, 0.5rem) clamp(0.5rem, 1vw, 1rem)",
-                padding: "clamp(0.4rem, 1vw, 0.75rem) clamp(0.5rem, 1vw, 1rem)",
+                gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))",
+                gap: "0.5rem 1rem",
+                padding: "0.75rem 1rem",
                 background: `url("data:image/svg+xml;utf8,<svg width='100' height='100' transform='rotate(25)' opacity='0.15' version='1.1' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'><g fill='%23250E17'><circle cx='25' cy='25' r='8'/><circle cx='75' cy='75' r='8'/><circle cx='75' cy='25' r='8'/><circle cx='25' cy='75' r='8'/></g></svg>"), #fff`,
                 backgroundSize: "1rem 1rem, 100% 100%",
                 userSelect: "none",
@@ -519,16 +520,16 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                   style={{
                     display: "flex",
                     alignItems: "baseline",
-                    gap: "clamp(0.25rem, 0.5vw, 0.5rem)",
+                    gap: "0.5rem",
                     borderBottom: "0.0625rem solid rgba(0,0,0,0.1)",
-                    paddingBottom: "clamp(0.2rem, 0.4vw, 0.375rem)",
+                    paddingBottom: "0.375rem",
                   }}
                 >
                   <span
                     className="hero-title"
                     style={{
                       fontWeight: 800,
-                      fontSize: "clamp(0.55rem, 1.2vw, 0.875rem)",
+                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
                       whiteSpace: "nowrap",
                       color: "rgba(0,0,0,0.8)",
                     }}
@@ -538,8 +539,8 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                   <span
                     style={{
                       color: "#000",
-                      fontSize: "clamp(0.55rem, 1.2vw, 0.875rem)",
-                      lineHeight: 1.3,
+                      fontSize: "clamp(0.65rem, 1.2vw, 0.875rem)",
+                      lineHeight: 1.4,
                     }}
                   >
                     {info.event}
@@ -554,9 +555,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
               style={{
                 background: "#000",
                 color: "rgba(255,255,255,0.5)",
-                fontSize: "clamp(0.45rem, 0.8vw, 0.625rem)",
+                fontSize: "0.625rem",
                 textAlign: "center",
-                padding: "clamp(0.125rem, 0.3vw, 0.25rem) 0",
+                padding: "0.25rem 0",
                 userSelect: "none",
               }}
             >
@@ -636,6 +637,7 @@ export default function TimerTimeline({
             flexDirection: "column",
             gap: "clamp(0.75rem, 3vw, 2.5rem)",
             maxWidth: "80rem",
+            marginTop: "clamp(3rem, 3vw, 2rem)",
           }}
         >
           <div
@@ -649,7 +651,7 @@ export default function TimerTimeline({
             style={{
               maxWidth: "38.75rem",
               minWidth: 0,
-              marginTop: "clamp(1.5rem, 3vw, 2.5rem)",
+              marginTop: "clamp(1rem, 3vw, 2.5rem)",
             }}
           >
             <Timeline interactive={isSettled} />
