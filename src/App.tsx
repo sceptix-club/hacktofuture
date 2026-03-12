@@ -25,7 +25,7 @@ export function AnalyticsTracker() {
   const location = useLocation();
 
   useEffect(() => {
-    pageview(location.pathname);
+    pageview(location.pathname, document.title);
   }, [location]);
 
   return null;

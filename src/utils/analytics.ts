@@ -6,8 +6,9 @@ declare global {
 
 export const GA_ID = "G-R5JWHN2VLN";
 
-export const pageview = (url: string) => {
+export const pageview = (url: string, title: string) => {
   window.gtag("config", GA_ID, {
     page_path: url,
+    page_title: title,
   });
 };
