@@ -63,7 +63,7 @@ export function Overlay() {
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }} />
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }} />
         <img
-          src="/logo_white.png"
+          src="/sponsors/egdk.png"
           alt="logo"
           style={{
             height: "clamp(20px, 3vw, 30px)",
@@ -129,7 +129,7 @@ export function Overlay() {
             margin: 0,
           }}
         >
-          COMICS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ●
+          COMICS
         </p>
       </div>
 
