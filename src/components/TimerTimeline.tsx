@@ -197,9 +197,10 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
   const peek = 32;
   const [currentCard, setCurrentCard] = useState(0);
   const [currentButton, setCurrentButton] = useState(0);
-  const timelineRef = useRef<HTMLDivElement>(null);
+  const cardStackRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [rendered, setRendered] = useState(false);
+  const animatingRef = useRef(false);
 
   const originalPos = [
     { x: 0, y: 0, rotation: 0, scale: 1 },
@@ -243,6 +244,8 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
   const Header = ["15th April", "16th April", "17th April"];
   const dayLabels = ["Day 1", "Day 2", "Day 3"];
   const cardColors = ["#DA100C", "#FFE105", "#50BAEA"];
+  const currentCardRef = useRef(0);
+  const animationTimeoutRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const setZIndex = useCallback(
     (curr: number) => {
@@ -260,44 +263,43 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
 
   const flipForward = useCallback(
     (updateButton?: boolean) => {
-      setCurrentCard((prev) => {
-        const next = prev === totalCards - 1 ? 0 : prev + 1;
-        const prevCard = cardRefs.current[prev];
+      const prev = currentCardRef.current;
+      const next = prev === totalCards - 1 ? 0 : prev + 1;
+      currentCardRef.current = next;
+      setCurrentCard(next);
 
-        if (prevCard) {
-          const finalPosIdx = (prev - next + totalCards) % totalCards;
-          const tl1 = gsap.timeline();
-          tl1
-            .to(prevCard, {
-              ...fannedForward,
-              duration: 0.5,
-              ease: "back.in(1.4)",
-              rotationY: 60,
-              delay: 0.05,
-            })
-            .to(prevCard, {
-              ...originalPos[finalPosIdx],
-              rotationY: 0,
-              duration: 0.5,
-              ease: "back.in(1.4)",
-            });
-        }
-
-        setTimeout(() => setZIndex(next), 500);
-
-        if (updateButton) setCurrentButton(next);
-
-        cardRefs.current.forEach((card, i) => {
-          if (i === prev) return;
-          const finalPosIdx = (i - next + totalCards) % totalCards;
-          gsap.to(card, {
+      const prevCard = cardRefs.current[prev];
+      if (prevCard) {
+        const finalPosIdx = (prev - next + totalCards) % totalCards;
+        const tl1 = gsap.timeline();
+        tl1
+          .to(prevCard, {
+            ...fannedForward,
+            duration: 0.5,
+            ease: "back.in(1.4)",
+            rotationY: 60,
+            delay: 0.05,
+          })
+          .to(prevCard, {
             ...originalPos[finalPosIdx],
-            duration: 1.0,
-            ease: "back.out(1.2)",
+            rotationY: 0,
+            duration: 0.5,
+            ease: "back.in(1.4)",
           });
-        });
+      }
 
-        return next;
+      setTimeout(() => setZIndex(next), 500);
+
+      if (updateButton) setCurrentButton(next);
+
+      cardRefs.current.forEach((card, i) => {
+        if (i === prev) return;
+        const finalPosIdx = (i - next + totalCards) % totalCards;
+        gsap.to(card, {
+          ...originalPos[finalPosIdx],
+          duration: 1.0,
+          ease: "back.out(1.2)",
+        });
       });
     },
     [totalCards, setZIndex, fannedForward, originalPos]
@@ -305,104 +307,134 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
 
   const flipBackward = useCallback(
     (updateButton?: boolean) => {
-      setCurrentCard((next) => {
-        const prev = next === 0 ? totalCards - 1 : next - 1;
-        const prevCard = cardRefs.current[prev];
-        if (prevCard) {
-          const tl = gsap.timeline();
-          tl.to(prevCard, {
-            ...fannedBack,
-            duration: 0.5,
-            ease: "back.in(1.4)",
-            rotationY: 60,
-            delay: 0.05,
-          }).to(prevCard, {
-            ...originalPos[0],
-            rotationY: 0,
-            duration: 0.5,
-            ease: "back.in(1.4)",
-            delay: 0.05,
-          });
-        }
+      const curr = currentCardRef.current;
+      const prev = curr === 0 ? totalCards - 1 : curr - 1;
+      currentCardRef.current = prev;
+      setCurrentCard(prev);
 
-        cardRefs.current.forEach((card, i) => {
-          if (i === prev) return;
-          const finalPosIdx = (i - prev + totalCards) % totalCards;
-          gsap.to(card, {
-            ...originalPos[finalPosIdx],
-            duration: 1.0,
-            ease: "back.out(1.2)",
-          });
+      const prevCard = cardRefs.current[prev];
+      if (prevCard) {
+        const tl = gsap.timeline();
+        tl.to(prevCard, {
+          ...fannedBack,
+          duration: 0.5,
+          ease: "back.in(1.4)",
+          rotationY: 60,
+          delay: 0.05,
+        }).to(prevCard, {
+          ...originalPos[0],
+          rotationY: 0,
+          duration: 0.5,
+          ease: "back.in(1.4)",
+          delay: 0.05,
         });
+      }
 
-        setTimeout(() => setZIndex(prev), 800);
-        if (updateButton) setCurrentButton(prev);
-        return prev;
+      cardRefs.current.forEach((card, i) => {
+        if (i === prev) return;
+        const finalPosIdx = (i - prev + totalCards) % totalCards;
+        gsap.to(card, {
+          ...originalPos[finalPosIdx],
+          duration: 1.0,
+          ease: "back.out(1.2)",
+        });
       });
+
+      setTimeout(() => setZIndex(prev), 800);
+      if (updateButton) setCurrentButton(prev);
     },
     [totalCards, setZIndex, fannedBack, originalPos]
   );
 
-  const buttonClicked = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!interactive) return;
-    const nextCard = Number(event.currentTarget.id);
-    const difference = currentCard - nextCard;
-    const animateCards = difference > 0 ? flipBackward : flipForward;
+  // Clear any pending animation timeouts
+  const clearPendingAnimations = useCallback(() => {
+    animationTimeoutRef.current.forEach(clearTimeout);
+    animationTimeoutRef.current = [];
+  }, []);
 
-    setCurrentButton(nextCard);
-
-    const absDiff = Math.abs(difference);
-    for (let i = 0; i < absDiff; i++) {
-      setTimeout(() => animateCards(), 700 * i);
+  const lockCardStack = useCallback((durationMs: number) => {
+    animatingRef.current = true;
+    if (cardStackRef.current) {
+      cardStackRef.current.style.pointerEvents = "none";
     }
-
-    if (timelineRef.current) {
-      timelineRef.current.style.pointerEvents = "none";
-    }
-    setTimeout(() => {
-      if (timelineRef.current) {
-        timelineRef.current.style.pointerEvents = "auto";
+    const id = setTimeout(() => {
+      animatingRef.current = false;
+      if (cardStackRef.current) {
+        cardStackRef.current.style.pointerEvents = "auto";
       }
-    }, 700 * absDiff);
-  };
+    }, durationMs);
+    animationTimeoutRef.current.push(id);
+  }, []);
 
-  const cardClicked = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (!interactive) return;
-    const currentEl = cardRefs.current[currentCard];
-    if (!currentEl) return;
-    const rect = currentEl.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const midpoint = rect.width / 2;
+  const buttonClicked = useCallback(
+    (idx: number) => {
+      if (!interactive || animatingRef.current) return;
 
-    if (timelineRef.current) {
-      timelineRef.current.style.pointerEvents = "none";
-    }
-    setTimeout(() => {
-      if (timelineRef.current) {
-        timelineRef.current.style.pointerEvents = "auto";
+      const curr = currentCardRef.current;
+      const difference = curr - idx;
+      if (difference === 0) return;
+
+      const animateCards = difference > 0 ? flipBackward : flipForward;
+      const absDiff = Math.abs(difference);
+
+      setCurrentButton(idx);
+      clearPendingAnimations();
+      lockCardStack(700 * absDiff);
+
+      for (let i = 0; i < absDiff; i++) {
+        const id = setTimeout(() => animateCards(), 700 * i);
+        animationTimeoutRef.current.push(id);
       }
-    }, 700);
+    },
+    [
+      interactive,
+      flipForward,
+      flipBackward,
+      clearPendingAnimations,
+      lockCardStack,
+    ]
+  );
 
-    if (x > midpoint) {
-      flipForward(true);
-    } else {
-      flipBackward(true);
-    }
-  };
+  const cardClicked = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (!interactive || animatingRef.current) return;
+      const currentEl = cardRefs.current[currentCardRef.current];
+      if (!currentEl) return;
+
+      const rect = currentEl.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const midpoint = rect.width / 2;
+
+      lockCardStack(700);
+
+      if (x > midpoint) {
+        flipForward(true);
+      } else {
+        flipBackward(true);
+      }
+    },
+    [interactive, flipForward, flipBackward, lockCardStack]
+  );
 
   useEffect(() => {
     if (!rendered) {
       cardRefs.current.forEach((card, i) => {
         if (card) gsap.set(card, originalPos[i]);
       });
-      setZIndex(currentCard);
+      setZIndex(currentCardRef.current);
       setRendered(true);
     }
-  }, [rendered, currentCard, setZIndex, originalPos]);
+  }, [rendered, setZIndex, originalPos]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      animationTimeoutRef.current.forEach(clearTimeout);
+    };
+  }, []);
 
   return (
     <div
-      ref={timelineRef}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -410,10 +442,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         justifyContent: "center",
         width: "100%",
         paddingBottom: "clamp(1.5rem, 4vh, 3rem)",
-        pointerEvents: interactive ? "auto" : "none",
       }}
     >
-      {/* Day buttons */}
+      {/* Day buttons - always interactive, never blocked by pointer-events */}
       <div
         style={{
           display: "flex",
@@ -421,13 +452,17 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
           marginBottom: "0.75rem",
           flexWrap: "wrap",
           justifyContent: "center",
+          position: "relative",
+          zIndex: totalCards + 10,
         }}
       >
         {dayLabels.map((label, i) => (
           <div key={i} className="htf-panel">
             <button
-              id={String(i)}
-              onClick={buttonClicked}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+                buttonClicked(i);
+              }}
               className="comic-sans"
               style={{
                 padding: "0.375rem 0.75rem",
@@ -449,8 +484,9 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
                 gap: "0.25rem",
                 borderRadius: "0.125rem",
                 fontWeight: 700,
-                zIndex: 999,
-                pointerEvents: "auto",
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
+                userSelect: "none",
               }}
             >
               {i === currentButton && (
@@ -462,12 +498,14 @@ function Timeline({ interactive = false }: { interactive?: boolean }) {
         ))}
       </div>
 
-      {/* Card stack */}
+      {/* Card stack - only this area gets pointer-events blocked during animation */}
       <div
+        ref={cardStackRef}
         style={{
           position: "relative",
           width: "min(90%, 38rem)",
           minHeight: "14rem",
+          pointerEvents: interactive ? "auto" : "none",
         }}
       >
         {cards.map((card, i) => (
