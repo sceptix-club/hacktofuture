@@ -259,7 +259,7 @@ export default function PSPageClient({ data }: Props) {
                   </div>
 
                   {/* ── The Solution ── */}
-                  {activePS.solution && (
+                  {activePS.prerequisites && (
                     <div
                       className="relative overflow-hidden"
                       style={{
@@ -305,7 +305,7 @@ export default function PSPageClient({ data }: Props) {
                               background: colors.blue,
                             }}
                           />
-                          THE SOLUTION
+                          GOOD TO KNOW
                         </h3>
                         <p
                           className="comic-sans leading-relaxed"
@@ -315,7 +315,7 @@ export default function PSPageClient({ data }: Props) {
                             lineHeight: 1.8,
                           }}
                         >
-                          {activePS.solution}
+                          {activePS.prerequisites}
                         </p>
                       </div>
                     </div>

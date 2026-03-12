@@ -17,34 +17,34 @@ const colors = {
 /* ─── Theme card data ─── */
 const THEME_CARDS = [
   {
-    slug: "healthcare-and-citizen-welfare" as ThemeSlug,
-    title: "Healthcare & Citizen Welfare",
+    slug: "agentic-devops" as ThemeSlug,
+    title: "Agentic DevOps",
     description:
-      "Build solutions that improve public health outcomes, enhance citizen welfare, and make healthcare accessible for all. From diagnostics to mental health, drive meaningful change.",
+      "Reimagine modern DevOps with autonomous agents that monitor pipelines, diagnose failures, repair CI/CD workflows, and orchestrate intelligent software releases while maintaining human oversight.",
     accent: colors.red,
     number: "01",
   },
   {
-    slug: "infrastructure-and-smart-cities" as ThemeSlug,
-    title: "Infrastructure & Smart Cities",
+    slug: "agentic-cybersecurity" as ThemeSlug,
+    title: "Agentic Cybersecurity",
     description:
-      "Design the cities of tomorrow — smarter waste management, connected transit, road safety systems, and data-driven urban planning for a better quality of life.",
-    accent: colors.blue,
+      "Build the next generation of AI-driven security systems capable of continuously verifying identities, simulating cyber attacks, detecting threats, and autonomously defending enterprise infrastructure.",
+    accent: colors.yellow,
     number: "02",
   },
   {
-    slug: "industry-and-trade" as ThemeSlug,
-    title: "Industry & Trade",
+    slug: "agentic-cloud-architecture" as ThemeSlug,
+    title: "Agentic Cloud Architecture",
     description:
-      "Optimize supply chains, streamline manufacturing, and empower businesses with intelligent tools for procurement, forecasting, and trade compliance.",
-    accent: colors.yellow,
+      "Design self-healing and intelligent cloud systems where autonomous agents monitor infrastructure, diagnose failures, optimize resource allocation, and maintain resilient Kubernetes environments.",
+    accent: colors.blue,
     number: "03",
   },
   {
     slug: "open-innovation" as ThemeSlug,
     title: "Open Innovation",
     description:
-      "Push the boundaries of what's possible — tackle unconventional problems, build creative solutions, and leverage open collaboration to drive breakthrough innovation.",
+      "No boundaries. No predefined problems. Bring your boldest ideas, experiment freely, and build something extraordinary. This track celebrates creativity, originality, and fearless execution.",
     accent: "#A855F7",
     number: "04",
   },
@@ -185,7 +185,7 @@ function ThemeCard({
               letterSpacing: "0.1em",
             }}
           >
-            Coming Soon ...
+            Explore More ...
           </span>
         </div>
       </div>
