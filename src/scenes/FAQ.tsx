@@ -49,50 +49,17 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         overflow: "hidden",
       }}
     >
-      {/* ── LAYER 2: Radial gradient vignette ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-       
-      />
-
-      {/* ── LAYER 3: Top-to-bottom colour gradient overlay ── */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-       
-      />
+     
 
       {/* ── Corner panel frames ── */}
-      <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="absolute bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none z-10" />
-      <div className="absolute bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none z-10" />
+        {/* ── Corner panel frames ── */}
+        <div className="absolute top-2 left-4 w-40 h-24 md:w-84 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
+        <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-52 comic-panel-border rounded-sm pointer-events-none" />
+       
 
       {/* ── Dot cluster accents ── */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          top: "5%",
-          right: "5%",
-          width: 120,
-          height: 120,
-          backgroundImage:
-            "radial-gradient(circle, rgba(255,225,5,0.12) 2px, transparent 2px)",
-          backgroundSize: "8px 8px",
-        }}
-      />
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          bottom: "8%",
-          left: "5%",
-          width: 100,
-          height: 100,
-          backgroundImage:
-            "radial-gradient(circle, rgba(232,0,61,0.12) 2px, transparent 2px)",
-          backgroundSize: "8px 8px",
-        }}
-      />
-
+      
+     
       {/* ── SCROLLABLE CONTENT — scrollbar hidden ── */}
       <div
         className="relative z-10 w-full h-full flex flex-col items-center px-4 pt-28 pb-16 -mt-4 sm:mt-0"

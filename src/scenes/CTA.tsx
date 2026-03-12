@@ -249,8 +249,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
           opacity: 0,
         }}
       >
-        {/* ── LAYER 2: Radial gradient vignette ── */}
-        <div className="absolute inset-0 pointer-events-none" />
+     
 
         {/* ── Animated layers only rendered when CTA is active ── */}
         {/* {isActive && (
@@ -261,24 +260,8 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         )} */}
 
         {/* ── Comic dot clusters ── */}
-        <ComicDots
-          style={{
-            top: "5%",
-            right: "5%",
-            width: 120,
-            height: 120,
-            color: "rgba(255,200,0,0.08)",
-          }}
-        />
-        <ComicDots
-          style={{
-            bottom: "8%",
-            left: "5%",
-            width: 100,
-            height: 100,
-            color: "rgba(100,200,255,0.08)",
-          }}
-        />
+
+
 
         {/* ── Spinning starburst — only when active ── */}
         {/* {isActive && (
@@ -306,10 +289,9 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         )} */}
 
         {/* ── Corner panel frames ── */}
-        <div className="absolute top-4 left-4 w-24 h-24 md:w-36 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
-        <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none" />
-        <div className="absolute bottom-4 left-4 w-28 h-20 md:w-40 md:h-28 comic-panel-border rounded-sm pointer-events-none" />
-        <div className="absolute bottom-4 right-4 w-24 h-24 md:w-32 md:h-32 comic-panel-border rounded-sm pointer-events-none" />
+        <div className="absolute top-2 left-4 w-40 h-24 md:w-84 md:h-36 comic-panel-border rounded-sm pointer-events-none" />
+        <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-52 comic-panel-border rounded-sm pointer-events-none" />
+       
 
         {/* ── MAIN CONTENT ── */}
         <div className="relative z-10 max-w-[85vw] text-center">
