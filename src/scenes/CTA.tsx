@@ -386,6 +386,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                     height: "clamp(1rem, 2vw, 1.5rem)",
                     objectFit: "contain",
                     flexShrink: 0,
+                    filter: "invert(100%)"
                   }}
                 />
               </Button>

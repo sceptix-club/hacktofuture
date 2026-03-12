@@ -129,7 +129,7 @@ export function Overlay() {
             margin: 0,
           }}
         >
-          NOTIFICATIONS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ●
+          COMICS &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ●
         </p>
       </div>
 
