@@ -1,5 +1,7 @@
-import { Info, Users, Lightbulb, Heart, LogIn, BookText } from "lucide-react";
+import { Info, Users, Lightbulb, Heart, BookText } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { ruleBookLink } from "../../lib/utils";
+import { UnstopIcon } from "./Unstop";
 
 interface NavbarProps {
   className?: string;
@@ -15,13 +17,23 @@ const Navbar = ({ className }: NavbarProps) => {
     { icon: Users, href: "#team", label: "Team", route: "/team" },
     { icon: Lightbulb, href: "#themes", label: "Themes", route: "/themes" },
     { icon: Heart, href: "#sponsors", label: "Sponsors", route: "/sponsors" },
-    { icon: BookText, href: "/rulebook.pdf", label: "Rulebook", route: "/rulebook.pdf" },
-    { icon: LogIn, href: "https://unstop.com/", label: "UnStop", route: null },
+    {
+      icon: BookText,
+      href: `${ruleBookLink}`,
+      label: "Rulebook",
+      route: null,
+    },
+    {
+      icon: UnstopIcon,
+      href: "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
+      label: "UnStop",
+      route: null,
+    },
   ];
 
   return (
     <nav
-      className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-50 ${
+      className={`fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 z-[60] ${
         className ?? ""
       }`}
     >
@@ -34,7 +46,7 @@ const Navbar = ({ className }: NavbarProps) => {
         }}
       >
         {/* Comic tail */}
-       <div
+        <div
           className="absolute -bottom-3.5 left-8 w-0 h-0"
           style={{
             borderLeft: "12px solid transparent",
@@ -62,7 +74,7 @@ const Navbar = ({ className }: NavbarProps) => {
         >
           <div className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 relative">
             <img
-              src="/src/assets/logo_white.png"
+              src="/logo_white.png"
               alt="Logo"
               className="object-cover h-full w-full drop-shadow-md"
               style={{ filter: "invert(1)" }}
@@ -94,9 +106,9 @@ const Navbar = ({ className }: NavbarProps) => {
             }}
             title={item.label}
           >
-            <item.icon 
+            <item.icon
               className="w-4 h-4 sm:w-[18px] sm:h-[18px] md:w-5 md:h-5"
-              strokeWidth={2.5} 
+              strokeWidth={2.5}
             />
             {/* Tooltip - hidden on mobile, visible on hover for desktop */}
             <span

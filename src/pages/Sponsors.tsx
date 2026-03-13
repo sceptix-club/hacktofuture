@@ -1,6 +1,12 @@
 import { useRef, useEffect, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollSmoother } from "gsap/ScrollSmoother";
+import { MapPin } from "lucide-react";
+
+gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 /* ─── Types ─── */
 interface Sponsor {
@@ -103,47 +109,16 @@ const SILVER_SPONSORS: Sponsor[] = [
   // },
 ];
 
-const BRONZE_SPONSORS: Sponsor[] = [
-  // {
-  //   name: "Sponsor A",
-  //   logo: "/sponsors/a.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor B",
-  //   logo: "/sponsors/b.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor C",
-  //   logo: "/sponsors/c.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor D",
-  //   logo: "/sponsors/d.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-  // {
-  //   name: "Sponsor E",
-  //   logo: "/sponsors/e.png",
-  //   url: "#",
-  //   description: "Coming soon.",
-  // },
-];
+const BRONZE_SPONSORS: Sponsor[] = [];
 
-const TIER_COLORS = {
-  title: "#E8003D",
-  gold: "#C8980A",
-  silver: "#7A7A7A",
-  bronze: "#A0522D",
+const TIER_COLORS: Record<string, { bg: string; text: string }> = {
+  title: { bg: "#DA100C", text: "#000" },
+  gold: { bg: "#FFE105", text: "#000" },
+  silver: { bg: "#50BAEA", text: "#000" },
+  bronze: { bg: "#A0522D", text: "#fff" },
 };
 
-/* ─── Dialog ─── */
+/* ─── Dialog (portaled to document.body) ─── */
 function SponsorDialog({
   sponsor,
   accent,
@@ -157,7 +132,9 @@ function SponsorDialog({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // entrance
+    const smoother = ScrollSmoother.get();
+    if (smoother) smoother.paused(true);
+
     gsap.fromTo(
       backdropRef.current,
       { opacity: 0 },
@@ -168,9 +145,10 @@ function SponsorDialog({
       { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
     );
-    // lock scroll
     document.body.style.overflow = "hidden";
     return () => {
+      const sm = ScrollSmoother.get();
+      if (sm) sm.paused(false);
       document.body.style.overflow = "";
     };
   }, []);
@@ -190,7 +168,6 @@ function SponsorDialog({
     });
   }, [onClose]);
 
-  // close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") close();
@@ -199,11 +176,17 @@ function SponsorDialog({
     return () => window.removeEventListener("keydown", handler);
   }, [close]);
 
-  return (
+  // Portal to document.body — escapes the ScrollSmoother transform context
+  // so position:fixed is always relative to the actual viewport
+  return createPortal(
     <div
       ref={backdropRef}
-      className="fixed inset-0 z-[999] flex items-center justify-center p-4 md:p-8"
-      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+      className="fixed inset-0 flex items-center justify-center p-4 md:p-8"
+      style={{
+        zIndex: 9999,
+        background: "rgba(0,0,0,0.75)",
+        backdropFilter: "blur(4px)",
+      }}
       onClick={(e) => {
         if (e.target === backdropRef.current) close();
       }}
@@ -213,16 +196,15 @@ function SponsorDialog({
         className="relative w-full flex flex-col md:flex-row overflow-hidden"
         style={{
           maxWidth: "min(780px, 95vw)",
+          maxHeight: "85vh",
+          overflowY: "auto",
           background: "#FFFEF2",
-          backgroundImage:
-            "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
           border: "3px solid #000",
           borderTop: `5px solid ${accent}`,
           borderRadius: "0.75rem",
           boxShadow: "6px 6px 0 rgba(0,0,0,0.7)",
         }}
       >
-        {/* Close button */}
         <button
           onClick={close}
           className="absolute top-3 right-3 z-10 flex items-center justify-center"
@@ -243,13 +225,11 @@ function SponsorDialog({
           ×
         </button>
 
-        {/* Left — logo panel */}
         <div
           className="flex flex-col items-center justify-center p-8 md:p-10 gap-4"
           style={{
             minWidth: "clamp(140px, 30%, 220px)",
             borderBottom: "3px solid #000",
-            /* on desktop, right border instead */
           }}
         >
           <div
@@ -304,15 +284,12 @@ function SponsorDialog({
           )}
         </div>
 
-        {/* Divider — vertical on desktop, horizontal on mobile (CSS handles it) */}
         <div
           className="hidden md:block flex-shrink-0"
           style={{ width: 3, background: "#000" }}
         />
 
-        {/* Right — info panel */}
         <div className="flex flex-col gap-4 p-6 md:p-8 flex-1">
-          {/* Name + tagline */}
           <div>
             <h2
               className="hero-title font-black uppercase"
@@ -327,10 +304,8 @@ function SponsorDialog({
             </h2>
           </div>
 
-          {/* Divider */}
           <div style={{ height: 2, background: "#000", opacity: 0.1 }} />
 
-          {/* Description */}
           {sponsor.description && (
             <p
               className="comic-sans"
@@ -344,7 +319,6 @@ function SponsorDialog({
             </p>
           )}
 
-          {/* Meta chips */}
           <div className="flex flex-wrap gap-2 mt-auto pt-2">
             {sponsor.industry && (
               <span
@@ -388,13 +362,15 @@ function SponsorDialog({
                   background: "rgba(0,0,0,0.05)",
                 }}
               >
-                📍 {sponsor.headquarters}
+                <MapPin className="inline-block mb-1" size={14} />{" "}
+                {sponsor.headquarters}
               </span>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -432,6 +408,7 @@ function SponsorCard({
     gsap.to(ref.current, {
       y: -6,
       scale: 1.04,
+      boxShadow: "8px 8px 0 rgba(0,0,0,0.55)",
       duration: 0.25,
       ease: "power2.out",
     });
@@ -439,6 +416,7 @@ function SponsorCard({
     gsap.to(ref.current, {
       y: 0,
       scale: 1,
+      boxShadow: "4px 4px 0 rgba(0,0,0,0.55)",
       duration: 0.25,
       ease: "power2.out",
     });
@@ -449,90 +427,119 @@ function SponsorCard({
       onClick={onOpen}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
-      className="flex flex-col items-center justify-center gap-3 cursor-pointer"
+      className="relative flex flex-col items-center justify-center cursor-pointer select-none overflow-hidden"
       style={{
         width: cardW,
         height: cardH,
-        paddingTop: size === "lg" ? 20 : 14,
-        paddingBottom: size === "lg" ? 20 : 14,
-        paddingLeft: 12,
-        paddingRight: 12,
         background: "#FFFEF2",
-        backgroundImage:
-          "repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,0.04) 28px,rgba(0,0,0,0.04) 29px)",
-        border: "2.5px solid #000",
-        borderTop: `4px solid ${accent}`,
-        borderRadius: "0.6rem",
+        border: "3px solid #000",
+        borderTop: "none",
+        borderRadius: 0,
         boxShadow: "4px 4px 0 rgba(0,0,0,0.55)",
         willChange: "transform",
         flexShrink: 0,
+        padding: 0,
         textAlign: "center",
       }}
     >
-      {/* Logo */}
       <div
-        className="flex items-center justify-center"
         style={{
-          width: imgSize + 16,
-          height: imgSize,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 6,
+          background: accent,
         }}
-      >
-        <img
-          src={sponsor.logo}
-          alt={sponsor.name}
-          style={{
-            maxWidth: imgSize,
-            maxHeight: imgSize * 0.7,
-            objectFit: "contain",
-            userSelect: "none",
-            pointerEvents: "none",
-          }}
-          draggable={false}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = "none";
-            const p = (e.currentTarget as HTMLImageElement).parentElement;
-            if (p && !p.querySelector(".fb")) {
-              const s = document.createElement("span");
-              s.className = "fb";
-              s.textContent = sponsor.name[0];
-              s.style.cssText = `font-weight:900;font-size:1.4rem;color:${accent};`;
-              p.appendChild(s);
-            }
-          }}
-        />
-      </div>
-
-      {/* Divider */}
-      <div
-        style={{ width: "60%", height: 1.5, background: "#000", opacity: 0.1 }}
       />
 
-      {/* Name */}
-      <span
-        className="hero-title uppercase"
+      <div
+        className="absolute pointer-events-none"
         style={{
-          fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
-          color: "#111",
-          letterSpacing: "0.05em",
-          lineHeight: 1.2,
+          top: 6,
+          right: 0,
+          width: "70%",
+          height: "70%",
+          backgroundImage: `radial-gradient(circle, rgba(6,0,0,0.1) 1.5px, transparent 1.5px)`,
+          backgroundSize: "8px 8px",
+          maskImage:
+            "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse at 100% 0%, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.8) 30%, transparent 65%)",
         }}
-      >
-        {sponsor.name}
-      </span>
+      />
 
-      {/* Learn more hint */}
-      <span
-        className="comic-sans"
+      <div
+        className="relative flex flex-col items-center justify-center gap-3 w-full h-full"
         style={{
-          fontSize: "0.6rem",
-          color: accent,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          opacity: 0.8,
+          paddingTop: size === "lg" ? 28 : 20,
+          paddingBottom: size === "lg" ? 20 : 14,
+          paddingLeft: 12,
+          paddingRight: 12,
         }}
       >
-        tap to learn more
-      </span>
+        <div
+          className="flex items-center justify-center"
+          style={{ width: imgSize + 16, height: imgSize }}
+        >
+          <img
+            src={sponsor.logo}
+            alt={sponsor.name}
+            style={{
+              maxWidth: imgSize,
+              maxHeight: imgSize * 0.7,
+              objectFit: "contain",
+              userSelect: "none",
+              pointerEvents: "none",
+            }}
+            draggable={false}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+              const p = (e.currentTarget as HTMLImageElement).parentElement;
+              if (p && !p.querySelector(".fb")) {
+                const s = document.createElement("span");
+                s.className = "fb";
+                s.textContent = sponsor.name[0];
+                s.style.cssText = `font-weight:900;font-size:1.4rem;color:${accent};`;
+                p.appendChild(s);
+              }
+            }}
+          />
+        </div>
+
+        <div
+          style={{
+            width: "clamp(24px, 5vw, 40px)",
+            height: 3,
+            background: accent,
+          }}
+        />
+
+        <span
+          className="hero-title uppercase"
+          style={{
+            fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
+            color: "#111",
+            letterSpacing: "0.05em",
+            lineHeight: 1.2,
+          }}
+        >
+          {sponsor.name}
+        </span>
+
+        <span
+          className="comic-sans"
+          style={{
+            fontSize: "0.6rem",
+            color: accent,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            opacity: 0.8,
+          }}
+        >
+          tap to learn more
+        </span>
+      </div>
     </button>
   );
 }
@@ -540,17 +547,19 @@ function SponsorCard({
 /* ─── Tier row ─── */
 function TierRow({
   label,
-  accent,
+  tier,
   sponsors,
   size,
 }: {
   label: string;
-  accent: string;
+  tier: keyof typeof TIER_COLORS;
   sponsors: Sponsor[];
   size: "lg" | "md" | "sm";
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<Sponsor | null>(null);
+
+  const { bg: accent, text: tierText } = TIER_COLORS[tier];
 
   useEffect(() => {
     if (!rowRef.current) return;
@@ -578,36 +587,53 @@ function TierRow({
           onClose={() => setActive(null)}
         />
       )}
-
+      <div className="w-full -mt-24" style={{ height: "0.5rem" }} />
       <div className="flex flex-col items-center gap-5 w-full">
-        {/* Tier label */}
-        <div className="flex items-center gap-3 w-full max-w-4xl">
+        {/* ── Tier label — comic badge style ── */}
+        <div className="flex items-center gap-4 w-full max-w-4xl">
           <div
-            style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
+            style={{
+              height: 3,
+              flex: 1,
+              background: accent,
+              boxShadow: "2px 2px 0 #000",
+            }}
           />
           <div
-            className="px-4 py-1"
-            style={{ border: `2px solid ${accent}`, borderRadius: "2px" }}
+            className="inline-block"
+            style={{
+              background: accent,
+              color: tierText,
+              padding: "0.4rem 1rem",
+              border: "3px solid #000",
+              boxShadow: "3px 3px 0 #000",
+            }}
           >
             <span
-              className="hero-title uppercase tracking-widest"
+              className="comic-sans font-bold"
               style={{
-                fontSize: "clamp(0.6rem, 1.4vw, 0.8rem)",
-                color: accent,
+                fontSize: "clamp(0.7rem, 1.2vw, 0.85rem)",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
               }}
             >
               {label}
             </span>
           </div>
           <div
-            style={{ flex: 1, height: 2, background: accent, opacity: 0.4 }}
+            style={{
+              height: 3,
+              flex: 1,
+              background: accent,
+              boxShadow: "2px 2px 0 #000",
+            }}
           />
         </div>
 
         {/* Cards */}
         <div
           ref={rowRef}
-          className="flex flex-wrap items-center justify-center gap-4 md:gap-6"
+          className="flex flex-wrap items-center mt-4 justify-center gap-4 md:gap-6"
         >
           {sponsors.map((s) => (
             <div key={s.name} className="sponsor-card-wrap">
@@ -626,108 +652,159 @@ function TierRow({
 }
 
 /* ─── Main Page ─── */
-export default function Sponsors() {
+export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
   const headerRef = useRef<HTMLDivElement>(null);
+  const smootherRef = useRef<ScrollSmoother | null>(null);
 
   useEffect(() => {
     if (!headerRef.current) return;
     gsap.fromTo(
       headerRef.current,
-      { opacity: 0, y: -24 },
-      { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }
+      { opacity: 0, y: -30 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
     );
   }, []);
 
+  // ScrollSmoother — only create after loader is done
+  useEffect(() => {
+    if (!loaderDone) return;
+
+    const timer = setTimeout(() => {
+      smootherRef.current = ScrollSmoother.create({
+        wrapper: "#sponsors-smooth-wrapper",
+        content: "#sponsors-smooth-content",
+        smooth: 0.75,
+        effects: false,
+        smoothTouch: 0.25,
+        normalizeScroll: true,
+      });
+      ScrollTrigger.refresh();
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      smootherRef.current?.kill();
+      smootherRef.current = null;
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, [loaderDone]);
+
   return (
     <>
-      <Navbar />
       <div
-        className="relative w-full min-h-screen"
         style={{
-          background: "#0a0a0a",
+          position: "fixed",
+          inset: 0,
           backgroundImage: "url('/textures/background.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
+          backgroundAttachment: "scroll",
+          zIndex: 0,
+          pointerEvents: "none",
+          willChange: "unset",
+          transform: "none",
         }}
-      >
-        <div
-          className="fixed inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-            zIndex: 0,
-          }}
-        />
+      />
 
-        <div
-          className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-14 md:gap-20"
-          style={{ zIndex: 1 }}
-        >
-          {/* Header */}
-          <div ref={headerRef} className="flex flex-col -mt-12 items-center">
-            <p
-              className="comic-sans uppercase tracking-widest mb-3"
-              style={{
-                fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
-                color: "rgba(255,255,255,0.6)",
-              }}
-            >
-              HackToFuture 4.0
-            </p>
-            <h1
-              className="hero-title text-center font-black uppercase"
-              style={{
-                fontSize: "clamp(2.5rem, 8vw, 5rem)",
-                lineHeight: 0.9,
-                color: "#fff",
-              }}
-            >
-              Sponsors
-            </h1>
-            <div
-              className="mt-4"
-              style={{
-                height: 3,
-                width: "clamp(60px, 8vw, 100px)",
-                background: "#E8003D",
-              }}
-            />
+      <div
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          zIndex: 1,
+        }}
+      />
+
+      <Navbar />
+
+      <div id="sponsors-smooth-wrapper" style={{ zIndex: 2 }}>
+        <div id="sponsors-smooth-content">
+          <div className="relative w-full min-h-screen">
+            <div className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-14 md:gap-20">
+              <div
+                ref={headerRef}
+                className="-mt-12 mb-14 flex flex-col items-center"
+              >
+                <p
+                  className="comic-sans uppercase tracking-widest mb-3"
+                  style={{
+                    fontSize: "clamp(0.7rem, 1.3vw, 0.85rem)",
+                    color: "rgba(255,255,255,0.6)",
+                  }}
+                >
+                  HackToFuture 4.0
+                </p>
+
+                <h1
+                  className="hero-title text-center font-black uppercase"
+                  style={{
+                    fontSize: "clamp(2.5rem, 8vw, 5rem)",
+                    lineHeight: 0.9,
+                    color: "#fff",
+                  }}
+                >
+                  Sponsors
+                </h1>
+
+                <div
+                  className="mt-4"
+                  style={{
+                    height: 5,
+                    width: "clamp(60px, 10vw, 120px)",
+                    background: "#E8003D",
+                    boxShadow: "2px 2px 0 #000",
+                  }}
+                />
+
+                <p
+                  className="comic-sans text-center mt-5 -mb-12 max-w-lg"
+                  style={{
+                    fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
+                    color: "rgba(255,255,255,0.85)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Meet the organizations powering HackToFuture 4.0 — and compete
+                  for an incredible prize pool up for grabs.
+                </p>
+              </div>
+
+              {TITLE_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Title Sponsor"
+                  tier="title"
+                  sponsors={TITLE_SPONSORS}
+                  size="lg"
+                />
+              )}
+              {GOLD_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Gold Sponsors"
+                  tier="gold"
+                  sponsors={GOLD_SPONSORS}
+                  size="lg"
+                />
+              )}
+              {SILVER_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Silver Sponsors"
+                  tier="silver"
+                  sponsors={SILVER_SPONSORS}
+                  size="md"
+                />
+              )}
+              {BRONZE_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Bronze Sponsors"
+                  tier="bronze"
+                  sponsors={BRONZE_SPONSORS}
+                  size="sm"
+                />
+              )}
+            </div>
           </div>
-
-          {TITLE_SPONSORS.length > 0 && (
-            <TierRow
-              label="Title Sponsors"
-              accent={TIER_COLORS.title}
-              sponsors={TITLE_SPONSORS}
-              size="lg"
-            />
-          )}
-          {GOLD_SPONSORS.length > 0 && (
-            <TierRow
-              label="Gold Sponsors"
-              accent={TIER_COLORS.gold}
-              sponsors={GOLD_SPONSORS}
-              size="lg"
-            />
-          )}
-          {SILVER_SPONSORS.length > 0 && (
-            <TierRow
-              label="Silver Sponsors"
-              accent={TIER_COLORS.silver}
-              sponsors={SILVER_SPONSORS}
-              size="md"
-            />
-          )}
-          {BRONZE_SPONSORS.length > 0 && (
-            <TierRow
-              label="Bronze Sponsors"
-              accent={TIER_COLORS.bronze}
-              sponsors={BRONZE_SPONSORS}
-              size="sm"
-            />
-          )}
         </div>
       </div>
     </>

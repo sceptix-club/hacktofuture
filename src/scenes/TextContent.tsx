@@ -1,14 +1,17 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { SponsorsBento } from "../assets/Sponsor";
-import Footer from "./Footer";
 import CTA from "./CTA";
 import FAQ from "./FAQ";
+import Footer from "./Footer";
 
 const handleThemeNavigate = (slug: string) => {
   window.location.href = `/theme/${slug}`;
 };
+
 import TimerTimeline from "../components/TimerTimeline";
+
+import { ruleBookLink } from "../lib/utils";
 
 type TextContentProps = {
   currentScene: number;
@@ -20,6 +23,8 @@ const TextContent = ({
   currentScene: _currentScene,
   getTimelineRef,
 }: TextContentProps) => {
+  const timerSettledRef = useRef<((settled: boolean) => void) | null>(null);
+
   const scene1TextRef = useRef<HTMLDivElement>(null);
   const scene2TextRef = useRef<HTMLDivElement>(null);
   const scene3TextRef = useRef<HTMLDivElement>(null);
@@ -49,11 +54,15 @@ const TextContent = ({
     if (scene2TextRef.current) {
       tl.fromTo(
         scene2TextRef.current,
-        { y: "100vh", opacity: 0 },
-        { y: "20vh", opacity: 1, duration: 0.4 },
+        { y: "100vh", opacity: 0, pointerEvents: "none" },
+        { y: "20vh", opacity: 1, duration: 0.4, pointerEvents: "auto" },
         1.0
       );
-      tl.to(scene2TextRef.current, { opacity: 0, duration: 0.2 }, 2.0);
+      tl.to(
+        scene2TextRef.current,
+        { opacity: 0, duration: 0.2, pointerEvents: "none" },
+        2.0
+      );
     }
 
     // Scene 3
@@ -105,7 +114,6 @@ const TextContent = ({
     // Scene 4
     if (scene4TextRef.current) {
       const panels = scene4TextRef.current.querySelectorAll(".htf-panel");
-      // 8 panels: heading, timer, day1, day2, day3, card0, card1, card2
       const enterX = [0, -1800, -800, 0, 800, 1800, 1800, -1800];
       const enterY = [-800, -300, -1000, -1200, -1000, 600, -600, 600];
 
@@ -123,6 +131,7 @@ const TextContent = ({
           duration: 0.4,
           stagger: 0.06,
           ease: "back.out(0.8)",
+          onComplete: () => timerSettledRef.current?.(true),
         },
         3.2
       );
@@ -135,52 +144,70 @@ const TextContent = ({
           duration: 0.3,
           stagger: 0.04,
           ease: "back.in(0.8)",
+          onStart: () => timerSettledRef.current?.(false),
         },
         4.2
       );
     }
 
-    // Card 1 text (camera dwell: 5.0 – 5.5)
+    // Card 1
     if (card1TextRef.current) {
       tl.fromTo(
         card1TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
-        { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        5.05
+        { opacity: 1, scale: 1, duration: 0.15, pointerEvents: "auto" },
+        4.55
       );
-      tl.to(card1TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 5.35);
+      tl.to(
+        card1TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        4.95
+      );
     }
-    // Card 2 text (camera dwell: 5.8 – 6.2)
+    // Card 2
     if (card2TextRef.current) {
       tl.fromTo(
         card2TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        5.85
+        5.35
       );
-      tl.to(card2TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.1);
+      tl.to(
+        card2TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        5.65
+      );
     }
-    // Card 3 text (camera dwell: 6.5 – 6.9)
+    // Card 3
     if (card3TextRef.current) {
       tl.fromTo(
         card3TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        6.55
+        6.05
       );
-      tl.to(card3TextRef.current, { opacity: 0, duration: 0.1, pointerEvents: "none" }, 6.8);
+      tl.to(
+        card3TextRef.current,
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        6.35
+      );
     }
-    // Card 4 text (camera dwell: 7.2 – 7.6)
+    // Card 4
     if (card4TextRef.current) {
       tl.fromTo(
         card4TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        7.25
+        6.75
       );
-      tl.to(card4TextRef.current, { opacity: 0, duration: 0.2, pointerEvents: "none" }, 7.6);
+      tl.to(
+        card4TextRef.current,
+        { opacity: 0, duration: 0.15, pointerEvents: "none" },
+        8.1
+      );
     }
-    // ── CTA: slides in at 8.0, slides OUT at 8.8 ──
+
+    // CTA
     if (ctaRef.current) {
       gsap.set(ctaRef.current, { y: "100%", opacity: 0 });
       tl.to(
@@ -191,17 +218,17 @@ const TextContent = ({
       tl.to(
         ctaRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        8.8
+        9.2
       );
     }
 
-    // ── FAQ: slides in at 8.9, slides OUT at 10.4 ──
+    // FAQ
     if (faqRef.current) {
       gsap.set(faqRef.current, { y: "100%", opacity: 0 });
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        8.9
+        9.3
       );
       tl.to(
         faqRef.current,
@@ -210,33 +237,20 @@ const TextContent = ({
       );
     }
 
-    // ── Footer: slides in at 10.2 ──
+    // Footer: fade in from bottom, matching CTA/FAQ pattern
     if (footerRef.current) {
-      gsap.set(footerRef.current, { y: "100%" });
+      gsap.set(footerRef.current, { y: "100%", opacity: 0 });
       tl.to(
         footerRef.current,
-        { y: "0%", duration: 0.4, ease: "power2.out", force3D: true },
-        10.2
+        {
+          y: "0%",
+          opacity: 1,
+          duration: 0.4,
+          ease: "power2.out",
+          force3D: true,
+        },
+        10.5
       );
-
-      // HackToFuture letters animate at 10.5
-      const htfLetters = footerRef.current.querySelectorAll(
-        ".hero-title.inline-block"
-      );
-      if (htfLetters.length) {
-        tl.fromTo(
-          htfLetters,
-          { y: 200, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.3,
-            stagger: 0.04,
-            ease: "back.out(1.4)",
-          },
-          10.5
-        );
-      }
     }
 
     tl.set({}, {}, 12.2);
@@ -249,33 +263,46 @@ const TextContent = ({
 
   return (
     <>
-      {/* Scene 1 */}
       <div
         ref={scene1TextRef}
         className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
       ></div>
 
-      {/* Scene 2 */}
       <div
         ref={scene2TextRef}
-        className={`hero-title fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center ${_currentScene === 1 ? "pointer-events-auto" : "pointer-events-none"
-          }`}
+        className="hero-title fixed left-0 right-0 top-1/2  -translate-y-1/2 z-30 flex justify-center"
         style={{
           fontSize: "clamp(10px, 3vw, 20px)",
           opacity: 0,
+          color: "white",
+          cursor: "pointer",
+          textShadow:
+            "0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black",
+          pointerEvents: "none",
         }}
-        aria-hidden={_currentScene !== 1}
       >
-        CLICK TO DOWNLOAD RULEBOOK
+        <a
+          href={`${ruleBookLink}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            textDecoration: "none",
+            pointerEvents: "inherit",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          DOWNLOAD RULEBOOK
+        </a>
       </div>
 
-      {/* Scene 3 */}
       <div
         ref={scene3TextRef}
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
       >
         <SponsorsBento
-          title={{ name: "EGDK" }}
+          title={{ name: "EGDK", logo: "/sponsors/egdk.png" }}
           platinum={[{ name: "Company A" }, { name: "Company B" }]}
           gold={[{ name: "Company C" }, { name: "Company D" }]}
           silver={[
@@ -286,7 +313,6 @@ const TextContent = ({
         />
       </div>
 
-      {/* Scene 4 */}
       <div
         ref={scene4TextRef}
         className="fixed left-0 right-0 top-[50%] -translate-y-1/2 z-20 flex items-center justify-center px-4"
@@ -294,19 +320,24 @@ const TextContent = ({
         <TimerTimeline />
       </div>
 
-      {/* Cards 1-4 – Themes */}
       {[1, 2, 3, 4].map((n, i) => {
         const themeData = [
           {
-            slug: "healthcare-and-citizen-welfare",
-            title: "Healthcare & Citizen Welfare",
+            slug: "agentic-devops",
+            title: "Agentic DevOps",
           },
-          { slug: "industry-and-trade", title: "Industry & Trade" },
           {
-            slug: "infrastructure-and-smart-cities",
-            title: "Infrastructure & Smart Cities",
+            slug: "agentic-cybersecurity",
+            title: "Agentic Cybersecurity",
           },
-          { slug: "open-innovation", title: "Open Innovation" },
+          {
+            slug: "agentic-cloud-architecture",
+            title: "Agentic Cloud Architecture",
+          },
+          {
+            slug: "open-innovation",
+            title: "Open Innovation",
+          },
         ];
         const { slug, title } = themeData[i];
 
@@ -320,20 +351,17 @@ const TextContent = ({
           >
             <div className="max-w-[95vw] overflow-hidden text-center">
               <h2
-                className="text-white font-bold"
-                style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}
+                className="text-white hero-title"
+                style={{
+                  fontSize: "clamp(1.5rem, 5vw, 3rem)",
+                  textShadow: "0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 5px black",
+                }}
               >
                 THEME {n}: {title}
               </h2>
               <p
-                className="text-white/80 mt-2"
-                style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)" }}
-              >
-                Click to view problem statements
-              </p>
-              <p
                 className="text-white/50 mt-3 uppercase tracking-widest"
-                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)" }}
+                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)", textShadow: "0 0 1px black", }}
               >
                 Click to explore →
               </p>

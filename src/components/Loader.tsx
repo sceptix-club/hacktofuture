@@ -1,417 +1,371 @@
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useRef, useState, useCallback } from "react";
+import logoWhite from "../assets/logo_white.png";
 
 type LoaderProps = {
-  progress: number
-  onComplete?: () => void
-}
+  canDismiss: boolean;
+  onComplete?: () => void;
+  minDisplayMs?: number;
+  fadeOutMs?: number;
+};
 
-export default function Loader({ progress, onComplete }: LoaderProps) {
-  const [dots, setDots] = useState(".")
-  const [phase, setPhase] = useState<"loading" | "closing" | "done">("loading")
-  const completedRef = useRef(false)
+export default function Loader({
+  canDismiss,
+  onComplete,
+  minDisplayMs = 3000,
+  fadeOutMs = 1200,
+}: LoaderProps) {
+  const [phase, setPhase] = useState<"visible" | "fading" | "done">("visible");
+  const [progress, setProgress] = useState(0);
 
-  // Animate dots
+  const canDismissRef = useRef(false);
+  const progressRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const startTimeRef = useRef(Date.now());
+  const minDisplayMsRef = useRef(minDisplayMs);
+
+  const FADE_OUT_MS = fadeOutMs;
+
   useEffect(() => {
-    const id = setInterval(() => {
-      setDots((d) => (d.length >= 3 ? "." : d + "."))
-    }, 400)
-    return () => clearInterval(id)
-  }, [])
+    canDismissRef.current = canDismiss;
+  }, [canDismiss]);
 
-  // Trigger close sequence when progress hits 100
   useEffect(() => {
-    if (progress >= 100 && !completedRef.current) {
-      completedRef.current = true
-      // Small delay so user sees "100%" for a moment
-      setTimeout(() => {
-        setPhase("closing")
-        // After close animation finishes, call onComplete
-        setTimeout(() => {
-          setPhase("done")
-          onComplete?.()
-        }, 700)
-      }, 600)
+    minDisplayMsRef.current = minDisplayMs;
+  }, [minDisplayMs]);
+
+  // Lock ALL scrolling while loader is active (visible or fading)
+  useEffect(() => {
+    if (phase === "done") return;
+
+    const scrollY = window.scrollY;
+
+    // Lock body
+    const origOverflow = document.body.style.overflow;
+    const origPosition = document.body.style.position;
+    const origWidth = document.body.style.width;
+    const origTop = document.body.style.top;
+    const origTouchAction = document.body.style.touchAction;
+    const origOverscroll = document.body.style.overscrollBehavior;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.touchAction = "none";
+    document.body.style.overscrollBehavior = "none";
+
+    // Also lock <html>
+    const htmlEl = document.documentElement;
+    const origHtmlOverflow = htmlEl.style.overflow;
+    const origHtmlOverscroll = htmlEl.style.overscrollBehavior;
+    htmlEl.style.overflow = "hidden";
+    htmlEl.style.overscrollBehavior = "none";
+
+    // Block all scroll-causing events at the window/document level
+    const prevent = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const preventKeyScroll = (e: KeyboardEvent) => {
+      const keys = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "Space",
+        "PageUp",
+        "PageDown",
+        "Home",
+        "End",
+        "Tab",
+      ];
+      if (keys.includes(e.code)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    // Use capture phase to intercept before anything else
+    window.addEventListener("wheel", prevent, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("touchmove", prevent, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("touchstart", prevent, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("keydown", preventKeyScroll, {
+      capture: true,
+      passive: false,
+    });
+    window.addEventListener("scroll", prevent, {
+      capture: true,
+      passive: false,
+    });
+
+    return () => {
+      // Restore body
+      document.body.style.overflow = origOverflow;
+      document.body.style.position = origPosition;
+      document.body.style.width = origWidth;
+      document.body.style.top = origTop;
+      document.body.style.touchAction = origTouchAction;
+      document.body.style.overscrollBehavior = origOverscroll;
+
+      // Restore html
+      htmlEl.style.overflow = origHtmlOverflow;
+      htmlEl.style.overscrollBehavior = origHtmlOverscroll;
+
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
+
+      // Remove listeners
+      window.removeEventListener("wheel", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("touchmove", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("touchstart", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("keydown", preventKeyScroll, {
+        capture: true,
+      } as EventListenerOptions);
+      window.removeEventListener("scroll", prevent, {
+        capture: true,
+      } as EventListenerOptions);
+    };
+  }, [phase]);
+
+  // Use requestAnimationFrame for smooth 60fps progress
+  const tick = useCallback(() => {
+    const elapsed = Date.now() - startTimeRef.current;
+    const canFinish = canDismissRef.current;
+    const min = minDisplayMsRef.current;
+    const minTimeReached = elapsed >= min;
+
+    let target: number;
+
+    if (canFinish && minTimeReached) {
+      target = 100;
+      const next = progressRef.current + (target - progressRef.current) * 0.08;
+      progressRef.current = next >= 99.5 ? 100 : next;
+    } else if (canFinish && !minTimeReached) {
+      const ratio = Math.min(elapsed / min, 1);
+      target = 10 + ratio * 80;
+      progressRef.current = Math.max(progressRef.current, target);
+    } else {
+      const ratio = Math.min(elapsed / (min * 2), 1);
+      target = 70 * (1 - Math.pow(1 - ratio, 3));
+      progressRef.current = Math.max(progressRef.current, target);
     }
-  }, [progress, onComplete])
 
-  const getMessage = () => {
-    if (progress < 25) return "BOOTING SYSTEMS"
-    if (progress < 50) return "LOADING ASSETS"
-    if (progress < 75) return "HACKING THE FUTURE"
-    if (progress < 95) return "ALMOST THERE"
-    return "LAUNCHING"
-  }
+    setProgress(progressRef.current);
 
-  const filled = Math.round(progress / 5)
+    if (progressRef.current >= 100) {
+      setPhase((prev) => (prev === "visible" ? "fading" : prev));
+      return;
+    }
 
-  if (phase === "done") return null
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  // Start the rAF loop
+  useEffect(() => {
+    startTimeRef.current = Date.now();
+    rafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [tick]);
+
+  // Handle fade-out → done
+  useEffect(() => {
+    if (phase !== "fading") return;
+    const timer = setTimeout(() => {
+      setPhase("done");
+      onComplete?.();
+    }, FADE_OUT_MS);
+    return () => clearTimeout(timer);
+  }, [phase, onComplete, FADE_OUT_MS]);
+
+  if (phase === "done") return null;
+
+  const roundedProgress = Math.round(progress);
+  const statusText =
+    roundedProgress < 30
+      ? "Initializing…"
+      : roundedProgress < 60
+      ? "Loading resources…"
+      : roundedProgress < 95
+      ? "Almost there…"
+      : "Ready!";
 
   return (
     <>
       <style>{`
-        @keyframes flicker {
-          0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
-          20%, 24%, 55% { opacity: 0.4; }
-        }
-        @keyframes htf-pulse {
-          0%, 100% { transform: scale(1) rotate(-1deg); }
-          50% { transform: scale(1.04) rotate(1deg); }
-        }
-        @keyframes spin-gear {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        @keyframes spin-gear-rev {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(-360deg); }
-        }
-        @keyframes pop-in {
-          0% { transform: scale(0) rotate(-10deg); opacity: 0; }
-          70% { transform: scale(1.15) rotate(3deg); opacity: 1; }
-          100% { transform: scale(1) rotate(0deg); opacity: 1; }
-        }
-        @keyframes float-dot {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-6px); }
+        @keyframes loaderPulse {
+          0%, 100% { opacity: 0.6; }
+          50%      { opacity: 1; }
         }
 
-        /* Shutter close: two halves slide to center */
-        @keyframes shutter-top {
-          from { transform: scaleY(0); transform-origin: top; }
-          to   { transform: scaleY(1); transform-origin: top; }
-        }
-        @keyframes shutter-bottom {
-          from { transform: scaleY(0); transform-origin: bottom; }
-          to   { transform: scaleY(1); transform-origin: bottom; }
-        }
-        @keyframes bg-fade-out {
-          from { opacity: 1; }
-          to   { opacity: 0; }
+        @keyframes shimmer {
+          0%   { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
         }
 
-        .loader-root {
+        .htf-loader {
           position: fixed;
           inset: 0;
-          background: #1a0a00;
+          z-index: 99999;
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          z-index: 9999;
+          gap: 2.5rem;
+          opacity: 1;
+          transition: opacity ${FADE_OUT_MS}ms ease-out;
           overflow: hidden;
-          font-family: 'VT323', monospace;
-        }
-        .loader-root::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: radial-gradient(circle, #c0392b22 1px, transparent 1px);
-          background-size: 20px 20px;
-          pointer-events: none;
-        }
-        .loader-root::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: repeating-linear-gradient(
-            0deg, transparent, transparent 2px,
-            rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
-          );
-          pointer-events: none;
-          z-index: 10;
-        }
-
-        .loader-root.closing {
-          animation: bg-fade-out 0.7s ease forwards;
-          animation-delay: 0.1s;
-        }
-
-        /* Shutter panels */
-        .shutter-top, .shutter-bottom {
-          position: absolute;
-          left: 0; right: 0;
-          height: 50%;
-          background: #111;
-          z-index: 100;
-          transform: scaleY(0);
-        }
-        .shutter-top {
-          top: 0;
-          transform-origin: top;
-          animation: shutter-top 0.55s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-        }
-        .shutter-bottom {
-          bottom: 0;
-          transform-origin: bottom;
-          animation: shutter-bottom 0.55s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-        }
-
-        .card {
-          position: relative;
-          width: min(520px, 92vw);
-          background: #fff;
-          border: 5px solid #111;
-          box-shadow: 8px 8px 0 #111, 16px 16px 0 #c0392b;
-          padding: 0;
-          animation: pop-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-          z-index: 20;
-        }
-        .card-header {
-          background: #c0392b;
-          border-bottom: 4px solid #111;
-          padding: 14px 20px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .htf-title {
-          font-family: 'Bangers', cursive;
-          font-size: clamp(22px, 5vw, 32px);
-          color: #fff;
-          letter-spacing: 3px;
-          text-shadow: 2px 2px 0 #111;
-          animation: htf-pulse 2s ease-in-out infinite;
-          display: inline-block;
-        }
-        .badge {
-          background: #111;
-          color: #fff;
-          font-family: 'VT323', monospace;
-          font-size: 15px;
-          padding: 3px 10px;
-          border: 2px solid #fff;
-          letter-spacing: 1px;
-        }
-        .card-body {
-          padding: 24px 20px 20px;
-          background: #fffdf8;
-          position: relative;
-        }
-        .card-body::after {
-          content: '';
-          position: absolute;
-          top: 0; left: 50%;
-          width: 2px;
-          height: 100%;
-          background: rgba(0,0,0,0.06);
-          pointer-events: none;
-        }
-        .robot-row {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          margin-bottom: 18px;
-        }
-        .robot { width: 64px; height: 64px; flex-shrink: 0; }
-        .robot svg { width: 100%; height: 100%; }
-        .speech-bubble {
-          flex: 1;
-          background: #fff;
-          border: 3px solid #111;
-          border-radius: 0 12px 12px 12px;
-          padding: 8px 12px;
-          position: relative;
-          font-family: 'Bangers', cursive;
-          font-size: clamp(16px, 3.5vw, 22px);
-          letter-spacing: 2px;
-          color: #111;
-          min-height: 48px;
-          display: flex;
-          align-items: center;
-        }
-        .speech-bubble::before {
-          content: '';
-          position: absolute;
-          left: -14px; top: 10px;
-          border: 8px solid transparent;
-          border-right-color: #111;
-        }
-        .speech-bubble::after {
-          content: '';
-          position: absolute;
-          left: -9px; top: 12px;
-          border: 6px solid transparent;
-          border-right-color: #fff;
-        }
-        .dots-text { color: #c0392b; animation: flicker 2s infinite; }
-        .progress-label {
-          font-family: 'VT323', monospace;
-          font-size: 14px;
-          color: #555;
-          letter-spacing: 1px;
-          margin-bottom: 6px;
-          display: flex;
-          justify-content: space-between;
-        }
-        .progress-track {
-          width: 100%;
-          height: 28px;
-          border: 3px solid #111;
-          background: #f0e8d8;
-          position: relative;
-          overflow: hidden;
-          margin-bottom: 16px;
-        }
-        .progress-fill {
-          height: 100%;
-          background: repeating-linear-gradient(
-            45deg, #c0392b, #c0392b 10px, #e74c3c 10px, #e74c3c 20px
-          );
-          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          border-right: 3px solid #111;
-        }
-        .progress-pct {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-family: 'Bangers', cursive;
-          font-size: 20px;
-          letter-spacing: 2px;
-          color: #fff;
-          text-shadow: 1px 1px 0 #111, -1px -1px 0 #111, 1px -1px 0 #111, -1px 1px 0 #111;
-          z-index: 2;
-          pointer-events: none;
-        }
-        .seg-row { display: flex; gap: 3px; margin-bottom: 18px; }
-        .seg { flex: 1; height: 10px; border: 2px solid #111; transition: background 0.2s; }
-        .seg.on { background: #111; }
-        .seg.off { background: #f0e8d8; }
-        .gear-row {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          border-top: 3px solid #111;
-          padding-top: 14px;
-        }
-        .gear { animation: spin-gear 3s linear infinite; color: #c0392b; }
-        .gear.rev { animation: spin-gear-rev 2s linear infinite; color: #111; }
-        .status-text {
-          font-family: 'VT323', monospace;
-          font-size: 13px;
-          letter-spacing: 2px;
-          color: #888;
-          text-align: center;
-          flex: 1;
-        }
-        .corner-deco {
-          position: absolute;
-          font-family: 'Bangers', cursive;
-          font-size: 11px;
-          letter-spacing: 1px;
-          color: #c0392b;
-          opacity: 0.5;
-        }
-        .corner-deco.tl { top: 6px; left: 8px; }
-        .corner-deco.br { bottom: 6px; right: 8px; }
-        .action-word {
-          position: absolute;
-          font-family: 'Bangers', cursive;
-          letter-spacing: 3px;
-          pointer-events: none;
-          opacity: 0.12;
+          will-change: opacity;
+          touch-action: none;
           user-select: none;
+          -webkit-user-select: none;
+          overscroll-behavior: none;
+          -webkit-overflow-scrolling: auto;
+          pointer-events: all;
+        }
+
+        .htf-loader.fading {
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .htf-loader.fading .htf-loader-logo {
+          animation: none;
+          opacity: 1;
+        }
+
+        .htf-loader-bg {
+          position: absolute;
+          inset: -1.25rem;
+          background-image: url('/textures/background.jpg');
+          background-size: cover;
+          background-position: center center;
+          background-repeat: no-repeat;
+          filter: blur(0.5rem);
+          z-index: 0;
+        }
+
+        .htf-loader-overlay {
+          position: absolute;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.45);
+          z-index: 1;
+        }
+
+        .htf-loader-logo {
+          position: relative;
+          z-index: 2;
+          width: min(17.5rem, 60vw);
+          height: auto;
+          object-fit: contain;
+          user-select: none;
+          -webkit-user-drag: none;
+          animation: loaderPulse 2s ease-in-out infinite;
+        }
+
+        .htf-progress-wrapper {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.875rem;
+          width: min(22.5rem, 75vw);
+        }
+
+        .htf-progress-track {
+          width: 100%;
+          height: 0.25rem;
+          background: rgba(255, 255, 255, 0.12);
+          border-radius: 99px;
+          overflow: hidden;
+          backdrop-filter: blur(0.25rem);
+        }
+
+        .htf-progress-fill {
+          height: 100%;
+          border-radius: 99px;
+          background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.9),
+            rgba(255, 255, 255, 0.9)
+          );
+          background-size: 200% 100%;
+          animation: shimmer 2s linear infinite;
+          will-change: width;
+          box-shadow: 0 0 0.75rem rgba(168, 130, 255, 0.4);
+        }
+
+        .htf-progress-info {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+        }
+
+        .htf-progress-text {
+          font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+          font-size: 0.75rem;
+          font-weight: 500;
+          letter-spacing: 0.03rem;
+          color: rgba(255, 255, 255, 0.5);
+          text-transform: uppercase;
+        }
+
+        .htf-progress-percent {
+          font-family: 'JetBrains Mono', 'Fira Code', monospace;
+          font-size: 0.75rem;
+          font-weight: 600;
+          color: rgba(255, 255, 255, 0.6);
+          min-width: 2.25rem;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
         }
       `}</style>
 
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link href="https://fonts.googleapis.com/css2?family=Bangers&family=VT323&display=swap" rel="stylesheet" />
+      <div className={`htf-loader${phase === "fading" ? " fading" : ""}`}>
+        <div className="htf-loader-bg" />
+        <div className="htf-loader-overlay" />
 
-      <div className={`loader-root${phase === "closing" ? " closing" : ""}`}>
-        {/* Shutter panels — only render when closing */}
-        {phase === "closing" && (
-          <>
-            <div className="shutter-top" />
-            <div className="shutter-bottom" />
-          </>
-        )}
+        <img
+          src={logoWhite}
+          alt="HackToFuture"
+          className="htf-loader-logo"
+          draggable={false}
+        />
 
-        {/* BG action words */}
-        {[
-          { text: "POW!", top: "8%", left: "5%", size: 48, rot: -12 },
-          { text: "HACK!", top: "15%", right: "4%", size: 36, rot: 8 },
-          { text: "ZAP!", bottom: "10%", left: "8%", size: 42, rot: 6 },
-          { text: "BOOM!", bottom: "18%", right: "6%", size: 38, rot: -8 },
-        ].map((w, i) => (
-          <div
-            key={i}
-            className="action-word"
-            style={{
-              top: w.top, left: (w as any).left, right: (w as any).right, bottom: w.bottom,
-              fontSize: w.size, transform: `rotate(${w.rot}deg)`,
-              color: i % 2 === 0 ? "#c0392b" : "#111",
-              animation: `float-dot ${2 + i * 0.5}s ease-in-out infinite`,
-              animationDelay: `${i * 0.3}s`,
-            }}
-          >
-            {w.text}
+        <div className="htf-progress-wrapper">
+          <div className="htf-progress-track">
+            <div
+              className="htf-progress-fill"
+              style={{ width: `${progress}%` }}
+            />
           </div>
-        ))}
-
-        <div className="card">
-          <div className="card-header">
-            <span className="htf-title">HACKTOFUTURE</span>
-            <span className="badge">4.0</span>
-          </div>
-          <div className="card-body">
-            <div className="corner-deco tl">36HR</div>
-            <div className="corner-deco br">SJEC</div>
-
-            <div className="robot-row">
-              <div className="robot">
-                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <line x1="32" y1="4" x2="32" y2="12" stroke="#111" strokeWidth="2.5" strokeLinecap="round"/>
-                  <circle cx="32" cy="3" r="3" fill="#c0392b" stroke="#111" strokeWidth="2"/>
-                  <rect x="14" y="12" width="36" height="26" rx="4" fill="#fffdf8" stroke="#111" strokeWidth="2.5"/>
-                  <rect x="19" y="19" width="10" height="8" rx="2" fill="#111"/>
-                  <rect x="35" y="19" width="10" height="8" rx="2" fill="#111"/>
-                  <circle cx="24" cy="23" r="3" fill="#c0392b"/>
-                  <circle cx="40" cy="23" r="3" fill="#c0392b"/>
-                  <path d="M22 31 Q32 37 42 31" stroke="#111" strokeWidth="2.5" strokeLinecap="round" fill="none"/>
-                  <rect x="20" y="39" width="24" height="18" rx="3" fill="#c0392b" stroke="#111" strokeWidth="2.5"/>
-                  <rect x="25" y="44" width="14" height="8" rx="2" fill="#111" opacity="0.3"/>
-                  <rect x="22" y="56" width="8" height="6" rx="2" fill="#111"/>
-                  <rect x="34" y="56" width="8" height="6" rx="2" fill="#111"/>
-                  <rect x="8" y="40" width="12" height="6" rx="3" fill="#fffdf8" stroke="#111" strokeWidth="2"/>
-                  <rect x="44" y="40" width="12" height="6" rx="3" fill="#fffdf8" stroke="#111" strokeWidth="2"/>
-                </svg>
-              </div>
-              <div className="speech-bubble">
-                {getMessage()}
-                <span className="dots-text">{dots}</span>
-              </div>
-            </div>
-
-            <div className="progress-label">
-              <span>PROGRESS</span>
-              <span style={{ color: "#c0392b", fontWeight: "bold" }}>{progress.toFixed(0)}%</span>
-            </div>
-            <div className="progress-track">
-              <div className="progress-fill" style={{ width: `${progress}%` }} />
-              <div className="progress-pct">{progress.toFixed(0)}%</div>
-            </div>
-
-            <div className="seg-row">
-              {Array.from({ length: 20 }).map((_, i) => (
-                <div key={i} className={`seg ${i < filled ? "on" : "off"}`} />
-              ))}
-            </div>
-
-            <div className="gear-row">
-              <svg className="gear" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.92c.04-.3.07-.6.07-.93s-.03-.63-.07-.93l2-1.56c.18-.14.23-.41.12-.61l-1.9-3.29c-.12-.2-.37-.26-.57-.2l-2.36.95a6.9 6.9 0 00-1.6-.93l-.36-2.51A.484.484 0 0014 2h-4c-.25 0-.46.18-.5.42l-.36 2.51a6.9 6.9 0 00-1.61.93L5.17 4.9c-.2-.07-.45 0-.57.2L2.7 8.39c-.11.2-.06.47.12.61l2 1.56c-.04.3-.07.61-.07.94s.03.63.07.93l-2 1.56c-.18.14-.23.41-.12.61l1.9 3.29c.12.2.37.26.57.2l2.36-.95a6.9 6.9 0 001.6.93l.36 2.51c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.36-2.51a6.9 6.9 0 001.61-.93l2.36.95c.2.07.45 0 .57-.2l1.9-3.29c.11-.2.06-.47-.12-.61l-2-1.56z"/>
-              </svg>
-              <div className="status-text">
-                {progress >= 100 ? "SYSTEM READY" : `INITIALIZING... ${progress.toFixed(0)}%`}
-              </div>
-              <svg className="gear rev" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 15.5A3.5 3.5 0 018.5 12 3.5 3.5 0 0112 8.5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5m7.43-2.92c.04-.3.07-.6.07-.93s-.03-.63-.07-.93l2-1.56c.18-.14.23-.41.12-.61l-1.9-3.29c-.12-.2-.37-.26-.57-.2l-2.36.95a6.9 6.9 0 00-1.6-.93l-.36-2.51A.484.484 0 0014 2h-4c-.25 0-.46.18-.5.42l-.36 2.51a6.9 6.9 0 00-1.61.93L5.17 4.9c-.2-.07-.45 0-.57.2L2.7 8.39c-.11.2-.06.47.12.61l2 1.56c-.04.3-.07.61-.07.94s.03.63.07.93l-2 1.56c-.18.14-.23.41-.12.61l1.9 3.29c.12.2.37.26.57.2l2.36-.95a6.9 6.9 0 001.6.93l.36 2.51c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.36-2.51a6.9 6.9 0 001.61-.93l2.36.95c.2.07.45 0 .57-.2l1.9-3.29c.11-.2.06-.47-.12-.61l-2-1.56z"/>
-              </svg>
-            </div>
+          <div className="htf-progress-info">
+            <span className="htf-progress-text">{statusText}</span>
+            <span className="htf-progress-percent">{roundedProgress}%</span>
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }

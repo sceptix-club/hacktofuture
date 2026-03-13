@@ -2,51 +2,59 @@ import { Image } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
-import halftoneUrl from "./halftone.png";
+import { wallImagesPrefix } from "../lib/utils";
 
 interface MarqueeGridProps {
   viewportWidth: number;
   imageUrls?: string[][];
-  columns?: number;
-  imagesPerColumn?: number;
-  position?: [number, number, number];
-  imageScale?: [number, number];
-  imageSpacing?: number;
-  columnSpacing?: number;
-  marqueeSpeed?: number;
+  scrollProgressRef: React.RefObject<number>;
 }
 
 const MarqueeGrid = ({
   viewportWidth,
   imageUrls,
-  columns = 6,
-  imagesPerColumn,
-  position,
-  imageScale,
-  imageSpacing,
-  columnSpacing,
-  marqueeSpeed,
+  scrollProgressRef,
 }: MarqueeGridProps) => {
-  if (viewportWidth < 15) {
-    (columns = 4),
-      (imagesPerColumn = 3),
-      (position = [0, 0, -8]),
-      (imageScale = [3, 4]),
-      (imageSpacing = 5),
-      (columnSpacing = 3.5),
-      (marqueeSpeed = 2);
-  } else {
-    (columns = 6),
-      (imagesPerColumn = 3),
-      (position = [0, 0, -10]),
-      (imageScale = [7, 9]),
-      (imageSpacing = 10),
-      (columnSpacing = 8),
-      (marqueeSpeed = 2);
-  }
+  const config = useMemo(() => {
+    if (viewportWidth < 15) {
+      return {
+        columns: 4,
+        imagesPerColumn: 4,
+        position: [0, 0, -8] as [number, number, number],
+        imageScale: [3, 4] as [number, number],
+        imageSpacing: 5,
+        columnSpacing: 3.5,
+        marqueeSpeed: 2,
+      };
+    }
+    return {
+      columns: 6,
+      imagesPerColumn: 4,
+      position: [0, 0, -10] as [number, number, number],
+      imageScale: [7, 9] as [number, number],
+      imageSpacing: 10,
+      columnSpacing: 8,
+      marqueeSpeed: 2,
+    };
+  }, [viewportWidth]);
+
+  const {
+    columns,
+    imagesPerColumn,
+    position,
+    imageScale,
+    imageSpacing,
+    columnSpacing,
+    marqueeSpeed,
+  } = config;
 
   const groupRef = useRef<THREE.Group>(null);
-  const columnRefs = useRef<(THREE.Group | null)[]>([]);
+  
+  // Refs for each image mesh in each column
+  // Structure: imageRefs[colIndex][imageIndex] = THREE.Mesh
+  const imageRefs = useRef<(THREE.Mesh | null)[][]>(
+    Array(columns).fill(null).map(() => [])
+  );
 
   const imageColumns = useMemo(() => {
     if (imageUrls) {
@@ -54,68 +62,104 @@ const MarqueeGrid = ({
     }
 
     return Array.from({ length: columns }, (_, colIndex) =>
-      Array.from({ length: imagesPerColumn }, (_, imgIndex) => ({
-        url: `https://picsum.photos/seed/${colIndex * imagesPerColumn + imgIndex
-          }/400/500`,
-      }))
+      Array.from({ length: imagesPerColumn }, (_, imgIndex) => {
+        const imageNum = (colIndex * imagesPerColumn + imgIndex + 1) % 14 || 14;
+        return {
+          url: `${wallImagesPrefix}${imageNum}.webp`,
+        };
+      })
     );
   }, [imageUrls, columns, imagesPerColumn]);
 
-  useFrame(() => {
-    columnRefs.current.forEach((col, index) => {
-      if (!col) return;
+  // Total height of one complete set
+  const totalHeight = imagesPerColumn * imageSpacing;
+  
+  // We render 3 sets (above, middle, below) for seamless scrolling
+  const sets = 3;
+  const fullHeight = totalHeight * sets;
 
-      const dir = index % 2 === 0 ? 1 : -1;
-      const speed = (0.3 + index * 0.15) * marqueeSpeed;
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
 
-      col.position.y -= speed * 0.005 * dir;
-      const columnHeight = (imageColumns[index].length * imageSpacing) / 3;
-      col.position.y =
-        ((col.position.y % columnHeight) + columnHeight) % columnHeight;
+    const scrollProgress = scrollProgressRef?.current ?? 0;
+
+    const scene1Threshold = 0.072132;
+    const isScene1 = scrollProgress < scene1Threshold;
+
+    groupRef.current.visible = isScene1;
+
+    if (!isScene1) return;
+
+    // Animate each column's images
+    imageRefs.current.forEach((colImages, colIndex) => {
+      const dir = colIndex % 2 === 0 ? 1 : -1;
+      const speed = (0.3 + colIndex * 0.15) * marqueeSpeed;
+      const movement = speed * delta * dir;
+
+      colImages.forEach((mesh) => {
+        if (!mesh) return;
+
+        mesh.position.y += movement;
+
+        // Wrap position for infinite scroll
+        // When image goes too far up, move it to bottom
+        // When image goes too far down, move it to top
+        const halfHeight = fullHeight / 2;
+
+        if (mesh.position.y > halfHeight) {
+          mesh.position.y -= fullHeight;
+        } else if (mesh.position.y < -halfHeight) {
+          mesh.position.y += fullHeight;
+        }
+      });
     });
   });
 
+  // Reset refs when columns change
+  useMemo(() => {
+    imageRefs.current = Array(columns).fill(null).map(() => []);
+  }, [columns]);
+
   return (
     <group ref={groupRef} position={position}>
-      {imageColumns.map((images, colIndex) => (
-        <group
-          key={colIndex}
-          ref={(el) => (columnRefs.current[colIndex] = el)}
-          position={[
-            (colIndex - (imageColumns.length - 1) / 2) * columnSpacing,
-            0,
-            0,
-          ]}
-        >
-          {images.map((img, imgIndex) => (
-            <group key={imgIndex} position={[0, -imgIndex * imageSpacing, 0]}>
-              <Image
-                url={img.url}
-                scale={imageScale}
-                transparent
-                opacity={0.5}
-              />
-            </group>
-          ))}
-          {images.map((img, imgIndex) => (
-            <group
-              key={`dup-${imgIndex}`}
-              position={[
-                0,
-                -imgIndex * imageSpacing + images.length * imageSpacing,
-                0,
-              ]}
-            >
-              <Image
-                url={img.url}
-                scale={imageScale}
-                transparent
-                opacity={0.5}
-              />
-            </group>
-          ))}
-        </group>
-      ))}
+      {imageColumns.map((images, colIndex) => {
+        let imageIndex = 0;
+
+        return (
+          <group
+            key={colIndex}
+            position={[
+              (colIndex - (imageColumns.length - 1) / 2) * columnSpacing,
+              0,
+              0,
+            ]}
+          >
+            {/* Render 3 sets: one above, one middle, one below */}
+            {[-1, 0, 1].map((setOffset) =>
+              images.map((img, imgIdx) => {
+                const currentImageIndex = imageIndex++;
+                const yPos = -imgIdx * imageSpacing + setOffset * totalHeight;
+
+                return (
+                  <Image
+                    key={`${setOffset}-${imgIdx}`}
+                    ref={(el) => {
+                      if (imageRefs.current[colIndex]) {
+                        imageRefs.current[colIndex][currentImageIndex] = el as unknown as THREE.Mesh;
+                      }
+                    }}
+                    url={img.url}
+                    scale={imageScale}
+                    position={[0, yPos, 0]}
+                    transparent
+                    opacity={0.5}
+                  />
+                );
+              })
+            )}
+          </group>
+        );
+      })}
     </group>
   );
 };

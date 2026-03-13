@@ -4,7 +4,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import {
   MotionPathControls,
   useMotion,
-  useTexture,
   Float,
   Environment,
 } from "@react-three/drei";
@@ -182,10 +181,10 @@ const Sticker = forwardRef<
   { scale?: number; position?: [number, number, number] }
 >(({ ...props }, ref) => {
   // Textures are still loaded but kept available for future mesh content
-  const [smiley, invert] = useTexture([
-    "/textures/Sticker_1024x1024@2x.png",
-    "/textures/Sticker_1024x1024@2x_invert.png",
-  ]);
+  // const [smiley, invert] = useTexture([
+  //   "/textures/Sticker_1024x1024@2x.png",
+  //   "/textures/Sticker_1024x1024@2x_invert.png",
+  // ]);
 
   return <mesh ref={ref} {...props} />;
 });
@@ -233,7 +232,7 @@ function Scene({
         // Dropped multisampling 4 → 0; MSAA inside a post-process composer is
         // expensive and largely redundant when DotScreen is active anyway.
         multisampling={0}
-        enableNormalPass={false}   // not needed by any of the three effects
+        enableNormalPass={false} // not needed by any of the three effects
       >
         {/* Saturation-only HueSaturation — hue=0 skips the hue rotation math */}
         <HueSaturation hue={0} saturation={-1} />
@@ -266,9 +265,7 @@ export default function BackgroundNew({
   className,
 }: BackgroundNewProps) {
   return (
-    <div
-      className={`w-full h-full pointer-events-none ${className ?? ""}`}
-    >
+    <div className={`w-full h-full pointer-events-none ${className ?? ""}`}>
       <Canvas
         camera={{ position: [10, 15, -10], fov: 45 }}
         // DPR clamped to [1, 1] — retina rendering of a blurred dot-screen
