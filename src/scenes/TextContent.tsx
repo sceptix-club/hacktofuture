@@ -351,20 +351,17 @@ const TextContent = ({
           >
             <div className="max-w-[95vw] overflow-hidden text-center">
               <h2
-                className="text-white font-bold"
-                style={{ fontSize: "clamp(1.5rem, 5vw, 3rem)" }}
+                className="text-white hero-title"
+                style={{
+                  fontSize: "clamp(1.5rem, 5vw, 3rem)",
+                  textShadow: "0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 5px black",
+                }}
               >
                 THEME {n}: {title}
               </h2>
               <p
-                className="text-white/80 mt-2"
-                style={{ fontSize: "clamp(0.9rem, 2.5vw, 1.3rem)" }}
-              >
-                Click to view problem statements
-              </p>
-              <p
                 className="text-white/50 mt-3 uppercase tracking-widest"
-                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)" }}
+                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)", textShadow: "0 0 1px black", }}
               >
                 Click to explore →
               </p>

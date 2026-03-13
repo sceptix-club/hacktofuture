@@ -31,12 +31,12 @@ export const TEAM_MEMBERS: TeamMember[] = [
     photo: "/ashley.webp",
     links: [
       {
-        label: "Instagram",
-        url: "https://www.instagram.com/ashley_pinto25?igsh=dzF0ZHNieGNlNmho&utm_source=qr",
-      },
-      {
         label: "LinkedIn",
         url: "https://www.linkedin.com/in/ashley-cleon-pinto/",
+      },
+      {
+        label: "Instagram",
+        url: "https://www.instagram.com/ashley_pinto25?igsh=dzF0ZHNieGNlNmho&utm_source=qr",
       },
     ],
   },
@@ -46,12 +46,12 @@ export const TEAM_MEMBERS: TeamMember[] = [
     photo: "/shovin.webp",
     links: [
       {
-        label: "Instagram",
-        url: "https://www.instagram.com/shovindsouza?igsh=bGZiMnJlM2t3aTMy",
-      },
-      {
         label: "LinkedIn",
         url: "https://www.linkedin.com/in/shovin-dsouza-72a54328b/?originalSubdomain=in",
+      },
+      {
+        label: "Instagram",
+        url: "https://www.instagram.com/shovindsouza?igsh=bGZiMnJlM2t3aTMy",
       },
     ],
   },
@@ -61,12 +61,12 @@ export const TEAM_MEMBERS: TeamMember[] = [
     photo: "/priyal.webp",
     links: [
       {
-        label: "LinkedIn",
-        url: "https://www.linkedin.com/in/priyal-shemoan-saldanha-109235291/",
-      },
-      {
         label: "Instagram",
         url: "https://www.instagram.com/priyalll_sal?igsh=YW0zNW04ZXBqcG54",
+      },
+      {
+        label: "LinkedIn",
+        url: "https://www.linkedin.com/in/priyal-shemoan-saldanha-109235291/",
       },
     ],
   },
@@ -117,11 +117,11 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Press & Media Lead",
     photo: "/nithin.webp",
     links: [
+      // { label: "LinkedIn", url: "" },
       {
         label: "Instagram",
         url: "https://www.instagram.com/nearlynithin?igsh=Z2JlZ2RqcXJydWI3",
       },
-      { label: "LinkedIn", url: "#" },
     ],
   },
   {
@@ -213,8 +213,11 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Stage & Venue Lead",
     photo: "/hemanth.webp",
     links: [
-      { label: "LinkedIn", url: "#" },
-      { label: "Instagram", url: "#" },
+      // { label: "LinkedIn", url: "" },
+      {
+        label: "Instagram",
+        url: "https://www.instagram.com/hemanth_adthale?igsh=MTNjY3hsaGsyeGxrZw==",
+      },
     ],
   },
   {
@@ -264,11 +267,11 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Cultural Lead",
     photo: "/sancia.webp",
     links: [
+      // { label: "LinkedIn", url: "" },
       {
         label: "Instagram",
         url: "https://www.instagram.com/sanciasanctis?igsh=eGdsN2s5cXk5cHNs",
       },
-      { label: "LinkedIn", url: "" },
     ],
   },
   {
@@ -276,8 +279,11 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Cultural Lead",
     photo: "/lenn.webp",
     links: [
-      { label: "LinkedIn", url: "#" },
-      { label: "Instagram", url: "#" },
+      {
+        label: "LinkedIn",
+        url: "https://www.linkedin.com/in/lenn-shaun-sequeira-3242602b9/",
+      },
+      // { label: "Instagram", url: "" },
     ],
   },
 ];
