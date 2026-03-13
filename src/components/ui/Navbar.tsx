@@ -74,7 +74,7 @@ const Navbar = ({ className }: NavbarProps) => {
         >
           <div className="h-7 w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 relative">
             <img
-              src="/htf-logo.svg"
+              src="/logo_white.svg"
               alt="Logo"
               className="object-cover h-full w-full drop-shadow-md"
               style={{ filter: "invert(1)" }}

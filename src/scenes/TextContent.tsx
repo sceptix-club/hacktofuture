@@ -323,16 +323,16 @@ const TextContent = ({
       {[1, 2, 3, 4].map((n, i) => {
         const themeData = [
           {
-            slug: "agentic-cloud-architecture",
-            title: "Agentic Cloud Architecture",
+            slug: "cloud-architecture",
+            title: "Cloud Architecture",
           },
           {
-            slug: "agentic-devops",
-            title: "Agentic DevOps",
+            slug: "devops",
+            title: "DevOps",
           },
           {
-            slug: "agentic-cybersecurity",
-            title: "Agentic Cybersecurity",
+            slug: "cybersecurity",
+            title: "Cybersecurity",
           },
           {
             slug: "open-innovation",
@@ -360,16 +360,16 @@ const TextContent = ({
               >
                 THEME {n}: {title}
               </h2>
-              <p
-                className="text-white/50 mt-3 uppercase tracking-widest"
-                style={{
-                  fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
-                  textShadow: "0 0 1px black",
-                }}
-              >
-                Click to explore →
-              </p>
             </div>
+            <p
+              className="text-white mt-12 absolute left-1/2 -translate-x-1/2 top-[300%] uppercase tracking-widest"
+              style={{
+                fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
+                textShadow: "0 0 1px black",
+              }}
+            >
+              Click To Explore
+            </p>
           </div>
         );
       })}

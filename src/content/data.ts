@@ -6,29 +6,25 @@ export type ProblemStatement = {
 };
 
 export type Theme = {
-  slug:
-    | "agentic-devops"
-    | "agentic-cybersecurity"
-    | "agentic-cloud-architecture"
-    | "open-innovation";
+  slug: "devops" | "cybersecurity" | "cloud-architecture" | "open-innovation";
   label: string;
   icon: string;
   problemStatements: ProblemStatement[];
 };
 
 export const VALID_THEME_SLUGS = [
-  "agentic-devops",
-  "agentic-cybersecurity",
-  "agentic-cloud-architecture",
+  "devops",
+  "cybersecurity",
+  "cloud-architecture",
   "open-innovation",
 ] as const;
 
 export type ThemeSlug = (typeof VALID_THEME_SLUGS)[number];
 
 export const themes: Record<ThemeSlug, Theme> = {
-  "agentic-devops": {
-    slug: "agentic-devops",
-    label: "Agentic DevOps",
+  devops: {
+    slug: "devops",
+    label: "DevOps",
     icon: "/icons/devops.png",
     problemStatements: [
       {
@@ -52,9 +48,9 @@ export const themes: Record<ThemeSlug, Theme> = {
     ],
   },
 
-  "agentic-cybersecurity": {
-    slug: "agentic-cybersecurity",
-    label: "Agentic Cybersecurity",
+  cybersecurity: {
+    slug: "cybersecurity",
+    label: "Cybersecurity",
     icon: "/icons/cybersecurity.png",
     problemStatements: [
       {
@@ -77,9 +73,9 @@ export const themes: Record<ThemeSlug, Theme> = {
     ],
   },
 
-  "agentic-cloud-architecture": {
-    slug: "agentic-cloud-architecture",
-    label: "Agentic Cloud Architecture",
+  "cloud-architecture": {
+    slug: "cloud-architecture",
+    label: "Cloud Architecture",
     icon: "/icons/cloud.png",
     problemStatements: [
       {
