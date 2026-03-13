@@ -158,65 +158,57 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       camera.rotation.set(0, 0, a + Math.PI / 2);
     };
 
-		const start = 4.55
-		const duration = 0.65/2
-
     tl.set(
       scene5State,
       { angle: Math.PI * 1.5, onUpdate: updateCardCamera },
-      // 4.55
-			start
+      4.55
     );
 
     tl.to(
       scene5State,
       {
         angle: Math.PI * 1.5,
-        duration: duration,
+        duration: 0.5,
         onUpdate: updateCardCamera,
       },
-      // 4.55
-			start
+      4.55
     );
 
     tl.to(scene5State, {
       angle: Math.PI * 2,
-      duration: duration,
+      duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
     tl.to(scene5State, {
       angle: Math.PI * 2,
-      duration: duration,
+      duration: 0.4,
       onUpdate: updateCardCamera,
     });
 
     tl.to(scene5State, {
       angle: Math.PI * 2.5,
-      duration: duration,
+      duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
     tl.to(scene5State, {
       angle: Math.PI * 2.5,
-      duration: duration,
+      duration: 0.4,
       onUpdate: updateCardCamera,
     });
 
     tl.to(scene5State, {
       angle: Math.PI * 3,
-      duration: duration,
+      duration: 0.3,
       onUpdate: updateCardCamera,
     });
 
     tl.to(scene5State, {
       angle: Math.PI * 3,
-      duration: duration,
+      duration: 0.4,
       onUpdate: updateCardCamera,
     });
-
-		const scene6start = 4.55 + duration*10
-		const scene6duration = 0.4
 
     const scene6State = { progress: 0 };
     tl.to(
@@ -235,8 +227,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           camera.rotation.set(0, 0, a + Math.PI / 2);
         },
       },
-      // 7.8
-			scene6start
+      7.8
     );
 
     const cardFade = { opacity: 1 };
@@ -244,7 +235,7 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
       cardFade,
       {
         opacity: 0,
-        duration: scene6duration,
+        duration: 0.4,
         onUpdate: () => {
           if (!cardsGroupRef.current) return;
           cardsGroupRef.current.traverse((child) => {
@@ -259,12 +250,10 @@ const Experience = ({ scrollProgressRef, scenes }: ExperienceProps) => {
           });
         },
       },
-      // 8.2
-			scene6start + scene6duration
+      8.2
     );
 
-    // tl.set({}, {}, 12.2);
-		tl.set({}, {}, scene6start + scene6duration * 2);
+    tl.set({}, {}, 12.2);
 
     setTimeline(tl);
 

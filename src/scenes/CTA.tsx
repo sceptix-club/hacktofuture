@@ -32,7 +32,6 @@ const ComicDots = ({
   />
 );
 
-
 const CTA = forwardRef<HTMLDivElement, CTAProps>(
   (
     {
@@ -55,8 +54,6 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
           opacity: 0,
         }}
       >
-     
-
         <ComicDots
           style={{
             top: "5%",
@@ -162,7 +159,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   whiteSpace: "nowrap",
                 }}
               >
-                ▸ FREE REGISTRATION ▸ 36 HOURS ▸ INFINITE CHAOS ▸
+                ▸ CLOSES ON 24 MARCH 11:59 PM ▸
               </div>
             </div>
           </div>
