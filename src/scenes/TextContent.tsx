@@ -317,11 +317,7 @@ const TextContent = ({
         ref={scene4TextRef}
         className="fixed left-0 right-0 top-[50%] -translate-y-1/2 z-20 flex items-center justify-center px-4"
       >
-        <TimerTimeline
-          onSettledChange={(cb) => {
-            timerSettledRef.current = cb;
-          }}
-        />
+        <TimerTimeline />
       </div>
 
       {[1, 2, 3, 4].map((n, i) => {
