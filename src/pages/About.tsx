@@ -70,9 +70,9 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
   const stats = [
     { label: "PRIZES WORTH", value: "₹4,00,000", color: "#E8003D" },
     { label: "TEAMS", value: "40", color: "#00C6FF" },
-    { label: "DATES", value: "15-17 APR", color: "#FFE105" },
+    { label: "DATES", value: "15 - 17 APR", color: "#FFE105" },
     { label: "THEMES", value: "4", color: "#A855F7" },
-    { label: "VENUE", value: "Kalam Hall", color: "#FF8A00", colSpan: 2 },
+    { label: "VENUE", value: "Kalam Auditorium", color: "#FF8A00", colSpan: 2 },
   ];
 
   return (
@@ -256,18 +256,10 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                       className="mt-8 pt-5 flex items-center justify-between"
                       style={{ borderTop: "2px solid rgba(0,0,0,0.1)" }}
                     >
-                      <span
-                        className="comic-sans font-bold"
-                        style={{
-                          fontSize: "clamp(0.7rem, 1vw, 0.8rem)",
-                          color: "rgba(0,0,0,0.5)",
-                          textTransform: "uppercase",
-                          letterSpacing: "0.1em",
-                        }}
-                      >
-                        EST. 2023
-                      </span>
-                      <span
+                      <a
+                        href="https://maps.google.com/?q=St+Joseph+Engineering+College,+Mangaluru"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="comic-sans font-bold px-3 py-1"
                         style={{
                           fontSize: "clamp(0.7rem, 1vw, 0.8rem)",
@@ -276,11 +268,13 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                           borderRadius: "4px",
                           textTransform: "uppercase",
                           letterSpacing: "0.1em",
+                          textDecoration: "none",
+                          display: "inline-block",
                         }}
                       >
                         <MapPin className="inline-block mr-1 mb-1" size={14} />
                         SJEC MANGALURU
-                      </span>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -370,9 +364,9 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                         lineHeight: 1.2,
                       }}
                     >
-                      NO TUTORIALS.
+                      FREE
                       <br />
-                      <span style={{ color: "#FFE105" }}>JUST EXECUTION.</span>
+                      <span style={{ color: "#FFE105" }}>REGISTRATION.</span>
                     </h3>
                   </div>
                 </div>

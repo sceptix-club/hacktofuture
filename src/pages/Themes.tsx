@@ -17,6 +17,14 @@ const colors = {
 /* ─── Theme card data ─── */
 const THEME_CARDS = [
   {
+    slug: "agentic-cloud-architecture" as ThemeSlug,
+    title: "Agentic Cloud Architecture",
+    description:
+      "Design self-healing and intelligent cloud systems where autonomous agents monitor infrastructure, diagnose failures, optimize resource allocation, and maintain resilient Kubernetes environments.",
+    accent: colors.blue,
+    number: "01",
+  },
+  {
     slug: "agentic-devops" as ThemeSlug,
     title: "Agentic DevOps",
     description:
@@ -30,14 +38,6 @@ const THEME_CARDS = [
     description:
       "Build the next generation of AI-driven security systems capable of continuously verifying identities, simulating cyber attacks, detecting threats, and autonomously defending enterprise infrastructure.",
     accent: colors.yellow,
-    number: "02",
-  },
-  {
-    slug: "agentic-cloud-architecture" as ThemeSlug,
-    title: "Agentic Cloud Architecture",
-    description:
-      "Design self-healing and intelligent cloud systems where autonomous agents monitor infrastructure, diagnose failures, optimize resource allocation, and maintain resilient Kubernetes environments.",
-    accent: colors.blue,
     number: "03",
   },
   {

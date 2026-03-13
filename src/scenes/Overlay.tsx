@@ -66,7 +66,7 @@ export function Overlay() {
           src="/sponsors/egdk.png"
           alt="logo"
           style={{
-            height: "clamp(20px, 3vw, 30px)",
+            height: "clamp(40px, 3vw, 60px)",
             objectFit: "contain",
             textAlign: "right",
             display: "flex",
@@ -79,7 +79,7 @@ export function Overlay() {
           src="/sjec-gold.png"
           alt="logo"
           style={{
-            height: "clamp(20px, 3vw, 30px)",
+            height: "clamp(40px, 3vw, 60px)",
             objectFit: "contain",
             textAlign: "right",
             display: "flex",
