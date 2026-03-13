@@ -117,7 +117,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
     role: "Press & Media Lead",
     photo: "/nithin.webp",
     links: [
-      // { label: "LinkedIn", url: "" },
+      { label: "LinkedIn", url: "https://www.linkedin.com/in/nithinumesh" },
       {
         label: "Instagram",
         url: "https://www.instagram.com/nearlynithin?igsh=Z2JlZ2RqcXJydWI3",

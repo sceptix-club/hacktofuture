@@ -30,7 +30,7 @@ const THEME_CARDS = [
     description:
       "Reimagine modern DevOps with autonomous agents that monitor pipelines, diagnose failures, repair CI/CD workflows, and orchestrate intelligent software releases while maintaining human oversight.",
     accent: colors.red,
-    number: "01",
+    number: "02",
   },
   {
     slug: "agentic-cybersecurity" as ThemeSlug,

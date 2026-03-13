@@ -14,7 +14,7 @@ const sponsorLogos = [
   },
   {
     label: "EGDK India",
-    logoName: "/sponsors/egdk.png",
+    logoName: "/sponsors/egdk-black.png",
     website: "https://egsoftware.com/",
   },
 ];

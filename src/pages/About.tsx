@@ -172,7 +172,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                     />
 
                     {/* Number/Icon badge */}
-                    <div className="flex items-start justify-between mb-6">
+                    {/* <div className="flex items-start justify-between mb-6">
                       <span
                         className="hero-title font-black"
                         style={{
@@ -210,7 +210,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                           <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
                         </svg>
                       </div>
-                    </div>
+                    </div> */}
 
                     <h3
                       className="hero-title font-black uppercase mb-5"
@@ -220,7 +220,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                         lineHeight: 1.1,
                       }}
                     >
-                      The Hackathon
+                      HackToFuture 4.O
                     </h3>
 
                     <div
@@ -233,22 +233,24 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                     >
                       <p>
                         <strong className="text-black font-bold">
-                          HackToFuture
+                          HackToFuture 4.O
                         </strong>{" "}
-                        is a 36-hour intercollegiate hackathon hosted annually
-                        by the Sceptix Club at St Joseph Engineering College,
-                        Mangaluru. Now in its fourth edition, it brings together
-                        the brightest student minds to build, break, and ship
-                        real products under pressure — no tutorials, no safety
-                        nets, just ideas and execution.
+                        is a 36 hour national level hackathon organized by the
+                        Sceptix Club at St Joseph Engineering College,
+                        Mangaluru. Now in its fourth edition, the event brings
+                        together passionate student innovators from across the
+                        country to design, build, and launch real solutions
+                        within an intense build environment driven by
+                        creativity, collaboration, and execution.
                       </p>
                       <p>
-                        From machine learning pipelines to decentralised
-                        protocols, from health-tech tools to open innovation
-                        experiments — HTF has always been a stage for students
-                        who refuse to wait for permission to build the future.
-                        Every year the stakes get higher. Every year the builds
-                        get bolder.
+                        With themes spanning Agentic DevOps, Agentic
+                        Cybersecurity, Agentic Cloud Architecture, and Open
+                        Innovation, HackToFuture challenges participants to push
+                        the boundaries of modern technology. From autonomous
+                        systems and intelligent infrastructure to bold
+                        experimental ideas, HTF is a platform for students who
+                        choose to build the future rather than wait for it.
                       </p>
                     </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import logoWhite from "../assets/logo_white.png";
+import logoWhite from "../assets/logo_white.svg";
 
 type LoaderProps = {
   canDismiss: boolean;

@@ -14,7 +14,7 @@ interface Sponsor {
   logo: string;
   url?: string;
   description?: string;
-  founded?: string;
+  link?: string;
   headquarters?: string;
   industry?: string;
 }
@@ -23,11 +23,11 @@ interface Sponsor {
 const TITLE_SPONSORS: Sponsor[] = [
   {
     name: "EGDK India",
-    logo: "/sponsors/egdk.png",
+    logo: "/sponsors/egdk-black.png",
     url: "#",
     description:
-      "EGDK India is an IT company based in Mangaluru and a wholly owned subsidiary of the Danish software company EG A/S, working on product development, R&D, AI, UX, and enterprise software solutions for global markets.",
-    founded: "2019",
+      "EGDK India develops software built for the industry. All the solutions stand on the shoulders of EG’s size, stability, innovation, and security.",
+    link: "https://egsoftware.com/global",
     headquarters: "Mangalore, India",
     industry: "Technology",
   },
@@ -335,8 +335,11 @@ function SponsorDialog({
                 {sponsor.industry}
               </span>
             )}
-            {sponsor.founded && (
-              <span
+            {sponsor.link && (
+              <a
+                href={sponsor.link}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="comic-sans uppercase tracking-wider"
                 style={{
                   fontSize: "0.65rem",
@@ -345,10 +348,12 @@ function SponsorDialog({
                   borderRadius: 2,
                   color: "#444",
                   background: "rgba(0,0,0,0.05)",
+                  textDecoration: "none",
+                  display: "inline-block",
                 }}
               >
-                Est. {sponsor.founded}
-              </span>
+                Website
+              </a>
             )}
             {sponsor.headquarters && (
               <span
@@ -766,7 +771,7 @@ export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
                     lineHeight: 1.6,
                   }}
                 >
-                  Meet the organizations powering HackToFuture 4.0 — and compete
+                  Meet the organizations powering HackToFuture 4.0 and compete
                   for an incredible prize pool up for grabs.
                 </p>
               </div>

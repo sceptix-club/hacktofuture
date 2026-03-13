@@ -302,7 +302,7 @@ const TextContent = ({
         className="fixed left-0 right-0 top-1/2 -translate-y-1/2 z-20 flex justify-center pointer-events-none"
       >
         <SponsorsBento
-          title={{ name: "EGDK", logo: "/sponsors/egdk.png" }}
+          title={{ name: "EGDK", logo: "/sponsors/egdk-black.png" }}
           platinum={[{ name: "Company A" }, { name: "Company B" }]}
           gold={[{ name: "Company C" }, { name: "Company D" }]}
           silver={[
@@ -323,16 +323,16 @@ const TextContent = ({
       {[1, 2, 3, 4].map((n, i) => {
         const themeData = [
           {
+            slug: "agentic-cloud-architecture",
+            title: "Agentic Cloud Architecture",
+          },
+          {
             slug: "agentic-devops",
             title: "Agentic DevOps",
           },
           {
             slug: "agentic-cybersecurity",
             title: "Agentic Cybersecurity",
-          },
-          {
-            slug: "agentic-cloud-architecture",
-            title: "Agentic Cloud Architecture",
           },
           {
             slug: "open-innovation",
@@ -354,14 +354,18 @@ const TextContent = ({
                 className="text-white hero-title"
                 style={{
                   fontSize: "clamp(1.5rem, 5vw, 3rem)",
-                  textShadow: "0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 5px black",
+                  textShadow:
+                    "0 0 5px black, 0 0 5px black, 0 0 5px black, 0 0 5px black",
                 }}
               >
                 THEME {n}: {title}
               </h2>
               <p
                 className="text-white/50 mt-3 uppercase tracking-widest"
-                style={{ fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)", textShadow: "0 0 1px black", }}
+                style={{
+                  fontSize: "clamp(0.6rem, 1.2vw, 0.75rem)",
+                  textShadow: "0 0 1px black",
+                }}
               >
                 Click to explore →
               </p>
