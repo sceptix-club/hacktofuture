@@ -10,9 +10,10 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 type Props = {
   data: Theme;
+  loaderDone?: boolean;
 };
 
-export default function PSPageClient({ data }: Props) {
+export default function PSPageClient({ data, loaderDone }: Props) {
   const [activePSId, setActivePSId] = useState<string>(
     data.problemStatements[0].id
   );
@@ -38,20 +39,29 @@ export default function PSPageClient({ data }: Props) {
     );
   }, [activePSId]);
 
+  // ScrollSmoother — only create after loader is done
   useEffect(() => {
-    smootherRef.current = ScrollSmoother.create({
-      wrapper: "#smooth-page-wrapper",
-      content: "#smooth-page-content",
-      smooth: 0.75,
-      effects: false,
-      smoothTouch: 0.25,
-    });
+    if (!loaderDone) return;
+
+    const timer = setTimeout(() => {
+      smootherRef.current = ScrollSmoother.create({
+        wrapper: "#smooth-page-wrapper",
+        content: "#smooth-page-content",
+        smooth: 0.75,
+        effects: false,
+        smoothTouch: 0.25,
+        normalizeScroll: true,
+      });
+      ScrollTrigger.refresh();
+    }, 100);
+
     return () => {
+      clearTimeout(timer);
       smootherRef.current?.kill();
       smootherRef.current = null;
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [loaderDone]);
 
   const colors = {
     red: "#DA100C",
@@ -67,10 +77,13 @@ export default function PSPageClient({ data }: Props) {
           inset: 0,
           backgroundImage: "url('/textures/background.jpg')",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center center",
           backgroundRepeat: "no-repeat",
+          backgroundAttachment: "scroll",
           zIndex: 0,
           pointerEvents: "none",
+          willChange: "unset",
+          transform: "none",
         }}
       />
 
@@ -259,7 +272,7 @@ export default function PSPageClient({ data }: Props) {
                   </div>
 
                   {/* ── The Solution ── */}
-                  {activePS.solution && (
+                  {activePS.prerequisites && (
                     <div
                       className="relative overflow-hidden"
                       style={{
@@ -305,7 +318,7 @@ export default function PSPageClient({ data }: Props) {
                               background: colors.blue,
                             }}
                           />
-                          THE SOLUTION
+                          GOOD TO KNOW
                         </h3>
                         <p
                           className="comic-sans leading-relaxed"
@@ -315,7 +328,7 @@ export default function PSPageClient({ data }: Props) {
                             lineHeight: 1.8,
                           }}
                         >
-                          {activePS.solution}
+                          {activePS.prerequisites}
                         </p>
                       </div>
                     </div>
