@@ -167,40 +167,6 @@ export default function PSPageClient({ data, loaderDone }: Props) {
 
                 {/* ── PS Content ── */}
                 <section ref={contentRef}>
-                  {/* Caption box */}
-                  <div className="flex items-center gap-4 mb-6 flex-wrap">
-                    <div
-                      className="inline-block"
-                      style={{
-                        background: colors.yellow,
-                        color: "#000",
-                        padding: "0.4rem 1rem",
-                        border: "3px solid #000",
-                        boxShadow: "3px 3px 0 #000",
-                      }}
-                    >
-                      <span
-                        className="comic-sans font-bold"
-                        style={{
-                          fontSize: "clamp(0.7rem, 1.2vw, 0.85rem)",
-                          letterSpacing: "0.1em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {activePS.id}
-                      </span>
-                    </div>
-
-                    <span
-                      className="comic-sans"
-                      style={{
-                        fontSize: "clamp(0.7rem, 1.2vw, 0.8rem)",
-                        color: "rgba(255,255,255,0.4)",
-                      }}
-                    >
-                      {activeIndex + 1} of {data.problemStatements.length}
-                    </span>
-                  </div>
 
                   {/* PS Title */}
                   <h2
