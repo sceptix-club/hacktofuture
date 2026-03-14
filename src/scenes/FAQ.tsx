@@ -12,7 +12,7 @@ const faqs = [
   },
   {
     question: "WHAT IS THE TEAM SIZE FOR PARTICIPATION?",
-    answer: "Teams should consist of 3 to 4 members.",
+    answer: "Teams should consist of 2 to 4 members.",
   },
   {
     question: "ARE INTER-COLLEGE TEAMS ALLOWED?",
@@ -53,8 +53,7 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="absolute top-4 right-4 w-20 h-32 md:w-28 md:h-44 comic-panel-border rounded-sm pointer-events-none" />
 
       {/* ── Dot cluster accents ── */}
-      
-     
+
       {/* ── SCROLLABLE CONTENT — scrollbar hidden ── */}
       <div
         className="relative z-10 w-full h-full flex flex-col items-center px-4 pt-28 pb-16 -mt-4 sm:mt-0"

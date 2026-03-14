@@ -11,6 +11,8 @@ type SponsorsProps = {
   prizePool?: string;
 };
 
+const cardHeight = "clamp(12rem, 34vw, 18rem)";
+
 export function SponsorsBento({
   title,
   prizePool = "₹4,00,000+",
@@ -47,7 +49,7 @@ export function SponsorsBento({
       >
         {/* Title sponsor - Left column on desktop, spans both rows */}
         <div
-          className="sponsor-panel relative md:row-span-2"
+          className="sponsor-panel relative"
           style={{
             background: "linear-gradient(135deg, #FFE105 0%, #FFD700 100%)",
             border: "0.2rem solid #000",
@@ -55,7 +57,7 @@ export function SponsorsBento({
             boxShadow:
               "0.3rem 0.3rem 0 rgba(0,0,0,0.3), inset -0.1rem -0.1rem 0 rgba(0,0,0,0.2)",
             transform: "rotate(-1deg)",
-            minHeight: "10rem",
+            height: cardHeight,
           }}
         >
           <div
@@ -130,7 +132,7 @@ export function SponsorsBento({
               border: "0.2rem solid #000",
               borderRadius: "0.5rem",
               boxShadow: "0.3rem 0.3rem 0 rgba(0,0,0,0.3)",
-              minHeight: "7rem",
+              height: "100%",
               overflow: "hidden",
             }}
           >
@@ -233,108 +235,6 @@ export function SponsorsBento({
         </div>
 
         {/* Goodies - Right column bottom on desktop */}
-        <div
-          className="sponsor-panel relative"
-          style={{
-            transform: "rotate(-0.5deg)",
-          }}
-        >
-          <div
-            className="relative w-full h-full"
-            style={{
-              background: "linear-gradient(135deg, #DA100C 0%, #b00d0a 100%)",
-              border: "0.2rem solid #000",
-              borderRadius: "0.5rem",
-              boxShadow: "0.3rem 0.3rem 0 rgba(0,0,0,0.25)",
-              overflow: "hidden",
-              minHeight: "7rem",
-            }}
-          >
-            {/* Starburst right */}
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                right: "-2rem",
-                top: "-2rem",
-                width: "8rem",
-                height: "8rem",
-                background: "rgba(255,255,255,0.1)",
-                clipPath:
-                  "polygon(0% 0%, 27% 24%, 28% 0%, 46% 24%, 60% 0%, 71% 28%, 99% 1%, 83% 30%, 99% 28%, 84% 40%, 100% 51%, 82% 60%, 100% 69%, 78% 73%, 100% 100%, 66% 79%, 61% 100%, 45% 78%, 33% 100%, 28% 81%, 0% 85%, 21% 65%, 0% 61%, 24% 47%, 0% 32%, 15% 28%)",
-              }}
-            />
-            {/* Starburst left */}
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                left: "-2rem",
-                bottom: "-2rem",
-                width: "7rem",
-                height: "7rem",
-                background: "rgba(255,255,255,0.08)",
-                clipPath:
-                  "polygon(0% 0%, 27% 24%, 28% 0%, 46% 24%, 60% 0%, 71% 28%, 99% 1%, 83% 30%, 99% 28%, 84% 40%, 100% 51%, 82% 60%, 100% 69%, 78% 73%, 100% 100%, 66% 79%, 61% 100%, 45% 78%, 33% 100%, 28% 81%, 0% 85%, 21% 65%, 0% 61%, 24% 47%, 0% 32%, 15% 28%)",
-              }}
-            />
-            {/* Halftone */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                opacity: 0.05,
-                backgroundImage:
-                  "radial-gradient(circle, black 0.06rem, transparent 0.06rem)",
-                backgroundSize: "0.4rem 0.4rem",
-              }}
-            />
-
-            <div
-              className="relative flex flex-col items-center justify-center text-center h-full"
-              style={{
-                zIndex: 10,
-                padding: "1rem 1.25rem",
-                gap: "0.3rem",
-              }}
-            >
-              <span
-                className="font-black uppercase text-black leading-none"
-                style={{
-                  fontFamily: '"Bangers", "Impact", sans-serif',
-                  fontSize: "clamp(0.55rem, 1.8vw, 1rem)",
-                  letterSpacing: "0.25em",
-                  textShadow: "0.05rem 0.05rem 0 rgba(255,255,255,0.5)",
-                }}
-              >
-                GOODIES WORTH
-              </span>
-              <span
-                className="font-black text-black leading-none"
-                style={{
-                  fontFamily: '"Bangers", "Impact", sans-serif',
-                  fontSize: "clamp(1.6rem, 5vw, 4rem)",
-                  textShadow:
-                    "0.15rem 0.15rem 0 #fff, -0.1rem 0.1rem 0 #fff, -0.1rem -0.1rem 0 #fff, 0.1rem -0.1rem 0 #fff, 0.25rem 0.25rem 0 rgba(0,0,0,0.2)",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                ₹1,30,000+
-              </span>
-            </div>
-          </div>
-          <div
-            className="absolute bg-black text-white font-bold tracking-wider"
-            style={{
-              top: "-0.5rem",
-              left: "-0.5rem",
-              padding: "0.25rem 0.6rem",
-              fontSize: "0.65rem",
-              transform: "rotate(-3deg)",
-              border: "0.1rem solid white",
-              zIndex: 20,
-            }}
-          >
-            GOODIES
-          </div>
-        </div>
       </div>
     </div>
   );

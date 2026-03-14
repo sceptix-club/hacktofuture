@@ -66,7 +66,7 @@ export function Overlay() {
           src="/sponsors/egdk.png"
           alt="logo"
           style={{
-            height: "clamp(40px, 3vw, 60px)",
+            height: "clamp(30px, 3vw, 60px)",
             objectFit: "contain",
             textAlign: "right",
             display: "flex",
@@ -79,12 +79,26 @@ export function Overlay() {
           src="/sjec-gold.png"
           alt="logo"
           style={{
-            height: "clamp(40px, 3vw, 60px)",
+            height: "clamp(30px, 3vw, 60px)",
             objectFit: "contain",
             textAlign: "right",
             display: "flex",
             justifyContent: "flex-end",
             marginLeft: "auto",
+          }}
+        />
+        <div style={{ width: "1rem" }} />
+        <img
+          src="/sceptix-logo.png"
+          alt="logo"
+          style={{
+            height: "clamp(30px, 3vw, 60px)",
+            objectFit: "contain",
+            textAlign: "right",
+            display: "flex",
+            justifyContent: "flex-end",
+            marginLeft: "auto",
+            filter: "invert(1)"
           }}
         />
       </div>
@@ -116,7 +130,7 @@ export function Overlay() {
           <br />
         </p>
         <div style={{ width: 10 }} />
-        <p
+        {/* <p
           style={{
             transform: "rotate3d(0, 0, 1, 90deg) translate3d(100%,10px,0)",
             transformOrigin: "right",
@@ -130,7 +144,7 @@ export function Overlay() {
           }}
         >
           COMICS
-        </p>
+        </p> */}
       </div>
 
       {/* Spacer */}
