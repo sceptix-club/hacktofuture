@@ -17,20 +17,12 @@ const colors = {
 /* ─── Theme card data ─── */
 const THEME_CARDS = [
   {
-    slug: "cloud-architecture" as ThemeSlug,
-    title: "Cloud Architecture",
-    description:
-      "Design self-healing and intelligent cloud systems where autonomous agents monitor infrastructure, diagnose failures, optimize resource allocation, and maintain resilient Kubernetes environments.",
-    accent: colors.blue,
-    number: "01",
-  },
-  {
     slug: "devops" as ThemeSlug,
     title: "DevOps",
     description:
       "Reimagine modern DevOps with autonomous agents that monitor pipelines, diagnose failures, repair CI/CD workflows, and orchestrate intelligent software releases while maintaining human oversight.",
     accent: colors.red,
-    number: "02",
+    number: "01",
   },
   {
     slug: "cybersecurity" as ThemeSlug,
@@ -38,6 +30,14 @@ const THEME_CARDS = [
     description:
       "Build the next generation of AI-driven security systems capable of continuously verifying identities, simulating cyber attacks, detecting threats, and autonomously defending enterprise infrastructure.",
     accent: colors.yellow,
+    number: "02",
+  },
+  {
+    slug: "cloud-architecture" as ThemeSlug,
+    title: "Cloud Architecture",
+    description:
+      "Design self-healing and intelligent cloud systems where autonomous agents monitor infrastructure, diagnose failures, optimize resource allocation, and maintain resilient Kubernetes environments.",
+    accent: colors.blue,
     number: "03",
   },
   {
@@ -185,7 +185,7 @@ function ThemeCard({
               letterSpacing: "0.1em",
             }}
           >
-            Explore More ...
+            Click to Explore More ...
           </span>
         </div>
       </div>

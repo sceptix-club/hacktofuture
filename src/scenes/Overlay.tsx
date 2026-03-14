@@ -62,45 +62,66 @@ export function Overlay() {
         </div>
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }} />
         <div style={{ flex: "1 1 0%", display: "flex", gap: "2em" }} />
-        <img
-          src="/sponsors/egdk.png"
-          alt="logo"
-          style={{
-            height: "clamp(30px, 3vw, 60px)",
-            objectFit: "contain",
-            textAlign: "right",
-            display: "flex",
-            justifyContent: "flex-end",
-            marginLeft: "auto",
-          }}
-        />
+        <a
+          href="https://sjec.ac.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "flex", cursor: "pointer" }}
+        >
+          <img
+            src="/sjec-gold.png"
+            alt="logo"
+            style={{
+              height: "clamp(30px, 3vw, 60px)",
+              objectFit: "contain",
+              textAlign: "right",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginLeft: "auto",
+            }}
+          />
+        </a>
         <div style={{ width: "1rem" }} />
-        <img
-          src="/sjec-gold.png"
-          alt="logo"
-          style={{
-            height: "clamp(30px, 3vw, 60px)",
-            objectFit: "contain",
-            textAlign: "right",
-            display: "flex",
-            justifyContent: "flex-end",
-            marginLeft: "auto",
-          }}
-        />
+        <a
+          href="https://egdk.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "flex", cursor: "pointer" }}
+        >
+          <img
+            src="/sponsors/egdk.png"
+            alt="logo"
+            style={{
+              height: "clamp(30px, 3vw, 60px)",
+              objectFit: "contain",
+              textAlign: "right",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginLeft: "auto",
+            }}
+          />
+        </a>
         <div style={{ width: "1rem" }} />
-        <img
-          src="/sceptix-logo.png"
-          alt="logo"
-          style={{
-            height: "clamp(30px, 3vw, 60px)",
-            objectFit: "contain",
-            textAlign: "right",
-            display: "flex",
-            justifyContent: "flex-end",
-            marginLeft: "auto",
-            filter: "invert(1)"
-          }}
-        />
+        <a
+          href="https://sceptix.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "flex", cursor: "pointer" }}
+        >
+          <img
+            src="/sceptix-logo.png"
+            alt="logo"
+            style={{
+              height: "clamp(30px, 3vw, 60px)",
+              objectFit: "contain",
+              textAlign: "right",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginLeft: "auto",
+              filter: "invert(1)",
+            }}
+          />
+        </a>
       </div>
 
       <div style={{ height: "1rem" }} />

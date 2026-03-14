@@ -289,7 +289,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                   {stats.map((stat, i) => (
                     <div
                       key={i}
-                      className={`flex flex-col items-center justify-center text-center group cursor-pointer ${
+                      className={`flex flex-col items-center justify-center text-center group ${
                         stat.colSpan === 2 ? "col-span-2" : ""
                       }`}
                       style={{

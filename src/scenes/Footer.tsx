@@ -8,14 +8,14 @@ const sponsorLogos = [
     website: "https://www.sjec.ac.in/",
   },
   {
-    label: "The Sceptix Club",
-    logoName: "/sceptix-logo.png",
-    website: "https://sceptix.in/",
-  },
-  {
     label: "EGDK India",
     logoName: "/sponsors/egdk-black.png",
     website: "https://egsoftware.com/",
+  },
+  {
+    label: "The Sceptix Club",
+    logoName: "/sceptix-logo.png",
+    website: "https://sceptix.in/",
   },
 ];
 // Discord icon
@@ -173,7 +173,7 @@ const Footer = forwardRef<HTMLDivElement>((_, ref) => {
                     }}
                   >
                     A national-level hackathon hosted by The Sceptix Club at St
-                    Joseph Engineering College — building tomorrow's solutions,
+                    Joseph Engineering College building tomorrow's solutions,
                     today.
                   </p>
                   {/* Social icons */}
