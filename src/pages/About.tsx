@@ -68,7 +68,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
   }, [loaderDone]);
 
   const stats = [
-    { label: "PRIZES WORTH", value: "₹4,00,000", color: "#E8003D" },
+    { label: "PRIZES WORTH", value: "₹4,00,000+", color: "#E8003D" },
     { label: "TEAMS", value: "40", color: "#00C6FF" },
     { label: "DATES", value: "15 - 17 APR", color: "#FFE105" },
     { label: "THEMES", value: "4", color: "#A855F7" },

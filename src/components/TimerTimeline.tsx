@@ -211,7 +211,6 @@ const cards = [
   ],
   [
     { time: "1:00AM", event: "Refreshments" },
-    { time: "5:00AM", event: "Participation certificate" },
     { time: "6:00AM", event: "Hackathon ends" },
     { time: "8:00AM", event: "Breakfast" },
     { time: "9:30AM", event: "Team presentation" },
