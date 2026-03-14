@@ -7,7 +7,7 @@ type CardsProps = {
   groupRef?: React.RefObject<THREE.Group | null>;
 };
 
-const CARD_THEMES = ["cloud", "devops", "open", "security"] as const;
+const CARD_THEMES = ["devops", "security", "open", "cloud"] as const;
 
 export default function Cards({ pointerRef, groupRef }: CardsProps) {
   const texLoader = useMemo(() => new THREE.TextureLoader(), []);

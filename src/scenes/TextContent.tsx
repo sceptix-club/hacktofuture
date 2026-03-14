@@ -323,16 +323,16 @@ const TextContent = ({
       {[1, 2, 3, 4].map((n, i) => {
         const themeData = [
           {
-            slug: "cloud-architecture",
-            title: "Cloud Architecture",
-          },
-          {
             slug: "devops",
             title: "DevOps",
           },
           {
             slug: "cybersecurity",
             title: "Cybersecurity",
+          },
+          {
+            slug: "cloud-architecture",
+            title: "Cloud Architecture",
           },
           {
             slug: "open-innovation",
