@@ -22,9 +22,9 @@ export default function PSPageClient({ data, loaderDone }: Props) {
   const smootherRef = useRef<ScrollSmoother | null>(null);
 
   const activePS = data.problemStatements.find((ps) => ps.id === activePSId)!;
-  const activeIndex = data.problemStatements.findIndex(
-    (ps) => ps.id === activePSId
-  );
+  // const activeIndex = data.problemStatements.findIndex(
+  //   (ps) => ps.id === activePSId
+  // );
 
   useEffect(() => {
     setActivePSId(data.problemStatements[0].id);
@@ -167,7 +167,6 @@ export default function PSPageClient({ data, loaderDone }: Props) {
 
                 {/* ── PS Content ── */}
                 <section ref={contentRef}>
-
                   {/* PS Title */}
                   <h2
                     className="hero-title font-black mb-10"
