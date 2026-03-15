@@ -285,16 +285,41 @@ export default function PSPageClient({ data, loaderDone }: Props) {
                           />
                           GOOD TO KNOW
                         </h3>
-                        <p
-                          className="comic-sans leading-relaxed"
-                          style={{
-                            fontSize: "clamp(0.9rem, 1.6vw, 1.05rem)",
-                            color: "rgba(0,0,0,0.75)",
-                            lineHeight: 1.8,
-                          }}
-                        >
-                          {activePS.prerequisites}
-                        </p>
+
+                        {activePS.prerequisites &&
+                          activePS.prerequisites.length > 0 && (
+                            <ul
+                              className="comic-sans space-y-2"
+                              style={{
+                                fontSize: "clamp(0.9rem, 1.6vw, 1.05rem)",
+                                color: "rgba(0,0,0,0.75)",
+                                lineHeight: 1.8,
+                                paddingLeft: "1.25rem",
+                                listStyleType: "none",
+                              }}
+                            >
+                              {activePS.prerequisites.map((item, idx) => (
+                                <li
+                                  key={idx}
+                                  className="flex items-start gap-2"
+                                  style={{ marginBottom: "0.4rem" }}
+                                >
+                                  <span
+                                    style={{
+                                      display: "inline-block",
+                                      width: 6,
+                                      height: 6,
+                                      minWidth: 6,
+                                      borderRadius: "50%",
+                                      background: colors.blue,
+                                      marginTop: "0.55em",
+                                    }}
+                                  />
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                       </div>
                     </div>
                   )}
