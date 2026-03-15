@@ -233,7 +233,6 @@ function Timeline({ interactive }: { interactive: boolean }) {
   const isAnimating = useRef(false);
   const initialized = useRef(false);
 
-  // Keep ref in sync with state
   useEffect(() => {
     currentCardRef.current = currentCard;
   }, [currentCard]);
@@ -260,7 +259,6 @@ function Timeline({ interactive }: { interactive: boolean }) {
     });
   }, []);
 
-  // Initialize card positions — run once
   useEffect(() => {
     if (initialized.current) return;
     const positions = getOriginalPos();
@@ -274,105 +272,125 @@ function Timeline({ interactive }: { interactive: boolean }) {
   }, [getOriginalPos, setZIndex]);
 
   const flipForward = useCallback(
-    (updateBtn: boolean) => {
-      if (isAnimating.current) return;
-      isAnimating.current = true;
+    (updateBtn: boolean): Promise<void> => {
+      return new Promise((resolve) => {
+        if (isAnimating.current) {
+          resolve();
+          return;
+        }
+        isAnimating.current = true;
 
-      const prev = currentCardRef.current;
-      const next = (prev + 1) % totalCards;
-      const positions = getOriginalPos();
-      const prevCard = cardRefs.current[prev];
+        const prev = currentCardRef.current;
+        const next = (prev + 1) % totalCards;
+        const positions = getOriginalPos();
+        const prevCard = cardRefs.current[prev];
 
-      if (prevCard) {
-        const finalPosIdx = (prev - next + totalCards) % totalCards;
-        const tl = gsap.timeline({
-          onComplete: () => {
-            isAnimating.current = false;
-          },
-        });
-        tl.to(prevCard, {
-          x: "60%",
-          y: 60,
-          rotation: 5,
-          scale: 1,
-          rotationY: 60,
-          duration: 0.4,
-          ease: "back.in(1.4)",
-        }).to(prevCard, {
-          ...positions[finalPosIdx],
-          rotationY: 0,
-          duration: 0.4,
-          ease: "back.out(1.2)",
-        });
-      }
+        if (prevCard) {
+          const finalPosIdx = (prev - next + totalCards) % totalCards;
+          const tl = gsap.timeline({
+            onComplete: () => {
+              isAnimating.current = false;
+              resolve();
+            },
+          });
+          tl.to(prevCard, {
+            x: "60%",
+            y: 60,
+            rotation: 5,
+            scale: 1,
+            rotationY: 60,
+            duration: 0.4,
+            ease: "back.in(1.4)",
+          }).to(prevCard, {
+            ...positions[finalPosIdx],
+            rotationY: 0,
+            duration: 0.4,
+            ease: "back.out(1.2)",
+          });
+        } else {
+          isAnimating.current = false;
+          resolve();
+        }
 
-      // Move other cards
-      cardRefs.current.forEach((card, i) => {
-        if (i === prev || !card) return;
-        const finalPosIdx = (i - next + totalCards) % totalCards;
-        gsap.to(card, {
-          ...positions[finalPosIdx],
-          duration: 0.6,
-          ease: "back.out(1.2)",
+        cardRefs.current.forEach((card, i) => {
+          if (i === prev || !card) return;
+          const finalPosIdx = (i - next + totalCards) % totalCards;
+          gsap.to(card, {
+            ...positions[finalPosIdx],
+            duration: 0.6,
+            ease: "back.out(1.2)",
+          });
         });
+
+        setTimeout(() => setZIndex(next), 400);
+
+        setCurrentCard(next);
+        currentCardRef.current = next;
+        if (updateBtn) setCurrentButton(next);
       });
-
-      setTimeout(() => setZIndex(next), 400);
-
-      setCurrentCard(next);
-      currentCardRef.current = next;
-      if (updateBtn) setCurrentButton(next);
     },
     [getOriginalPos, setZIndex]
   );
 
   const flipBackward = useCallback(
-    (updateBtn: boolean) => {
-      if (isAnimating.current) return;
-      isAnimating.current = true;
+    (updateBtn: boolean): Promise<void> => {
+      return new Promise((resolve) => {
+        if (isAnimating.current) {
+          resolve();
+          return;
+        }
+        isAnimating.current = true;
 
-      const curr = currentCardRef.current;
-      const prev = (curr - 1 + totalCards) % totalCards;
-      const positions = getOriginalPos();
-      const prevCard = cardRefs.current[prev];
+        const curr = currentCardRef.current;
+        const prev = (curr - 1 + totalCards) % totalCards;
+        const positions = getOriginalPos();
+        const currCard = cardRefs.current[curr];
 
-      if (prevCard) {
-        const tl = gsap.timeline({
-          onComplete: () => {
-            isAnimating.current = false;
-          },
-        });
-        tl.to(prevCard, {
-          x: "60%",
-          y: 60,
-          rotation: 5,
-          scale: 1,
-          rotationY: 60,
-          duration: 0.4,
-          ease: "back.in(1.4)",
-        }).to(prevCard, {
-          ...positions[0],
-          rotationY: 0,
-          duration: 0.4,
-          ease: "back.out(1.2)",
-        });
-      }
+        // Animate the current top card off to the right, then to its new behind position
+        if (currCard) {
+          const finalPosIdx = (curr - prev + totalCards) % totalCards;
+          const tl = gsap.timeline({
+            onComplete: () => {
+              isAnimating.current = false;
+              resolve();
+            },
+          });
+          tl.to(currCard, {
+            x: "60%",
+            y: 60,
+            rotation: 5,
+            scale: 1,
+            rotationY: 60,
+            duration: 0.4,
+            ease: "back.in(1.4)",
+          }).to(currCard, {
+            ...positions[finalPosIdx],
+            rotationY: 0,
+            duration: 0.4,
+            ease: "back.out(1.2)",
+          });
+        } else {
+          isAnimating.current = false;
+          resolve();
+        }
 
-      cardRefs.current.forEach((card, i) => {
-        if (i === prev || !card) return;
-        const finalPosIdx = (i - prev + totalCards) % totalCards;
-        gsap.to(card, {
-          ...positions[finalPosIdx],
-          duration: 0.6,
-          ease: "back.out(1.2)",
+        // Move the previous card (and others) to their new positions
+        cardRefs.current.forEach((card, i) => {
+          if (i === curr || !card) return;
+          const finalPosIdx = (i - prev + totalCards) % totalCards;
+          gsap.to(card, {
+            ...positions[finalPosIdx],
+            duration: 0.6,
+            ease: "back.out(1.2)",
+          });
         });
+
+        setTimeout(() => setZIndex(prev), 400);
+
+        setCurrentCard(prev);
+        currentCardRef.current = prev;
+        if (updateBtn) setCurrentButton(prev);
       });
-
-      setTimeout(() => setZIndex(prev), 400);
-
-      setCurrentCard(prev);
-      currentCardRef.current = prev;
-      if (updateBtn) setCurrentButton(prev);
     },
     [getOriginalPos, setZIndex]
   );
@@ -385,23 +403,32 @@ function Timeline({ interactive }: { interactive: boolean }) {
       const curr = currentCardRef.current;
       if (nextCard === curr) return;
 
-      let diff = nextCard - curr;
-      // Normalize: positive = forward, negative = backward
-      if (diff > 0) {
-        // forward diff times
-        const step = (i: number) => {
-          setTimeout(() => flipForward(false), i * 700);
-        };
-        for (let i = 0; i < diff; i++) step(i);
-      } else {
-        const absDiff = Math.abs(diff);
-        const step = (i: number) => {
-          setTimeout(() => flipForward(false), i * 700);
-        };
-        for (let i = 0; i < absDiff; i++) step(i);
-      }
-
       setCurrentButton(nextCard);
+
+      // Determine shortest direction
+      let forwardDist = (nextCard - curr + totalCards) % totalCards;
+      let backwardDist = (curr - nextCard + totalCards) % totalCards;
+
+      if (forwardDist <= backwardDist) {
+        // Go forward forwardDist times
+        const chain = async () => {
+          for (let i = 0; i < forwardDist; i++) {
+            await flipForward(false);
+            // Small delay between sequential flips
+            await new Promise((r) => setTimeout(r, 100));
+          }
+        };
+        chain();
+      } else {
+        // Go backward backwardDist times
+        const chain = async () => {
+          for (let i = 0; i < backwardDist; i++) {
+            await flipBackward(false);
+            await new Promise((r) => setTimeout(r, 100));
+          }
+        };
+        chain();
+      }
     },
     [interactive, flipForward, flipBackward]
   );
@@ -487,7 +514,6 @@ function Timeline({ interactive }: { interactive: boolean }) {
         className="relative"
         style={{
           width: "min(90%, 38rem)",
-          /* Reserve height for the tallest card + peek offset */
           minHeight: "clamp(14rem, 30vw, 22rem)",
         }}
       >
@@ -690,7 +716,11 @@ export default function TimerTimeline() {
 
           <div
             className="w-full lg:w-1/2"
-            style={{ maxWidth: "38.75rem", minWidth: 0, marginTop: "clamp(1.5rem, 3vw, 6rem)" }}
+            style={{
+              maxWidth: "38.75rem",
+              minWidth: 0,
+              marginTop: "clamp(1.5rem, 3vw, 6rem)",
+            }}
           >
             <Timeline interactive={isSettled} />
           </div>
