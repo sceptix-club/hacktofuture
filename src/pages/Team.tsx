@@ -614,100 +614,202 @@ export default function Team() {
       });
   };
 
-  const flipForward = () => {
-    if (isAnimating.current) return;
+  const flipForwardStep = () =>
+    new Promise<void>((resolve) => {
+      const cur = currentMemberRef.current;
+      if (cur >= TOTAL_MEMBERS - 1) {
+        resolve();
+        return;
+      }
 
-    if (isMobile) {
-      mobileFlipForward();
-      return;
-    }
+      const sheetEl = sheetRefs.current[cur];
+      if (!sheetEl) {
+        resolve();
+        return;
+      }
 
-    const cur = currentMemberRef.current;
-    if (cur >= TOTAL_MEMBERS - 1) return;
+      isAnimating.current = true;
+      flippedState.current[cur] = true;
+      gsap.set(sheetEl, { zIndex: TOTAL_SHEETS + 10 });
 
-    const sheetEl = sheetRefs.current[cur];
-    if (!sheetEl) return;
-
-    isAnimating.current = true;
-    flippedState.current[cur] = true;
-    gsap.set(sheetEl, { zIndex: TOTAL_SHEETS + 10 });
-
-    gsap.to(sheetEl, {
-      rotateY: -180,
-      duration: 0.8,
-      ease: "power2.inOut",
-      onComplete: () => {
-        const next = cur + 1;
-        currentMemberRef.current = next;
-        setDisplayPage(next);
-        rebuildZIndices();
-        isAnimating.current = false;
-      },
+      gsap.to(sheetEl, {
+        rotateY: -180,
+        duration: 0.8,
+        ease: "power2.inOut",
+        onComplete: () => {
+          const next = cur + 1;
+          currentMemberRef.current = next;
+          setDisplayPage(next);
+          rebuildZIndices();
+          isAnimating.current = false;
+          resolve();
+        },
+      });
     });
-  };
 
-  const flipBackward = () => {
-    if (isAnimating.current) return;
+  const flipBackwardStep = () =>
+    new Promise<void>((resolve) => {
+      const cur = currentMemberRef.current;
+      if (cur <= 0) {
+        resolve();
+        return;
+      }
 
-    if (isMobile) {
-      mobileFlipBackward();
-      return;
-    }
+      const sheetIndex = cur - 1;
+      const sheetEl = sheetRefs.current[sheetIndex];
+      if (!sheetEl) {
+        resolve();
+        return;
+      }
 
-    const cur = currentMemberRef.current;
-    if (cur <= 0) return;
+      isAnimating.current = true;
+      flippedState.current[sheetIndex] = false;
+      gsap.set(sheetEl, { zIndex: TOTAL_SHEETS + 10 });
 
-    const sheetIndex = cur - 1;
-    const sheetEl = sheetRefs.current[sheetIndex];
-    if (!sheetEl) return;
-
-    isAnimating.current = true;
-    flippedState.current[sheetIndex] = false;
-    gsap.set(sheetEl, { zIndex: TOTAL_SHEETS + 10 });
-
-    gsap.to(sheetEl, {
-      rotateY: 0,
-      duration: 0.8,
-      ease: "power2.inOut",
-      onComplete: () => {
-        const next = cur - 1;
-        currentMemberRef.current = next;
-        setDisplayPage(next);
-        rebuildZIndices();
-        isAnimating.current = false;
-      },
+      gsap.to(sheetEl, {
+        rotateY: 0,
+        duration: 0.8,
+        ease: "power2.inOut",
+        onComplete: () => {
+          const next = cur - 1;
+          currentMemberRef.current = next;
+          setDisplayPage(next);
+          rebuildZIndices();
+          isAnimating.current = false;
+          resolve();
+        },
+      });
     });
-  };
 
-  const jumpToPage = (target: number) => {
+  const mobileForwardStep = () =>
+    new Promise<void>((resolve) => {
+      if (isAnimating.current) {
+        resolve();
+        return;
+      }
+
+      const cur = currentMemberRef.current;
+      const el = mobileCardRef.current;
+
+      if (!el || cur >= TOTAL_MEMBERS - 1) {
+        resolve();
+        return;
+      }
+
+      isAnimating.current = true;
+      gsap.fromTo(
+        el,
+        { x: 0, scale: 1, opacity: 1 },
+        {
+          x: -window.innerWidth * 1.1,
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.28,
+          ease: "power2.in",
+          onComplete: () => {
+            const next = cur + 1;
+            currentMemberRef.current = next;
+            setDisplayPage(next);
+
+            gsap.fromTo(
+              el,
+              { x: window.innerWidth * 0.6, scale: 0.92, opacity: 0 },
+              {
+                x: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 0.42,
+                ease: "expo.out",
+                onComplete: () => {
+                  isAnimating.current = false;
+                  resolve();
+                },
+              }
+            );
+          },
+        }
+      );
+    });
+
+  const mobileBackwardStep = () =>
+    new Promise<void>((resolve) => {
+      if (isAnimating.current) {
+        resolve();
+        return;
+      }
+
+      const cur = currentMemberRef.current;
+      const el = mobileCardRef.current;
+
+      if (!el || cur <= 0) {
+        resolve();
+        return;
+      }
+
+      isAnimating.current = true;
+      gsap.fromTo(
+        el,
+        { x: 0, scale: 1, opacity: 1 },
+        {
+          x: window.innerWidth * 1.1,
+          scale: 0.85,
+          opacity: 0,
+          duration: 0.28,
+          ease: "power2.in",
+          onComplete: () => {
+            const next = cur - 1;
+            currentMemberRef.current = next;
+            setDisplayPage(next);
+
+            gsap.fromTo(
+              el,
+              { x: -window.innerWidth * 0.6, scale: 0.92, opacity: 0 },
+              {
+                x: 0,
+                scale: 1,
+                opacity: 1,
+                duration: 0.42,
+                ease: "expo.out",
+                onComplete: () => {
+                  isAnimating.current = false;
+                  resolve();
+                },
+              }
+            );
+          },
+        }
+      );
+    });
+
+  const jumpToPage = async (target: number) => {
     if (target < 0 || target >= TOTAL_MEMBERS) return;
     if (isAnimating.current) return;
 
+    const current = currentMemberRef.current;
+    if (target === current) return;
+
     if (isMobile) {
-      currentMemberRef.current = target;
-      setDisplayPage(target);
-      if (mobileCardRef.current) {
-        gsap.set(mobileCardRef.current, { x: 0, opacity: 1 });
+      if (target > current) {
+        for (let i = current; i < target; i += 1) {
+          await mobileForwardStep();
+        }
+      } else {
+        for (let i = current; i > target; i -= 1) {
+          await mobileBackwardStep();
+        }
       }
       return;
     }
 
-    isAnimating.current = true;
-
-    sheetRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const flipped = i < target;
-      flippedState.current[i] = flipped;
-      gsap.set(el, { rotateY: flipped ? -180 : 0 });
-    });
-
-    rebuildZIndices();
-    currentMemberRef.current = target;
-    setDisplayPage(target);
-
-    setTimeout(() => {
-      isAnimating.current = false;
-    }, 100);
+    if (target > current) {
+      for (let i = current; i < target; i += 1) {
+        await flipForwardStep();
+      }
+    } else {
+      for (let i = current; i > target; i -= 1) {
+        await flipBackwardStep();
+      }
+    }
   };
 
   // Mobile horizontal swipe handlers
@@ -785,8 +887,8 @@ export default function Team() {
       e.preventDefault();
       if (isAnimating.current) return;
       if (Math.abs(e.deltaY) < 28) return;
-      if (e.deltaY > 0) flipForward();
-      else flipBackward();
+      if (e.deltaY > 0) flipForwardStep();
+      else flipBackwardStep();
     };
 
     const el = containerRef.current;
@@ -828,11 +930,11 @@ export default function Team() {
       if (absDX < 36 && absDY < 36) return;
 
       if (absDY >= absDX) {
-        if (deltaY > 0) flipForward();
-        else flipBackward();
+        if (deltaY > 0) flipForwardStep();
+        else flipBackwardStep();
       } else {
-        if (deltaX > 0) flipForward();
-        else flipBackward();
+        if (deltaX > 0) flipForwardStep();
+        else flipBackwardStep();
       }
     };
 
@@ -852,8 +954,8 @@ export default function Team() {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") flipForward();
-      if (e.key === "ArrowLeft" || e.key === "ArrowUp") flipBackward();
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") flipForwardStep();
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") flipBackwardStep();
     };
 
     window.addEventListener("keydown", handleKey);
