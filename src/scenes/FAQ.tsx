@@ -24,16 +24,24 @@ const HTF_YELLOW = "#FFE105";
 const HTF_RED = "#E8003D";
 
 const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndexes, setOpenIndexes] = useState<Set<number>>(new Set());
 
   const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+    setOpenIndexes((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
   };
 
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-30 w-full h-screen"
+      className="fixed inset-0 z-30 w-full h-dvh"
       style={{
         transform: "translateY(100%)",
         willChange: "transform, opacity",
@@ -56,14 +64,16 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
 
       {/* ── SCROLLABLE CONTENT — scrollbar hidden ── */}
       <div
-        className="relative z-10 w-full h-full flex flex-col items-center px-4 pt-28 pb-16 -mt-4 sm:mt-0"
+        className="relative z-10 w-full h-full px-4"
         style={{
           overflowY: "auto",
           overflowX: "hidden",
-          /* Firefox */
           scrollbarWidth: "none",
-          /* IE / Edge legacy */
           msOverflowStyle: "none",
+          display: "grid",
+          placeItems: "center",
+          paddingTop: "clamp(3.5rem, 9dvh, 7rem)",
+          paddingBottom: "clamp(2rem, 6dvh, 4.5rem)",
         }}
       >
         {/* hide webkit scrollbar via a style tag injected inline */}
@@ -74,10 +84,14 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
         {/* re-apply class so the style tag above targets it */}
         <div
           className="faq-scroll w-full flex flex-col items-center"
-          style={{ minHeight: "100%" }}
+          style={{
+            width: "100%",
+            maxWidth: "min(680px, 90vw)",
+            minHeight: "fit-content",
+          }}
         >
           {/* ── Title block ── */}
-          <div className="text-center mb-6 md:mb-8 mt-8 md:-mt-12">
+          <div className="text-center mb-[clamp(2rem,2.5vh,4rem)]">
             <h1
               className="hero-title font-black uppercase leading-none"
               style={{
@@ -91,9 +105,9 @@ const FAQ = forwardRef<HTMLDivElement>((_, ref) => {
           </div>
 
           {/* ── Accordion ── */}
-          <div className="w-full" style={{ maxWidth: "min(680px, 90vw)" }}>
+          <div className="w-full">
             {faqs.map((faq, index) => {
-              const isOpen = openIndex === index;
+              const isOpen = openIndexes.has(index);
 
               return (
                 <div
