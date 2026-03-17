@@ -18,4 +18,4 @@ export const rootPrefix =
   "https://raw.githubusercontent.com/sceptix-club/htf-4-assets/main/";
 
 export const ruleBookLink =
-  "https://drive.google.com/file/d/1sZes7cRxqaHYC_HohYxG2LtYk0proyAy/view?usp=sharing";
+  "https://drive.google.com/file/d/19dp-508j6xhfnpTtDzwPhlsCh57coDy5/view?usp=sharing";

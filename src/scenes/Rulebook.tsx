@@ -4,13 +4,10 @@ import * as THREE from "three";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { useGraph } from "@react-three/fiber";
 import { SkeletonUtils } from "three/examples/jsm/Addons.js";
+import { ruleBookLink } from "../lib/utils";
 
-const handleDownload = (e: any) => {
-  e.stopPropagation();
-  const link = document.createElement("a");
-  link.href = "/rulebook.pdf";
-  link.download = "HackToFuture-Rulebook.pdf";
-  link.click();
+const handleDownload = () => {
+  window.open(`${ruleBookLink}`, "_blank", "noopener,noreferrer");
 };
 
 type ComicProps = {
