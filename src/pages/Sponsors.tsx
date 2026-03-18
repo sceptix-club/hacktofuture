@@ -23,7 +23,7 @@ interface Sponsor {
 const TITLE_SPONSORS: Sponsor[] = [
   {
     name: "EGDK India",
-    logo: "/sponsors/egdk-black.png",
+    logo: "/sponsors/egdk-black.webp",
     url: "#",
     description:
       "EGDK India develops software built for the industry. All the solutions stand on the shoulders of EG’s size, stability, innovation, and security.",

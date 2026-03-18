@@ -4,17 +4,17 @@ import { Instagram, Linkedin, Github, Youtube } from "lucide-react";
 const sponsorLogos = [
   {
     label: "St Joseph Engineering College",
-    logoName: "/sjec-gold.png",
+    logoName: "/sjec-gold.webp",
     website: "https://www.sjec.ac.in/",
   },
   {
     label: "EGDK India",
-    logoName: "/sponsors/egdk-black.png",
+    logoName: "/sponsors/egdk-black.webp",
     website: "https://egsoftware.com/",
   },
   {
     label: "The Sceptix Club",
-    logoName: "/sceptix-logo.png",
+    logoName: "/sceptix-logo.webp",
     website: "https://sceptix.in/",
   },
 ];

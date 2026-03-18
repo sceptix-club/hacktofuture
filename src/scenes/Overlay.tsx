@@ -69,7 +69,7 @@ export function Overlay() {
           style={{ display: "flex", cursor: "pointer" }}
         >
           <img
-            src="/sjec-gold.png"
+            src="/sjec-gold.webp"
             alt="logo"
             style={{
               height: "clamp(30px, 3vw, 60px)",
@@ -89,7 +89,7 @@ export function Overlay() {
           style={{ display: "flex", cursor: "pointer" }}
         >
           <img
-            src="/sponsors/egdk.png"
+            src="/sponsors/egdk.webp"
             alt="logo"
             style={{
               height: "clamp(30px, 3vw, 60px)",
@@ -109,7 +109,7 @@ export function Overlay() {
           style={{ display: "flex", cursor: "pointer" }}
         >
           <img
-            src="/sceptix-logo.png"
+            src="/sceptix-logo.webp"
             alt="logo"
             style={{
               height: "clamp(30px, 3vw, 60px)",
