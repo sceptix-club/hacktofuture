@@ -159,7 +159,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   whiteSpace: "nowrap",
                 }}
               >
-                ▸ CLOSES ON 24 MARCH 11:59 PM ▸
+                ▸ CLOSES ON 29 MARCH 11:59 PM ▸
               </div>
             </div>
           </div>
