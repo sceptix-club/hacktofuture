@@ -10,7 +10,7 @@ type CTAProps = {
 const handleRedirect = () => {
   window.open(
     "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
-    "_blank"
+    "_blank",
   );
 };
 
@@ -39,7 +39,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
       body = "Join HackToFuture 4.0 and turn your wildest ideas into real products. Limited seats. Big energy.",
       buttonText = "Register Now",
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -166,7 +166,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 
 CTA.displayName = "CTA";
