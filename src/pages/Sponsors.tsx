@@ -60,15 +60,16 @@ const DIGITAL_SPONSORS: Sponsor[] = [
 ];
 
 const LOUNGE_SPONSORS: Sponsor[] = [
-  // {
-  //   name: "NTG Gaming",
-  //   logo: "",
-  //   url: "#",
-  //   description: "",
-  //   link: "",
-  //   headquarters: "",
-  //   industry: "",
-  // },
+  {
+    name: "NTG Gaming",
+    logo: "/sponsors/ntg.png",
+    url: "#",
+    description:
+      "NTG is Mangalores first esport lounge specialising in esport infrastructure and training for the youth of Mangalore to create more job opportunity ",
+    link: "https://www.instagram.com/ntg_lounge?igsh=MTRubTBuYjBvMTF6Ng%3D%3D&utm_source=qr",
+    headquarters: "Mangalore",
+    industry: "ESports and Gaming",
+  },
 ];
 
 // const GOLD_SPONSORS: Sponsor[] = [
@@ -85,7 +86,7 @@ const TIER_COLORS: Record<string, { bg: string; text: string }> = {
   title: { bg: "#DA100C", text: "#000" },
   powered: { bg: "#FFE105", text: "#000" },
   digital: { bg: "#50BAEA", text: "#000" },
-  lounge: { bg: "#A0522D", text: "#fff" },
+  lounge: { bg: "#A855F7", text: "#000" },
 };
 
 /* ─── Dialog (portaled to document.body) ─── */
@@ -757,7 +758,7 @@ export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
               {POWERED_SPONSORS.length > 0 && (
                 <TierRow
                   label="Powered By"
-                  tier="title"
+                  tier="powered"
                   sponsors={POWERED_SPONSORS}
                   size="lg"
                 />
