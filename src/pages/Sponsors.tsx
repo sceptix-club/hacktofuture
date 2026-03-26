@@ -33,89 +33,59 @@ const TITLE_SPONSORS: Sponsor[] = [
   },
 ];
 
-const GOLD_SPONSORS: Sponsor[] = [
+const POWERED_SPONSORS: Sponsor[] = [
+  {
+    name: "Unstop",
+    logo: "/sponsors/unstop.svg",
+    url: "#",
+    description:
+      "Unstop is an AI-enabled talent engagement and hiring platform that connects students and early professionals with companies through competitions, assessments, hackathons, and recruitment solutions.",
+    link: "https://unstop.com",
+    headquarters: "New Delhi, India",
+    industry: "Technology, Information and Internet",
+  },
+];
+
+const DIGITAL_SPONSORS: Sponsor[] = [
+  {
+    name: "HeavyM",
+    logo: "/sponsors/heavym.png",
+    url: "#",
+    description:
+      "HeavyM is a projection mapping software designed to create immersive visual experiences using intuitive tools, real-time effects, and audio-reactive visuals for events, installations, and digital art.",
+    link: "https://www.heavym.net/",
+    headquarters: "Montreuil, Île-de-France, France",
+    industry: "Software Development",
+  },
+];
+
+const LOUNGE_SPONSORS: Sponsor[] = [
   // {
-  //   name: "Amazon",
-  //   logo: "/sponsors/amazon.png",
-  //   url: "https://amazon.com",
-  //   description:
-  //     "Amazon is guided by four principles: customer obsession, passion for invention, commitment to operational excellence, and long-term thinking.",
-  //   founded: "1994",
-  //   headquarters: "Seattle, USA",
-  //   industry: "E-Commerce / Cloud",
-  // },
-  // {
-  //   name: "Google",
-  //   logo: "/sponsors/google.png",
-  //   url: "https://google.com",
-  //   description:
-  //     "Google's mission is to organize the world's information and make it universally accessible and useful.",
-  //   founded: "1998",
-  //   headquarters: "Mountain View, USA",
-  //   industry: "Internet / AI",
-  // },
-  // {
-  //   name: "Microsoft",
-  //   logo: "/sponsors/microsoft.png",
-  //   url: "https://microsoft.com",
-  //   description:
-  //     "Microsoft enables digital transformation for the era of an intelligent cloud and an intelligent edge.",
-  //   founded: "1975",
-  //   headquarters: "Redmond, USA",
-  //   industry: "Software / Cloud",
+  //   name: "NTG Gaming",
+  //   logo: "",
+  //   url: "#",
+  //   description: "",
+  //   link: "",
+  //   headquarters: "",
+  //   industry: "",
   // },
 ];
 
-const SILVER_SPONSORS: Sponsor[] = [
-  // {
-  //   name: "IBM",
-  //   logo: "/sponsors/ibm.png",
-  //   url: "https://ibm.com",
-  //   description:
-  //     "IBM is a global technology and consulting company helping clients build smarter businesses.",
-  //   founded: "1911",
-  //   headquarters: "Armonk, USA",
-  //   industry: "Enterprise Tech",
-  // },
-  // {
-  //   name: "Intel",
-  //   logo: "/sponsors/intel.png",
-  //   url: "https://intel.com",
-  //   description:
-  //     "Intel delivers world-changing technology that enriches the lives of every person on earth.",
-  //   founded: "1968",
-  //   headquarters: "Santa Clara, USA",
-  //   industry: "Semiconductors",
-  // },
-  // {
-  //   name: "Evernote",
-  //   logo: "/sponsors/evernote.png",
-  //   url: "https://evernote.com",
-  //   description:
-  //     "Evernote helps individuals and teams capture ideas, manage tasks, and stay organized.",
-  //   founded: "2004",
-  //   headquarters: "Redwood City, USA",
-  //   industry: "Productivity",
-  // },
-  // {
-  //   name: "Oracle",
-  //   logo: "/sponsors/oracle.png",
-  //   url: "https://oracle.com",
-  //   description:
-  //     "Oracle offers integrated suites of applications plus secure, autonomous infrastructure in the Oracle Cloud.",
-  //   founded: "1977",
-  //   headquarters: "Austin, USA",
-  //   industry: "Enterprise Software",
-  // },
-];
+// const GOLD_SPONSORS: Sponsor[] = [
 
-const BRONZE_SPONSORS: Sponsor[] = [];
+// ];
+
+// const SILVER_SPONSORS: Sponsor[] = [
+
+// ];
+
+// const BRONZE_SPONSORS: Sponsor[] = [];
 
 const TIER_COLORS: Record<string, { bg: string; text: string }> = {
   title: { bg: "#DA100C", text: "#000" },
-  gold: { bg: "#FFE105", text: "#000" },
-  silver: { bg: "#50BAEA", text: "#000" },
-  bronze: { bg: "#A0522D", text: "#fff" },
+  powered: { bg: "#FFE105", text: "#000" },
+  digital: { bg: "#50BAEA", text: "#000" },
+  lounge: { bg: "#A0522D", text: "#fff" },
 };
 
 /* ─── Dialog (portaled to document.body) ─── */
@@ -138,12 +108,12 @@ function SponsorDialog({
     gsap.fromTo(
       backdropRef.current,
       { opacity: 0 },
-      { opacity: 1, duration: 0.25 }
+      { opacity: 1, duration: 0.25 },
     );
     gsap.fromTo(
       cardRef.current,
       { opacity: 0, y: 40, scale: 0.96 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" }
+      { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "power3.out" },
     );
     document.body.style.overflow = "hidden";
     return () => {
@@ -375,7 +345,7 @@ function SponsorDialog({
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
@@ -399,15 +369,15 @@ function SponsorCard({
     size === "lg"
       ? "min(300px, 44vw)"
       : size === "md"
-      ? "min(185px, 40vw)"
-      : "min(150px, 36vw)";
+        ? "min(185px, 40vw)"
+        : "min(150px, 36vw)";
 
   const cardH =
     size === "lg"
       ? "min(300px, 44vw)"
       : size === "md"
-      ? "min(185px, 40vw)"
-      : "min(150px, 36vw)";
+        ? "min(185px, 40vw)"
+        : "min(150px, 36vw)";
 
   const onEnter = () =>
     gsap.to(ref.current, {
@@ -579,7 +549,7 @@ function TierRow({
         stagger: 0.08,
         ease: "power2.out",
         delay: 0.1,
-      }
+      },
     );
   }, []);
 
@@ -666,7 +636,7 @@ export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
     gsap.fromTo(
       headerRef.current,
       { opacity: 0, y: -30 },
-      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 },
     );
   }, []);
 
@@ -784,28 +754,28 @@ export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
                   size="lg"
                 />
               )}
-              {GOLD_SPONSORS.length > 0 && (
+              {POWERED_SPONSORS.length > 0 && (
                 <TierRow
-                  label="Gold Sponsors"
-                  tier="gold"
-                  sponsors={GOLD_SPONSORS}
+                  label="Powered By"
+                  tier="title"
+                  sponsors={POWERED_SPONSORS}
                   size="lg"
                 />
               )}
-              {SILVER_SPONSORS.length > 0 && (
+              {DIGITAL_SPONSORS.length > 0 && (
                 <TierRow
-                  label="Silver Sponsors"
-                  tier="silver"
-                  sponsors={SILVER_SPONSORS}
-                  size="md"
+                  label="Digital Partners"
+                  tier="digital"
+                  sponsors={DIGITAL_SPONSORS}
+                  size="lg"
                 />
               )}
-              {BRONZE_SPONSORS.length > 0 && (
+              {LOUNGE_SPONSORS.length > 0 && (
                 <TierRow
-                  label="Bronze Sponsors"
-                  tier="bronze"
-                  sponsors={BRONZE_SPONSORS}
-                  size="sm"
+                  label="Lounge Partners"
+                  tier="lounge"
+                  sponsors={LOUNGE_SPONSORS}
+                  size="lg"
                 />
               )}
             </div>
