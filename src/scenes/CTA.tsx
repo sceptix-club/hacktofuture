@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import Button from "../components/ui/Button";
+// import Button from "../components/ui/Button";
 
 type CTAProps = {
   title?: string;
@@ -7,12 +7,12 @@ type CTAProps = {
   buttonText?: string;
 };
 
-const handleRedirect = () => {
-  window.open(
-    "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
-    "_blank",
-  );
-};
+// const handleRedirect = () => {
+//   window.open(
+//     "https://unstop.com/hackathons/hacktofuture-40-st-joseph-engineering-college-vamanjoor-1654291",
+//     "_blank",
+//   );
+// };
 
 const ComicDots = ({
   className,
@@ -37,7 +37,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
     {
       title = "READY TO BUILD THE FUTURE?",
       body = "Join HackToFuture 4.0 and turn your wildest ideas into real products. Limited seats. Big energy.",
-      buttonText = "Register Now",
+      // buttonText = "Register Now",
     },
     ref,
   ) => {
@@ -115,7 +115,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
             </p>
 
             <div className="mt-7 flex flex-col items-center gap-3">
-              <Button
+              {/* <Button
                 className="hover:cursor-pointer font-bold tracking-wide comic-sans"
                 style={{
                   background: "#FFE105",
@@ -146,7 +146,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                 onClick={handleRedirect}
               >
                 {buttonText}
-              </Button>
+              </Button> */}
 
               <div
                 className="absolute -bottom-2 -right-3 bg-black text-white px-2 md:px-3 py-1 font-bold text-xs tracking-wider border-2 border-white"
@@ -159,7 +159,7 @@ const CTA = forwardRef<HTMLDivElement, CTAProps>(
                   whiteSpace: "nowrap",
                 }}
               >
-                ▸ CLOSES ON 29 MARCH 11:59 PM ▸
+                ▸ REGISTRATION CLOSED ▸
               </div>
             </div>
           </div>

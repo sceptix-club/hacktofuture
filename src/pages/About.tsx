@@ -21,7 +21,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
     gsap.fromTo(
       headerRef.current,
       { opacity: 0, y: -30 },
-      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 }
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 },
     );
 
     const cards = [
@@ -39,7 +39,7 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
         ease: "power3.out",
         stagger: 0.1,
         delay: 0.3,
-      }
+      },
     );
   }, []);
 
@@ -366,9 +366,9 @@ export default function About({ loaderDone }: { loaderDone?: boolean }) {
                         lineHeight: 1.2,
                       }}
                     >
-                      FREE
+                      REGISTRATION
                       <br />
-                      <span style={{ color: "#FFE105" }}>REGISTRATION.</span>
+                      <span style={{ color: "#FFE105" }}>CLOSED.</span>
                     </h3>
                   </div>
                 </div>
