@@ -291,7 +291,7 @@ const TextContent = ({
             e.stopPropagation();
           }}
         >
-          SHORTLISTED TEAMS COMING SOON
+          VIEW SHORTLISTED TEAMS
         </a>
       </div>
 

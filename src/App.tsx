@@ -345,7 +345,7 @@ function App() {
           path="/results"
           element={
             <PageLayout>
-              <Results showResults={false} />
+              <Results showResults={true} />
             </PageLayout>
           }
         />
