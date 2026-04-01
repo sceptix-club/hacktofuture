@@ -42,11 +42,12 @@ const TextContent = ({
 
     // Scene 1
     if (scene1TextRef.current) {
+      gsap.set(scene1TextRef.current, { pointerEvents: "auto" });
       tl.fromTo(
         scene1TextRef.current,
-        { opacity: 1 },
-        { opacity: 0, duration: 0.1 },
-        0.05
+        { opacity: 1, pointerEvents: "auto" },
+        { opacity: 0, duration: 0.1, pointerEvents: "none" },
+        0.25,
       );
     }
 
@@ -56,12 +57,12 @@ const TextContent = ({
         scene2TextRef.current,
         { y: "100vh", opacity: 0, pointerEvents: "none" },
         { y: "20vh", opacity: 1, duration: 0.4, pointerEvents: "auto" },
-        1.0
+        1.0,
       );
       tl.to(
         scene2TextRef.current,
         { opacity: 0, duration: 0.2, pointerEvents: "none" },
-        2.0
+        2.0,
       );
     }
 
@@ -89,7 +90,7 @@ const TextContent = ({
           stagger: 0.01,
           ease: "back.out(0.8)",
         },
-        2.0
+        2.0,
       );
       tl.to(
         panels,
@@ -107,7 +108,7 @@ const TextContent = ({
           stagger: 0.08,
           ease: "back.in(0.8)",
         },
-        2.6
+        2.6,
       );
     }
 
@@ -133,7 +134,7 @@ const TextContent = ({
           ease: "back.out(0.8)",
           onComplete: () => timerSettledRef.current?.(true),
         },
-        3.2
+        3.2,
       );
       tl.to(
         panels,
@@ -146,7 +147,7 @@ const TextContent = ({
           ease: "back.in(0.8)",
           onStart: () => timerSettledRef.current?.(false),
         },
-        4.2
+        4.2,
       );
     }
 
@@ -156,12 +157,12 @@ const TextContent = ({
         card1TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.15, pointerEvents: "auto" },
-        4.55
+        4.55,
       );
       tl.to(
         card1TextRef.current,
         { opacity: 0, duration: 0.1, pointerEvents: "none" },
-        4.95
+        4.95,
       );
     }
     // Card 2
@@ -170,12 +171,12 @@ const TextContent = ({
         card2TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        5.35
+        5.35,
       );
       tl.to(
         card2TextRef.current,
         { opacity: 0, duration: 0.1, pointerEvents: "none" },
-        5.65
+        5.65,
       );
     }
     // Card 3
@@ -184,12 +185,12 @@ const TextContent = ({
         card3TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        6.05
+        6.05,
       );
       tl.to(
         card3TextRef.current,
         { opacity: 0, duration: 0.1, pointerEvents: "none" },
-        6.35
+        6.35,
       );
     }
     // Card 4
@@ -198,12 +199,12 @@ const TextContent = ({
         card4TextRef.current,
         { opacity: 0, scale: 0.8, pointerEvents: "none" },
         { opacity: 1, scale: 1, duration: 0.1, pointerEvents: "auto" },
-        6.75
+        6.75,
       );
       tl.to(
         card4TextRef.current,
         { opacity: 0, duration: 0.15, pointerEvents: "none" },
-        8.1
+        8.1,
       );
     }
 
@@ -213,12 +214,12 @@ const TextContent = ({
       tl.to(
         ctaRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        8.0
+        8.0,
       );
       tl.to(
         ctaRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        9.2
+        9.2,
       );
     }
 
@@ -228,12 +229,12 @@ const TextContent = ({
       tl.to(
         faqRef.current,
         { y: "0%", opacity: 1, duration: 0.4, ease: "power2.out" },
-        9.3
+        9.3,
       );
       tl.to(
         faqRef.current,
         { y: "-100%", opacity: 0, duration: 0.3, ease: "power2.in" },
-        10.4
+        10.4,
       );
     }
 
@@ -249,7 +250,7 @@ const TextContent = ({
           ease: "power2.out",
           force3D: true,
         },
-        10.5
+        10.5,
       );
     }
 
@@ -265,8 +266,34 @@ const TextContent = ({
     <>
       <div
         ref={scene1TextRef}
-        className="hero-title fixed left-0 right-0 bottom-[12vh] z-20 flex justify-center"
-      ></div>
+        className="hero-title fixed left-0 right-0 bottom-[16vh] z-99 flex justify-center"
+        style={{
+          fontSize: "clamp(10px, 3vw, 20px)",
+          color: "white",
+          cursor: "pointer",
+          textShadow:
+            "0 0 2px black, 0 0 2px black, 0 0 2px black, 0 0 2px black",
+          pointerEvents: "auto",
+        }}
+      >
+        <a
+          href="/results"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            textDecoration: "none",
+            pointerEvents: "inherit",
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          SHORTLISTED TEAMS COMING SOON
+        </a>
+      </div>
 
       <div
         ref={scene2TextRef}
