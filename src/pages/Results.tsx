@@ -1,15 +1,15 @@
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect } from "react";
 import Navbar from "../components/ui/Navbar";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollSmoother } from "gsap/ScrollSmoother";
 import { Trophy, Shield, Cloud, Lightbulb } from "lucide-react";
+import resultsData from "../content/results.json";
 
 gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 
 /* ─── Types ─── */
 interface Team {
-  rank: number;
   teamName: string;
   college: string;
 }
@@ -22,12 +22,7 @@ interface ThemeResults {
 /* ─── Theme Config ─── */
 const THEME_CONFIG: Record<
   string,
-  {
-    color: string;
-    textColor: string;
-    icon: React.ReactNode;
-    label: string;
-  }
+  { color: string; textColor: string; icon: React.ReactNode; label: string }
 > = {
   devops: {
     color: "#DA100C",
@@ -55,101 +50,38 @@ const THEME_CONFIG: Record<
   },
 };
 
-/* ─── Rank Badge ─── */
-function RankBadge({ rank }: { rank: number }) {
+/* ─── Team Row — no GSAP, always visible ─── */
+function TeamRow({ team }: { team: Team }) {
   return (
     <div
-      className="flex items-center justify-center flex-shrink-0"
+      className="flex items-center gap-4 w-full"
       style={{
-        width: 36,
-        height: 36,
-        background: "#FFFEF2",
-        border: `3px solid #000`,
-        borderRadius: 0,
-        boxShadow: "2px 2px 0 #000",
-        fontFamily: "inherit",
-        flexShrink: 0,
-      }}
-    >
-      <span
-        className="hero-title font-black"
-        style={{ fontSize: "0.75rem", color: "#444", lineHeight: 1 }}
-      >
-        {rank}
-      </span>
-    </div>
-  );
-}
-
-/* ─── Team Row ─── */
-function TeamRow({
-  team,
-  index,
-}: {
-  team: Team;
-  accent: string;
-  index: number;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    gsap.fromTo(
-      ref.current,
-      { opacity: 0, x: -24 },
-      {
-        opacity: 1,
-        x: 0,
-        duration: 0.4,
-        ease: "power2.out",
-        delay: index * 0.055,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 90%",
-          toggleActions: "play none none none",
-        },
-      },
-    );
-  }, [index]);
-
-  return (
-    <div
-      ref={ref}
-      className="flex items-center gap-3 w-full"
-      style={{
-        padding: "0.65rem 1rem",
+        padding: "0.75rem 1.1rem",
         background: "#FFFEF2",
         border: "2px solid #000",
-        borderLeft: "3px solid rgba(0,0,0,0.15)",
-        borderRadius: 0,
-        boxShadow: "2px 2px 0 rgba(0,0,0,0.25)",
+        boxShadow: "2px 2px 0 rgba(0,0,0,0.3)",
         marginBottom: "0.4rem",
-        transition: "box-shadow 0.2s, transform 0.2s",
+        transition: "transform 0.15s ease, box-shadow 0.15s ease",
       }}
       onMouseEnter={(e) => {
-        gsap.to(e.currentTarget, {
-          y: -3,
-          boxShadow: "5px 5px 0 rgba(0,0,0,0.5)",
-          duration: 0.2,
-        });
+        (e.currentTarget as HTMLDivElement).style.transform =
+          "translateY(-3px)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow =
+          "5px 5px 0 rgba(0,0,0,0.45)";
       }}
       onMouseLeave={(e) => {
-        gsap.to(e.currentTarget, {
-          y: 0,
-          boxShadow: "2px 2px 0 rgba(0,0,0,0.25)",
-          duration: 0.2,
-        });
+        (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow =
+          "2px 2px 0 rgba(0,0,0,0.3)";
       }}
     >
-      <RankBadge rank={team.rank} />
-
       <div className="flex flex-col flex-1 min-w-0">
         <span
           className="hero-title font-black uppercase truncate"
           style={{
-            fontSize: "clamp(0.75rem, 1.6vw, 0.9rem)",
+            fontSize: "clamp(0.85rem, 2vw, 1.05rem)",
             color: "#111",
-            lineHeight: 1.15,
+            lineHeight: 1.2,
             letterSpacing: "0.03em",
           }}
         >
@@ -172,11 +104,9 @@ function TeamRow({
   );
 }
 
-/* ─── Theme Section ─── */
+/* ─── Theme Section — no GSAP on rows ─── */
 function ThemeSection({ data }: { data: ThemeResults }) {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  const key = data.theme.toLowerCase();
+  const key = data.theme.toLowerCase().trim();
   const config = THEME_CONFIG[key] ?? {
     color: "#E8003D",
     textColor: "#000",
@@ -184,29 +114,10 @@ function ThemeSection({ data }: { data: ThemeResults }) {
     label: data.theme,
   };
 
-  useEffect(() => {
-    if (!headerRef.current) return;
-    gsap.fromTo(
-      headerRef.current,
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      },
-    );
-  }, []);
-
   return (
-    <div ref={sectionRef} className="w-full flex flex-col items-center gap-6">
+    <div className="w-full flex flex-col items-center gap-6">
       {/* Theme Header */}
-      <div ref={headerRef} className="flex items-center gap-4 w-full max-w-3xl">
+      <div className="flex items-center gap-4 w-full max-w-3xl">
         <div
           style={{
             height: 3,
@@ -250,42 +161,15 @@ function ThemeSection({ data }: { data: ThemeResults }) {
         />
       </div>
 
-      {/* Teams Grid */}
+      {/* Teams */}
       <div
         className="w-full max-w-3xl flex flex-col"
         style={{ paddingBottom: "0.5rem" }}
       >
         {data.teams.map((team, i) => (
-          <TeamRow
-            key={`${team.teamName}-${i}`}
-            team={team}
-            accent={config.color}
-            index={i}
-          />
+          <TeamRow key={`${team.teamName}-${i}`} team={team} />
         ))}
       </div>
-    </div>
-  );
-}
-
-/* ─── Placeholder / Loading ─── */
-function ResultsSkeleton() {
-  return (
-    <div className="flex flex-col items-center gap-3 w-full max-w-3xl">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          style={{
-            width: "100%",
-            height: 56,
-            background: "rgba(255,255,255,0.08)",
-            border: "2px solid rgba(255,255,255,0.15)",
-            borderRadius: 0,
-            animation: "pulse 1.5s ease-in-out infinite",
-            animationDelay: `${i * 0.1}s`,
-          }}
-        />
-      ))}
     </div>
   );
 }
@@ -301,72 +185,19 @@ export default function Results({
   const headerRef = useRef<HTMLDivElement>(null);
   const smootherRef = useRef<ScrollSmoother | null>(null);
 
-  // ── Replace this with your actual fetch ──
-  const [results, setResults] = useState<ThemeResults[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error] = useState<string | null>(null);
+  const results = resultsData as ThemeResults[];
 
-  useEffect(() => {
-    if (!showResults) return;
-
-    // TODO: replace with your actual JSON endpoint
-    // fetch("/api/results.json")
-    //   .then((r) => r.json())
-    //   .then((data) => { setResults(data); setLoading(false); })
-    //   .catch(() => { setError("Failed to load results."); setLoading(false); });
-
-    // ── Demo data (remove once you wire up the fetch above) ──
-    const demo: ThemeResults[] = [
-      {
-        theme: "DevOps",
-        teams: Array.from({ length: 10 }, (_, i) => ({
-          rank: i + 1,
-          teamName: `Team ${["Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet"][i]}`,
-          college: `St. Joseph's Engineering College`,
-        })),
-      },
-      {
-        theme: "Cybersecurity",
-        teams: Array.from({ length: 10 }, (_, i) => ({
-          rank: i + 1,
-          teamName: `Team ${["Phantom", "Cipher", "Ghost", "Venom", "Stealth", "Specter", "Shadow", "Nexus", "Recon", "Siege"][i]}`,
-          college: `NMAM Institute of Technology`,
-        })),
-      },
-      {
-        theme: "Cloud Architecture",
-        teams: Array.from({ length: 10 }, (_, i) => ({
-          rank: i + 1,
-          teamName: `Team ${["Nimbus", "Stratus", "Cirrus", "Cumulus", "Aurora", "Zephyr", "Aether", "Nimbostratus", "Altus", "Celesta"][i]}`,
-          college: `Manipal Institute of Technology`,
-        })),
-      },
-      {
-        theme: "Open Innovation",
-        teams: Array.from({ length: 10 }, (_, i) => ({
-          rank: i + 1,
-          teamName: `Team ${["Forge", "Spark", "Blaze", "Flux", "Pioneer", "Vanguard", "Odyssey", "Zenith", "Apex", "Nova"][i]}`,
-          college: `Sahyadri College of Engineering`,
-        })),
-      },
-    ];
-    setTimeout(() => {
-      setResults(demo);
-      setLoading(false);
-    }, 600);
-  }, [showResults]);
-
-  /* Header animation */
+  /* Only animate the page header — nothing else touches GSAP */
   useEffect(() => {
     if (!headerRef.current) return;
     gsap.fromTo(
       headerRef.current,
       { opacity: 0, y: -30 },
-      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.1 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out", delay: 0.15 },
     );
   }, []);
 
-  /* ScrollSmoother — only after loader */
+  /* ScrollSmoother */
   useEffect(() => {
     if (!loaderDone) return;
     const timer = setTimeout(() => {
@@ -425,7 +256,7 @@ export default function Results({
         <div id="results-smooth-content">
           <div className="relative w-full min-h-screen">
             <div className="relative px-6 md:px-12 lg:px-20 pt-28 pb-24 flex flex-col items-center gap-16 md:gap-20">
-              {/* ── Page Header ── */}
+              {/* Page Header */}
               <div
                 ref={headerRef}
                 className="-mt-12 mb-6 flex flex-col items-center"
@@ -463,24 +294,24 @@ export default function Results({
 
                 {showResults && (
                   <p
-                    className="comic-sans text-center mt-5 max-w-lg -mb-[6vw]"
+                    className="comic-sans text-center mt-5 max-w-lg -mb-[3vw]"
                     style={{
                       fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
                       color: "rgba(255,255,255,0.85)",
                       lineHeight: 1.6,
                     }}
                   >
-                    Congratulations to all the finalists and winners of
-                    HackToFuture 4.0 across all four tracks.
+                    Meet the teams shortlisted for HackToFuture 4.0 across all
+                    four tracks.
                   </p>
                 )}
               </div>
 
-              {/* ── Results ── */}
+              {/* Teams or Coming Soon */}
               {!showResults ? (
                 <div
-                  className="flex flex-col items-center justify-center gap-4"
-                  style={{ minHeight: "30vh", textAlign: "center" }}
+                  className="flex items-center justify-center"
+                  style={{ minHeight: "30vh" }}
                 >
                   <div
                     style={{
@@ -488,6 +319,7 @@ export default function Results({
                       border: "3px solid #000",
                       boxShadow: "5px 5px 0 #000",
                       padding: "2.5rem 3rem",
+                      textAlign: "center",
                     }}
                   >
                     <p
@@ -504,44 +336,14 @@ export default function Results({
                   </div>
                 </div>
               ) : (
-                <>
-                  {loading && <ResultsSkeleton />}
-
-                  {error && (
-                    <div
-                      className="comic-sans text-center"
-                      style={{
-                        color: "#DA100C",
-                        background: "#FFFEF2",
-                        border: "3px solid #000",
-                        padding: "1.5rem 2rem",
-                        boxShadow: "4px 4px 0 #000",
-                        fontSize: "0.9rem",
-                      }}
-                    >
-                      ⚠ {error}
-                    </div>
-                  )}
-
-                  {!loading &&
-                    !error &&
-                    results &&
-                    results.map((themeData) => (
-                      <ThemeSection key={themeData.theme} data={themeData} />
-                    ))}
-                </>
+                results.map((themeData) => (
+                  <ThemeSection key={themeData.theme} data={themeData} />
+                ))
               )}
             </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.8; }
-        }
-      `}</style>
     </>
   );
 }

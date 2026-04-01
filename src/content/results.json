@@ -1,0 +1,218 @@
+[
+  {
+    "theme": "DevOps",
+    "teams": [
+      {
+        "rank": 1,
+        "teamName": "The Mob Glitch",
+        "college": "Atria Institute of Technology (AIT), Bengaluru, Karnataka"
+      },
+      {
+        "rank": 2,
+        "teamName": "Devil's Den",
+        "college": "NIIT University (NIITU), Rajasthan"
+      },
+      {
+        "rank": 3,
+        "teamName": "The Quad",
+        "college": "SRM Easwari Engineering College"
+      },
+      {
+        "rank": 4,
+        "teamName": "Elite Hackers",
+        "college": "Canara Engineering College, Bantwal"
+      },
+      {
+        "rank": 5,
+        "teamName": "We don't know",
+        "college": "NMAM Institute of Technology (NMAMIT), Nitte"
+      },
+      {
+        "rank": 6,
+        "teamName": "Lil Kids",
+        "college": "Dayananda Sagar College of Engineering (DSCE), Bengaluru"
+      },
+      { "rank": 7, "teamName": "fun-tastick", "college": "REVA University" },
+      {
+        "rank": 8,
+        "teamName": "BROKENCODE",
+        "college": "National Institute of Technology Karnataka (NITK), Surathkal"
+      },
+      {
+        "rank": 9,
+        "teamName": "logic loopers",
+        "college": "St Joseph Engineering College (SJEC), Mangaluru"
+      },
+      {
+        "rank": 10,
+        "teamName": "CODE_CRAFTERS",
+        "college": "St Aloysius College (Autonomous), Mangaluru"
+      }
+    ]
+  },
+  {
+    "theme": "Cybersecurity",
+    "teams": [
+      {
+        "rank": 1,
+        "teamName": "Boss Bandits",
+        "college": "St. Joseph Engineering College, Vamanjoor"
+      },
+      {
+        "rank": 2,
+        "teamName": "Silicon Colosseum",
+        "college": "Presidency University (PU), Bangalore"
+      },
+      {
+        "rank": 3,
+        "teamName": "Nova Q",
+        "college": "Kumaraguru college of technology, Coimbatore, Tamil Nadu, India"
+      },
+      {
+        "rank": 4,
+        "teamName": "NexALS",
+        "college": "St. Joseph Engineering College, Vamanjoor"
+      },
+      {
+        "rank": 5,
+        "teamName": "Faleris",
+        "college": "Moodlakatte Institute of Technology (MIT), Kundapura"
+      },
+      {
+        "rank": 6,
+        "teamName": "Dollar $ign",
+        "college": "Presidency University (PU), Bangalore"
+      },
+      {
+        "rank": 7,
+        "teamName": "Team Novice",
+        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka"
+      },
+      {
+        "rank": 8,
+        "teamName": "Trailblazers",
+        "college": "National Institute of Engineering (NIE), Mysuru"
+      },
+      {
+        "rank": 9,
+        "teamName": "The Brainiacs",
+        "college": "Shri Madhwa Vadiraja Institute of Technology and Management (SMVITM), Shankarapura, Karnataka"
+      },
+      {
+        "rank": 10,
+        "teamName": "Trial And Error",
+        "college": "JIT, Bangalore"
+      }
+    ]
+  },
+  {
+    "theme": "Cloud",
+    "teams": [
+      {
+        "rank": 1,
+        "teamName": "Code Brigade",
+        "college": "Cambridge Institute of Technology, North Campus, Devanahalli, Karnataka"
+      },
+      {
+        "rank": 2,
+        "teamName": "Byte Me",
+        "college": "Dwarkadas J. Sanghvi College of Engineering"
+      },
+      {
+        "rank": 3,
+        "teamName": "Visionaries",
+        "college": "Moodlakatte Institute of Technology (MIT), Kundapura"
+      },
+      {
+        "rank": 4,
+        "teamName": "INVOX",
+        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka"
+      },
+      {
+        "rank": 5,
+        "teamName": "NeuralOps",
+        "college": "St. Joseph Engineering College, Vamanjoor"
+      },
+      {
+        "rank": 6,
+        "teamName": "Codeclan",
+        "college": "KLE Technological University (KLE Tech), Hubli"
+      },
+      {
+        "rank": 7,
+        "teamName": "RanOutOfTokens",
+        "college": "Sahyadri College of Engineering & Management (SCEM), Mangaluru"
+      },
+      {
+        "rank": 8,
+        "teamName": "SheCodes",
+        "college": "Vivekananda College of Engineering and Technology"
+      },
+      {
+        "rank": 9,
+        "teamName": "Tech Titans",
+        "college": "Sahyadri College of Engineering and Management, Mangalore"
+      },
+      {
+        "rank": 10,
+        "teamName": "DevLads",
+        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka"
+      }
+    ]
+  },
+  {
+    "theme": "Open Innovation",
+    "teams": [
+      {
+        "rank": 1,
+        "teamName": "Code_Slayers",
+        "college": "GM University Davanagere"
+      },
+      {
+        "rank": 2,
+        "teamName": "Sphinx",
+        "college": "Yenepoya Institute of Arts, Science, Commerce and Management, Mangalore, Karnataka"
+      },
+      {
+        "rank": 3,
+        "teamName": "Abra Code Abra",
+        "college": "P A College of Engineering (PACOE), Mangalore"
+      },
+      {
+        "rank": 4,
+        "teamName": "MindMesh",
+        "college": "St Joseph's Engineering College, Mangalore"
+      },
+      {
+        "rank": 5,
+        "teamName": "Obsidian",
+        "college": "Cambridge Institute of Technology, North Campus, Devanahalli, Karnataka"
+      },
+      {
+        "rank": 6,
+        "teamName": "Last Minute",
+        "college": "Christ University (CU), Bangalore Central Campus, Karnataka"
+      },
+      {
+        "rank": 7,
+        "teamName": "CODEMAFIANS",
+        "college": "P.A. College of Engineering, Mangalore, Karnataka"
+      },
+      {
+        "rank": 8,
+        "teamName": "BlueBerry",
+        "college": "Presidency University (PU), Bangalore"
+      },
+      {
+        "rank": 9,
+        "teamName": "MeowFi",
+        "college": "Moodlakatte Institute of Technology (MIT), Kundapura"
+      },
+      {
+        "rank": 10,
+        "teamName": "Team Identity",
+        "college": "VSB Engineering College (VSBEC), Karur, Tamil Nadu"
+      }
+    ]
+  }
+]
