@@ -295,7 +295,7 @@ export default function Results({
                 {showResults && (
                   <>
                     <p
-                      className="comic-sans text-center mt-5 max-w-lg"
+                      className="comic-sans text-center mt-5 max-w-lg -mb-[3vh]"
                       style={{
                         fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
                         color: "rgba(255,255,255,0.85)",
@@ -305,7 +305,7 @@ export default function Results({
                       Meet the teams shortlisted for HackToFuture 4.0 across all
                       four tracks.
                     </p>
-                    <p
+                    {/* <p
                       className="comic-sans text-center mt-5 max-w-lg -mb-[3vh]"
                       style={{
                         fontSize: "clamp(0.8rem, 1.4vw, 0.95rem)",
@@ -316,7 +316,7 @@ export default function Results({
                       To those who were not shortlisted, your journey does not
                       end here. Thank you for your participation, It truly means
                       a lot to us. Keep building, Keep innovating.
-                    </p>
+                    </p> */}
                   </>
                 )}
               </div>
