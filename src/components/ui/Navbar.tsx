@@ -1,6 +1,5 @@
 import { Info, Users, Lightbulb, Heart, SearchCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ruleBookLink } from "../../lib/utils";
 import { UnstopIcon } from "./Unstop";
 
 interface NavbarProps {

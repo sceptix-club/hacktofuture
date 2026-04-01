@@ -84,7 +84,6 @@ function RankBadge({ rank }: { rank: number }) {
 /* ─── Team Row ─── */
 function TeamRow({
   team,
-  accent,
   index,
 }: {
   team: Team;
@@ -305,7 +304,7 @@ export default function Results({
   // ── Replace this with your actual fetch ──
   const [results, setResults] = useState<ThemeResults[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   useEffect(() => {
     if (!showResults) return;
@@ -500,18 +499,7 @@ export default function Results({
                         lineHeight: 1.2,
                       }}
                     >
-                      Itni bhi kya jaldi hai
-                    </p>
-                    <p
-                      className="comic-sans font-bold uppercase"
-                      style={{
-                        fontSize: "clamp(0.75rem, 1.6vw, 1rem)",
-                        color: "#111",
-                        marginTop: "0.6rem",
-                        letterSpacing: "0.08em",
-                      }}
-                    >
-                      Results coming soon
+                      Results coming soon...
                     </p>
                   </div>
                 </div>
