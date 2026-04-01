@@ -14,7 +14,7 @@
       },
       {
         "rank": 3,
-        "teamName": "The Quad",
+        "teamName": "The_Quad",
         "college": "SRM Easwari Engineering College"
       },
       {
@@ -60,12 +60,12 @@
       },
       {
         "rank": 2,
-        "teamName": "Silicon Colosseum",
-        "college": "Presidency University (PU), Bangalore"
+        "teamName": "Cyanide Boys",
+        "college": "Canara Engineering College, Bantwal"
       },
       {
         "rank": 3,
-        "teamName": "Nova Q",
+        "teamName": "NovaQ",
         "college": "Kumaraguru college of technology, Coimbatore, Tamil Nadu, India"
       },
       {
@@ -75,8 +75,8 @@
       },
       {
         "rank": 5,
-        "teamName": "Faleris",
-        "college": "Moodlakatte Institute of Technology (MIT), Kundapura"
+        "teamName": "Silicon Colosseum",
+        "college": "Presidency University (PU), Bangalore"
       },
       {
         "rank": 6,
@@ -150,7 +150,7 @@
       },
       {
         "rank": 9,
-        "teamName": "Tech Titans",
+        "teamName": "Faleris",
         "college": "Sahyadri College of Engineering and Management, Mangalore"
       },
       {
@@ -205,13 +205,13 @@
       },
       {
         "rank": 9,
-        "teamName": "MeowFi",
-        "college": "Moodlakatte Institute of Technology (MIT), Kundapura"
+        "teamName": "Did he warriors",
+        "college": "St. Joseph Engineering College, Vamanjoor"
       },
       {
         "rank": 10,
-        "teamName": "Team Identity",
-        "college": "VSB Engineering College (VSBEC), Karur, Tamil Nadu"
+        "teamName": "BORN2CODE",
+        "college": "Smt.Kamala & Shri.Venkappa Agadi college of Engineering college Laxmeshwar, Karnataka"
       }
     ]
   }
