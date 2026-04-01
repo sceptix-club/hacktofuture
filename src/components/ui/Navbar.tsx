@@ -1,4 +1,4 @@
-import { Info, Users, Lightbulb, Heart, BookText } from "lucide-react";
+import { Info, Users, Lightbulb, Heart, SearchCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ruleBookLink } from "../../lib/utils";
 import { UnstopIcon } from "./Unstop";
@@ -18,10 +18,10 @@ const Navbar = ({ className }: NavbarProps) => {
     { icon: Lightbulb, href: "#themes", label: "Themes", route: "/themes" },
     { icon: Heart, href: "#sponsors", label: "Sponsors", route: "/sponsors" },
     {
-      icon: BookText,
-      href: `${ruleBookLink}`,
-      label: "Rulebook",
-      route: null,
+      icon: SearchCheck,
+      href: "#results",
+      label: "Results",
+      route: "/results",
     },
     {
       icon: UnstopIcon,

@@ -15,6 +15,7 @@ import { Environment, Preload, useProgress } from "@react-three/drei";
 import Sponsors from "./pages/Sponsors";
 import Themes from "./pages/Themes";
 import About from "./pages/About";
+import Results from "./pages/Results";
 import { Overlay } from "./scenes/Overlay";
 import PSPage from "./pages/ps";
 import { pageview } from "./utils/analytics";
@@ -337,6 +338,14 @@ function App() {
           element={
             <PageLayout>
               <PSPage />
+            </PageLayout>
+          }
+        />
+        <Route
+          path="/results"
+          element={
+            <PageLayout>
+              <Results showResults={false} />
             </PageLayout>
           }
         />
