@@ -1,9 +1,8 @@
-const CACHE_NAME = "htf4-cache-v1";
+const CACHE_NAME = "htf4-cache-v2";
 
 const STATIC_ASSETS = [
-  "/",
   "/manifest.json",
-  "/logo_white.png",
+  "/logo_white.svg",
 ];
 
 self.addEventListener("install", (event) => {
@@ -43,23 +42,23 @@ self.addEventListener("fetch", (event) => {
 
   if (request.method !== "GET") return;
 
-  if (request.url.includes("/api/")) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  if (
+  // Assets to cache: images, styles, scripts, fonts, and manifest
+  const isAsset =
     request.destination === "image" ||
     request.destination === "style" ||
-    request.destination === "script"
-  ) {
+    request.destination === "script" ||
+    request.destination === "font" ||
+    request.destination === "manifest";
+
+  // We exclude documents (HTML) and API calls from caching to ensure they are always fresh.
+  // This solves the issue where users see stale content like "Coming Soon" after updates.
+  if (isAsset) {
     event.respondWith(cacheFirst(request));
-    return;
+  } else {
+    // Network-only for documents and API calls
+    event.respondWith(fetch(request));
   }
-
-  event.respondWith(staleWhileRevalidate(request));
 });
-
 
 async function cacheFirst(request) {
   const cache = await caches.open(CACHE_NAME);
@@ -67,33 +66,15 @@ async function cacheFirst(request) {
 
   if (cached) return cached;
 
-  const response = await fetch(request);
-  cache.put(request, response.clone());
-  return response;
-}
-
-async function networkFirst(request) {
-  const cache = await caches.open(CACHE_NAME);
-
   try {
     const response = await fetch(request);
-    cache.put(request, response.clone());
+    // Cache the asset for future use if the fetch was successful
+    if (response && response.status === 200) {
+      cache.put(request, response.clone());
+    }
     return response;
   } catch (error) {
-    return await cache.match(request);
+    // If the network is down, the previously cached asset (if any) will be returned
+    return cached;
   }
-}
-
-async function staleWhileRevalidate(request) {
-  const cache = await caches.open(CACHE_NAME);
-  const cached = await cache.match(request);
-
-  const networkFetch = fetch(request)
-    .then((response) => {
-      cache.put(request, response.clone());
-      return response;
-    })
-    .catch(() => cached);
-
-  return cached || networkFetch;
 }
