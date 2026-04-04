@@ -76,17 +76,37 @@ const LOUNGE_SPONSORS: Sponsor[] = [
 
 // ];
 
-// const SILVER_SPONSORS: Sponsor[] = [
-
-// ];
+const SILVER_SPONSORS: Sponsor[] = [
+  {
+    name: "xTransMatrix Consulting Services Pvt Ltd ",
+    logo: "/sponsors/xtransmatrix.png",
+    url: "#",
+    description:
+      "Xtransmatrix Consulting Services Pvt Ltd is a Bengaluru-based IT and AI consulting company that provides services such as data annotation, prompt engineering, and tech staffing. It helps businesses improve their digital systems and adopt modern technologies like artificial intelligence and Agile practices.",
+    link: "https://xtransmatrix.com/",
+    headquarters: "Bengaluru, Karnataka",
+    industry: "IT Services and IT Consulting industry",
+  },
+  {
+    name: "WiZdom Ed",
+    logo: "/sponsors/wizdom.png",
+    url: "#",
+    description:
+      "WiZdom Ed is an education consulting organization that helps students with career guidance, study abroad admissions, scholarships, and test preparation. It provides services like psychometric assessments, university applications, and visa support, aiming to guide students in making informed academic and career decisions globally.",
+    link: "https://www.wizx.org/",
+    headquarters: "Mangalore, Karnataka",
+    industry: "Education Consulting industry",
+  },
+];
 
 // const BRONZE_SPONSORS: Sponsor[] = [];
 
 const TIER_COLORS: Record<string, { bg: string; text: string }> = {
   title: { bg: "#DA100C", text: "#000" },
-  powered: { bg: "#FFE105", text: "#000" },
+  powered: { bg: "#FFC000", text: "#000" },
   digital: { bg: "#50BAEA", text: "#000" },
   lounge: { bg: "#A855F7", text: "#000" },
+  silver: { bg: "#A3A3A3", text: "#000" },
 };
 
 /* ─── Dialog (portaled to document.body) ─── */
@@ -760,6 +780,14 @@ export default function Sponsors({ loaderDone }: { loaderDone?: boolean }) {
                   label="Powered By"
                   tier="powered"
                   sponsors={POWERED_SPONSORS}
+                  size="lg"
+                />
+              )}
+              {SILVER_SPONSORS.length > 0 && (
+                <TierRow
+                  label="Silver Sponsors"
+                  tier="silver"
+                  sponsors={SILVER_SPONSORS}
                   size="lg"
                 />
               )}
