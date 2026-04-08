@@ -90,13 +90,13 @@ function TeamRow({ team }: { team: Team }) {
         </span>
 
         {/* Separator Line */}
-        <div 
-          style={{ 
-            height: "1px", 
-            background: "rgba(0,0,0,0.1)", 
+        <div
+          style={{
+            height: "1px",
+            background: "rgba(0,0,0,0.1)",
             margin: "6px 0 4px 0",
-            width: "100%"
-          }} 
+            width: "100%",
+          }}
         />
 
         <div className="flex flex-col gap-0.5">
@@ -110,7 +110,7 @@ function TeamRow({ team }: { team: Team }) {
               fontWeight: 600,
             }}
           >
-            Leader: {team.teamLeader || "Not Specified"}
+            {team.teamLeader || "Not Specified"}
           </span>
           <span
             className="comic-sans truncate"
