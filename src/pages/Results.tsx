@@ -12,6 +12,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
 interface Team {
   teamName: string;
   college: string;
+  teamLeader?: string;
 }
 
 interface ThemeResults {
@@ -56,11 +57,11 @@ function TeamRow({ team }: { team: Team }) {
     <div
       className="flex items-center gap-4 w-full"
       style={{
-        padding: "0.75rem 1.1rem",
+        padding: "0.85rem 1.1rem",
         background: "#FFFEF2",
         border: "2px solid #000",
         boxShadow: "2px 2px 0 rgba(0,0,0,0.3)",
-        marginBottom: "0.4rem",
+        marginBottom: "0.5rem",
         transition: "transform 0.15s ease, box-shadow 0.15s ease",
       }}
       onMouseEnter={(e) => {
@@ -81,24 +82,48 @@ function TeamRow({ team }: { team: Team }) {
           style={{
             fontSize: "clamp(0.85rem, 2vw, 1.05rem)",
             color: "#111",
-            lineHeight: 1.2,
+            lineHeight: 1.1,
             letterSpacing: "0.03em",
           }}
         >
           {team.teamName}
         </span>
-        <span
-          className="comic-sans truncate"
-          style={{
-            fontSize: "clamp(0.6rem, 1.1vw, 0.72rem)",
-            color: "rgba(0,0,0,0.5)",
-            letterSpacing: "0.04em",
-            marginTop: 2,
-            textTransform: "uppercase",
-          }}
-        >
-          {team.college}
-        </span>
+
+        {/* Separator Line */}
+        <div 
+          style={{ 
+            height: "1px", 
+            background: "rgba(0,0,0,0.1)", 
+            margin: "6px 0 4px 0",
+            width: "100%"
+          }} 
+        />
+
+        <div className="flex flex-col gap-0.5">
+          <span
+            className="comic-sans truncate"
+            style={{
+              fontSize: "clamp(0.6rem, 1.1vw, 0.72rem)",
+              color: "rgba(0,0,0,0.6)",
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            Leader: {team.teamLeader || "Not Specified"}
+          </span>
+          <span
+            className="comic-sans truncate"
+            style={{
+              fontSize: "clamp(0.6rem, 1.1vw, 0.72rem)",
+              color: "rgba(0,0,0,0.45)",
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+            }}
+          >
+            {team.college}
+          </span>
+        </div>
       </div>
     </div>
   );

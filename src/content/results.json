@@ -5,48 +5,62 @@
       {
         "rank": 1,
         "teamName": "The Mob Glitch",
-        "college": "Atria Institute of Technology (AIT), Bengaluru, Karnataka"
+        "college": "Atria Institute of Technology (AIT), Bengaluru, Karnataka",
+        "teamLeader": "Mohammed Aqib Moez "
       },
       {
         "rank": 2,
         "teamName": "Devil's Den",
-        "college": "NIIT University (NIITU), Rajasthan"
+        "college": "NIIT University (NIITU), Rajasthan",
+        "teamLeader": "Naman Mani"
       },
       {
         "rank": 3,
         "teamName": "The_Quad",
-        "college": "SRM Easwari Engineering College"
+        "college": "SRM Easwari Engineering College",
+        "teamLeader": "G Harshitha"
       },
       {
         "rank": 4,
         "teamName": "Elite Hackers",
-        "college": "Canara Engineering College, Bantwal"
+        "college": "Canara Engineering College, Bantwal",
+        "teamLeader": "Prathwikumar M Gader"
       },
       {
         "rank": 5,
         "teamName": "We don't know",
-        "college": "NMAM Institute of Technology (NMAMIT), Nitte"
+        "college": "NMAM Institute of Technology (NMAMIT), Nitte",
+        "teamLeader": "Amith Colaco"
       },
       {
         "rank": 6,
         "teamName": "Lil Kids",
-        "college": "Dayananda Sagar College of Engineering (DSCE), Bengaluru"
+        "college": "Dayananda Sagar College of Engineering (DSCE), Bengaluru",
+        "teamLeader": "Ananya Gupta"
       },
-      { "rank": 7, "teamName": "fun-tastick", "college": "REVA University" },
+      {
+        "rank": 7,
+        "teamName": "fun-tastick",
+        "college": "REVA University",
+        "teamLeader": "Dibyendu Sahoo"
+      },
       {
         "rank": 8,
         "teamName": "BROKENCODE",
-        "college": "National Institute of Technology Karnataka (NITK), Surathkal"
+        "college": "National Institute of Technology Karnataka (NITK), Surathkal",
+        "teamLeader": "Adithya A"
       },
       {
         "rank": 9,
         "teamName": "logic loopers",
-        "college": "St Joseph Engineering College (SJEC), Mangaluru"
+        "college": "St Joseph Engineering College (SJEC), Mangaluru",
+        "teamLeader": "Prajwal Gaonkar"
       },
       {
         "rank": 10,
         "teamName": "CODE_CRAFTERS",
-        "college": "St Aloysius College (Autonomous), Mangaluru"
+        "college": "St Aloysius College (Autonomous), Mangaluru",
+        "teamLeader": "Gautam Naveen Rao"
       }
     ]
   },
@@ -56,52 +70,62 @@
       {
         "rank": 1,
         "teamName": "Boss Bandits",
-        "college": "St. Joseph Engineering College, Vamanjoor"
+        "college": "St. Joseph Engineering College, Vamanjoor",
+        "teamLeader": "Santhsim Virile Dsouza"
       },
       {
         "rank": 2,
-        "teamName": "Cyanide Boys",
-        "college": "Canara Engineering College, Bantwal"
+        "teamName": "Trial And Error",
+        "college": "JIT, Bangalore",
+        "teamLeader": "Bhavana M J"
       },
       {
         "rank": 3,
         "teamName": "NovaQ",
-        "college": "Kumaraguru college of technology, Coimbatore, Tamil Nadu, India"
+        "college": "Kumaraguru college of technology, Coimbatore, Tamil Nadu, India",
+        "teamLeader": "Prathiba Devi V S"
       },
       {
         "rank": 4,
         "teamName": "NexALS",
-        "college": "St. Joseph Engineering College, Vamanjoor"
+        "college": "St. Joseph Engineering College, Vamanjoor",
+        "teamLeader": "Linsha Neha Bangera"
       },
       {
         "rank": 5,
         "teamName": "Silicon Colosseum",
-        "college": "Presidency University (PU), Bangalore"
+        "college": "Presidency University (PU), Bangalore",
+        "teamLeader": "Derric Samson"
       },
       {
         "rank": 6,
         "teamName": "Dollar $ign",
-        "college": "Presidency University (PU), Bangalore"
+        "college": "Presidency University (PU), Bangalore",
+        "teamLeader": "Sachin S"
       },
       {
         "rank": 7,
         "teamName": "Team Novice",
-        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka"
+        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka",
+        "teamLeader": "Arjun Dinesh Gowda"
       },
       {
         "rank": 8,
         "teamName": "Trailblazers",
-        "college": "National Institute of Engineering (NIE), Mysuru"
+        "college": "National Institute of Engineering (NIE), Mysuru",
+        "teamLeader": "Kavya Nair"
       },
       {
         "rank": 9,
         "teamName": "The Brainiacs",
-        "college": "Shri Madhwa Vadiraja Institute of Technology and Management (SMVITM), Shankarapura, Karnataka"
+        "college": "Shri Madhwa Vadiraja Institute of Technology and Management (SMVITM), Shankarapura, Karnataka",
+        "teamLeader": "Manvitha Ravi Salian"
       },
       {
         "rank": 10,
-        "teamName": "Trial And Error",
-        "college": "JIT, Bangalore"
+        "teamName": "Cyanide Boys",
+        "college": "Canara Engineering College, Bantwal",
+        "teamLeader": "Nihal"
       }
     ]
   },
@@ -111,52 +135,62 @@
       {
         "rank": 1,
         "teamName": "Code Brigade",
-        "college": "Cambridge Institute of Technology, North Campus, Devanahalli, Karnataka"
+        "college": "Cambridge Institute of Technology, North Campus, Devanahalli, Karnataka",
+        "teamLeader": "Touheed Pasha"
       },
       {
         "rank": 2,
         "teamName": "Byte Me",
-        "college": "Dwarkadas J. Sanghvi College of Engineering"
+        "college": "Dwarkadas J. Sanghvi College of Engineering",
+        "teamLeader": "Daksh Pravin Mehta"
       },
       {
         "rank": 3,
         "teamName": "Visionaries",
-        "college": "Moodlakatte Institute of Technology (MIT), Kundapura"
+        "college": "Moodlakatte Institute of Technology (MIT), Kundapura",
+        "teamLeader": "Bhumika M Devadiga"
       },
       {
         "rank": 4,
         "teamName": "INVOX",
-        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka"
+        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka",
+        "teamLeader": "Shaman Krishna"
       },
       {
         "rank": 5,
         "teamName": "NeuralOps",
-        "college": "St. Joseph Engineering College, Vamanjoor"
+        "college": "St. Joseph Engineering College, Vamanjoor",
+        "teamLeader": "Harshanandan"
       },
       {
         "rank": 6,
         "teamName": "Codeclan",
-        "college": "KLE Technological University (KLE Tech), Hubli"
+        "college": "KLE Technological University (KLE Tech), Hubli",
+        "teamLeader": "Ayush Bhandari"
       },
       {
         "rank": 7,
         "teamName": "RanOutOfTokens",
-        "college": "Sahyadri College of Engineering & Management (SCEM), Mangaluru"
+        "college": "Sahyadri College of Engineering & Management (SCEM), Mangaluru",
+        "teamLeader": "Vivek Neeralagi"
       },
       {
         "rank": 8,
         "teamName": "SheCodes",
-        "college": "Vivekananda College of Engineering and Technology"
+        "college": "Vivekananda College of Engineering and Technology",
+        "teamLeader": "Neha Rai"
       },
       {
         "rank": 9,
         "teamName": "Faleris",
-        "college": "Sahyadri College of Engineering and Management, Mangalore"
+        "college": "Sahyadri College of Engineering and Management, Mangalore",
+        "teamLeader": "Ranjan kumar"
       },
       {
         "rank": 10,
         "teamName": "Clueless",
-        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka"
+        "college": "AJ Institute of Engineering and Technology (AJIET), Mangalore, Karnataka",
+        "teamLeader": "Jnanesh"
       }
     ]
   },
@@ -165,53 +199,63 @@
     "teams": [
       {
         "rank": 1,
-        "teamName": "Code_Slayers",
-        "college": "GM University Davanagere"
+        "teamName": "The Specter Sentinels",
+        "college": "AMC Engineering College (AMCEC), Bengaluru",
+        "teamLeader": "Sarita Damodar Naik"
       },
       {
         "rank": 2,
         "teamName": "Sphinx",
-        "college": "Yenepoya Institute of Arts, Science, Commerce and Management, Mangalore, Karnataka"
+        "college": "Yenepoya Institute of Arts, Science, Commerce and Management, Mangalore, Karnataka",
+        "teamLeader": "Prajval Kumar"
       },
       {
         "rank": 3,
         "teamName": "Abra Code Abra",
-        "college": "P A College of Engineering (PACOE), Mangalore"
+        "college": "P A College of Engineering (PACOE), Mangalore",
+        "teamLeader": "Muhammad Haashid"
       },
       {
         "rank": 4,
-        "teamName": "MindMesh (Reshal Sequeira)",
-        "college": "St Joseph's Engineering College, Mangalore"
+        "teamName": "MindMesh",
+        "college": "St Joseph's Engineering College, Mangalore",
+        "teamLeader": "Reshal Sequeira"
       },
       {
         "rank": 5,
         "teamName": "Obsidian",
-        "college": "Cambridge Institute of Technology, North Campus, Devanahalli, Karnataka"
+        "college": "Cambridge Institute of Technology, North Campus, Devanahalli, Karnataka",
+        "teamLeader": "Preran C V N"
       },
       {
         "rank": 6,
         "teamName": "Last Minute",
-        "college": "Christ University (CU), Bangalore Central Campus, Karnataka"
+        "college": "Christ University (CU), Bangalore Central Campus, Karnataka",
+        "teamLeader": "Dhwani Dhingra"
       },
       {
         "rank": 7,
         "teamName": "CODEMAFIANS",
-        "college": "P.A. College of Engineering, Mangalore, Karnataka"
+        "college": "P.A. College of Engineering, Mangalore, Karnataka",
+        "teamLeader": "Deepushree H P"
       },
       {
         "rank": 8,
         "teamName": "BlueBerry",
-        "college": "Presidency University (PU), Bangalore"
+        "college": "Presidency University (PU), Bangalore",
+        "teamLeader": "Mohammed Abrar"
       },
       {
         "rank": 9,
         "teamName": "Did he warriors",
-        "college": "St. Joseph Engineering College, Vamanjoor"
+        "college": "St. Joseph Engineering College, Vamanjoor",
+        "teamLeader": "Manish Dsouza Dsouza"
       },
       {
         "rank": 10,
         "teamName": "BORN2CODE",
-        "college": "Smt.Kamala & Shri.Venkappa Agadi college of Engineering college Laxmeshwar, Karnataka"
+        "college": "Smt.Kamala & Shri.Venkappa Agadi college of Engineering college Laxmeshwar, Karnataka",
+        "teamLeader": "Onkar Bevinakatti"
       }
     ]
   }
