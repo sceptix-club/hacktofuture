@@ -10,7 +10,7 @@ function Timer() {
     days: 0,
   });
 
-  const HtfDate = Date.parse("2026-04-15T18:30:00+05:30");
+  const HtfDate = Date.parse("2026-04-15T18:00:00+05:30");
 
   const setTimeLeft = useCallback(() => {
     const difference = HtfDate - Date.now();
@@ -203,7 +203,7 @@ const cards = [
   [
     { time: "1:00AM", event: "Refreshments" },
     { time: "8:00AM", event: "Breakfast" },
-    { time: "10:00AM", event: "Lunch" },
+    { time: "1:00PM", event: "Lunch" },
     { time: "4:00PM", event: "Snacks" },
     { time: "4:30PM", event: "Mentoring session" },
     { time: "7:30PM", event: "Cultural Program" },
